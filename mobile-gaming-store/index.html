@@ -51,6 +51,15 @@
         align-items: center;
         max-width: 1400px;
         margin: 0 auto;
+        gap: 20px;
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        flex: 1;
+        min-width: 0;
       }
 
       .navbar.hidden {
@@ -72,8 +81,8 @@
       .search-container {
         position: relative;
         flex: 1;
-        max-width: 500px;
-        margin: 0 40px;
+        max-width: 400px;
+        min-width: 200px;
       }
       .search-input {
         width: 100%;
@@ -162,9 +171,10 @@
 
       .nav-menu {
         display: flex;
-        gap: 30px;
+        gap: 25px;
         align-items: center;
         list-style: none;
+        flex-shrink: 0;
       }
 
       .nav-menu a {
@@ -1145,6 +1155,26 @@
           transform: translateY(0);
         }
       }
+
+      /* Laptop responsive styles */
+      @media (max-width: 1200px) {
+        .nav-container {
+          gap: 15px;
+        }
+        .nav-left {
+          gap: 20px;
+        }
+        .search-container {
+          max-width: 300px;
+        }
+        .nav-menu {
+          gap: 20px;
+        }
+        .nav-menu a {
+          font-size: 14px;
+        }
+      }
+
       @media (max-width: 768px) {
         .navbar {
           padding: 15px 20px;
@@ -1626,6 +1656,27 @@
         display: flex;
         gap: 15px;
         margin-top: 20px;
+      }
+      .view-details-btn {
+        background: rgba(37, 211, 102, 0.1);
+        color: #25d366;
+        border: 1px solid rgba(37, 211, 102, 0.3);
+        padding: 12px 24px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .view-details-btn:hover {
+        background: rgba(37, 211, 102, 0.2);
+        border-color: #25d366;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
       }
       @keyframes slideIn {
         from {
@@ -3404,8 +3455,87 @@
       </div>
     </div>
     
-    <!-- Unified Navbar Container -->
-    <div id="navbar-container"></div>
+    <!-- Main Navbar -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <!-- Logo and Search (left) -->
+        <div class="nav-left">
+          <div class="nav-logo">
+            <a href="/">
+              <i class="fas fa-gamepad"></i>
+              Mobile Gear Hub
+            </a>
+          </div>
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search gaming gear, accessories..."
+              id="search-input"
+            />
+            <button class="search-btn" id="search-btn">
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="search-suggestions" id="search-suggestions"></div>
+          </div>
+        </div>
+        
+        <!-- Nav Menu (centered) -->
+        <ul class="nav-menu">
+          <li class="dropdown">
+            <a href="#categories" id="categories-dropdown-btn">
+              Categories
+              <i class="fas fa-chevron-down" id="categories-arrow"></i>
+            </a>
+            <div class="dropdown-content" id="categories-dropdown-content">
+              <a href="category.html?cat=Controllers">
+                <i class="fas fa-gamepad"></i> Controllers
+              </a>
+              <a href="category.html?cat=Triggers">
+                <i class="fas fa-bullseye"></i> Triggers
+              </a>
+              <a href="category.html?cat=Holders">
+                <i class="fas fa-mobile-alt"></i> Holders
+              </a>
+              <a href="category.html?cat=Cooling Fans">
+                <i class="fas fa-fan"></i> Cooling Fans
+              </a>
+              <a href="category.html?cat=Joystick">
+                <i class="fas fa-dot-circle"></i> Joystick
+              </a>
+              <a href="category.html?cat=Accessories">
+                <i class="fas fa-headphones"></i> Accessories
+              </a>
+            </div>
+          </li>
+          <li>
+            <a href="help-center.html">
+              <i class="fas fa-question-circle"></i> Help Center
+            </a>
+          </li>
+          <li><a href="about.html">About</a></li>
+          <li id="admin-nav-item" style="display: none;">
+            <a href="admin-dashboard.html" class="admin-link">
+              <i class="fas fa-cogs"></i> Admin Dashboard
+            </a>
+          </li>
+        </ul>
+        
+        <!-- Navigation Actions (right) -->
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-btn cart-btn" id="cart-btn" title="Shopping Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count" id="cart-count"></span>
+          </a>
+          <div id="user-area">
+            <div class="user-skeleton">
+              <span class="user-spinner"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
     <!-- Mobile Bottom Navbar -->
     <nav class="mobile-bottom-navbar" id="mobile-bottom-navbar">
