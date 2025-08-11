@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Mobile Gear Hub</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <!-- Fallback Supabase CDN if the first one fails -->
+    <script>
+      // Wait for DOM to be fully loaded before initializing
+      document.addEventListener("DOMContentLoaded", function () {
+        if (typeof window.supabase === "undefined") {
+          console.log("Loading fallback Supabase CDN...");
+          const script = document.createElement("script");
+          script.src = "https://unpkg.com/@supabase/supabase-js@2";
+          script.onload = function () {
+            console.log("Fallback Supabase loaded successfully");
+            initializeSupabase();
+          };
+          script.onerror = function () {
+            console.error("Both Supabase CDNs failed to load");
+            const authError = document.getElementById("auth-error");
+            if (authError) {
+              authError.textContent =
+                "Failed to load authentication service. Please check your internet connection.";
+            }
+          };
+          document.head.appendChild(script);
+        } else {
+          console.log("Primary Supabase CDN loaded successfully");
+          initializeSupabase();
+        }
+      });
+
+      function initializeSupabase() {
+        // Use your actual Supabase URL and anon key
+        const SUPABASE_URL = "https://kokntkhxkymllafuubun.supabase.co";
+        const SUPABASE_ANON_KEY =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc";
+
+        // Check if Supabase is loaded
+        if (typeof window.supabase === "undefined") {
+          console.error(
+            "Supabase not loaded! Check if the script is loading properly."
+          );
+          const authError = document.getElementById("auth-error");
+          if (authError) {
+            authError.textContent =
+              "Supabase not loaded. Please refresh the page.";
+          }
+          return;
+        } else {
+          console.log("Supabase loaded successfully");
+        }
+
+        const supabase = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY
+        );
+        console.log("Supabase client created");
+
+        // Get DOM elements with null checks
+        const authForm = document.getElementById("auth-form");
+        const authTitle = document.getElementById("auth-title");
+        const authToggleText = document.getElementById("auth-toggle-text");
+        const authToggleBtn = document.querySelector(".auth-toggle button");
+        const authError = document.getElementById("auth-error");
+        const emailInput = document.getElementById("auth-email");
+        const passwordInput = document.getElementById("auth-password");
+        const forgotPasswordLink = document.getElementById(
+          "forgot-password-link"
+        );
+        const resetModal = document.getElementById("reset-modal");
+        const resetForm = document.getElementById("reset-form");
+        const resetEmail = document.getElementById("reset-email");
+        const resetMessage = document.getElementById("reset-message");
+        const togglePasswordBtn = document.getElementById("toggle-password");
+        const helpLink = document.getElementById("help-link");
+
+        // Check if all required elements exist
+        if (
+          !authForm ||
+          !authTitle ||
+          !authToggleText ||
+          !authToggleBtn ||
+          !authError ||
+          !emailInput ||
+          !passwordInput
+        ) {
+          console.error("Required DOM elements not found!");
+          return;
+        }
+
+        let authMode = "login";
+
+        // Test Supabase connection
+        async function testSupabaseConnection() {
+          try {
+            const { data, error } = await supabase.auth.getSession();
+            console.log("Supabase connection test:", { data, error });
+          } catch (err) {
+            console.error("Supabase connection failed:", err);
+          }
+        }
+
+        // Run connection test on page load
+        testSupabaseConnection();
+
+        function toggleAuthMode() {
+          if (authMode === "login") {
+            authMode = "signup";
+            authTitle.textContent = "Sign Up";
+            authToggleText.textContent = "Already have an account?";
+            authToggleBtn.textContent = "Login";
+            authForm.querySelector('button[type="submit"]').textContent =
+              "Sign Up";
+            document.getElementById("extra-signup-fields").style.display = "";
+          } else {
+            authMode = "login";
+            authTitle.textContent = "Login";
+            authToggleText.textContent = "Don't have an account?";
+            authToggleBtn.textContent = "Sign Up";
+            authForm.querySelector('button[type="submit"]').textContent =
+              "Login";
+            document.getElementById("extra-signup-fields").style.display =
+              "none";
+          }
+          authError.textContent = "";
+        }
+
+        authForm.onsubmit = async function (event) {
+          event.preventDefault();
+          console.log("Form submitted");
+          authError.textContent = "";
+
+          // Get form elements
+          const submitBtn = authForm.querySelector('button[type="submit"]');
+          const originalBtnText = submitBtn.textContent;
+
+          // Show loading state
+          submitBtn.textContent =
+            authMode === "login" ? "Logging in..." : "Creating account...";
+          submitBtn.disabled = true;
+
+          const email = emailInput.value;
+          const password = passwordInput.value;
+          console.log("Email:", email, "Password length:", password.length);
+
+          let result;
+          if (authMode === "login") {
+            console.log("Attempting login...");
+            try {
+              result = await supabase.auth.signInWithPassword({
+                email,
+                password,
+              });
+              console.log("Login result:", result);
+            } catch (err) {
+              console.error("Login error:", err);
+              result = { error: err };
+            }
+          } else {
+            console.log("Attempting signup...");
+            try {
+              // Validate name and username
+              const name = document.getElementById("auth-name").value.trim();
+              const username = document
+                .getElementById("auth-username")
+                .value.trim();
+              if (!name || !username) {
+                authError.textContent =
+                  "Please enter your full name and username.";
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
+                return;
+              }
+              result = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                  emailRedirectTo: window.location.origin + "/index.html",
+                },
+              });
+
+              if (result.error) {
+                throw result.error;
+              }
+
+              // Insert name and username into profiles
+              if (result.data?.user) {
+                const { error: profileError } = await supabase
+                  .from("profiles")
+                  .upsert([
+                    {
+                      id: result.data.user.id,
+                      email: email,
+                      name: name,
+                      username: username,
+                      created_at: new Date().toISOString(),
+                      updated_at: new Date().toISOString(),
+                    },
+                  ]);
+                if (profileError) {
+                  console.error("Profile upsert error:", profileError);
+                  authError.textContent =
+                    "Signup succeeded, but profile creation failed: " +
+                    profileError.message;
+                  submitBtn.textContent = originalBtnText;
+                  submitBtn.disabled = false;
+                  return;
+                }
+              }
+
+              // Success: show message and redirect
+              authError.style.color = "#25d366";
+              authError.textContent = "Signup successful! Redirecting...";
+              setTimeout(() => {
+                // Check for redirect param
+                const params = new URLSearchParams(window.location.search);
+                const redirect = params.get("redirect");
+                if (redirect) {
+                  if (redirect === "checkout.html") {
+                    window.location.href = "checkout.html";
+                  } else if (redirect === "index.html" || redirect === "/") {
+                    window.location.href = "index.html";
+                  } else {
+                    window.location.href = redirect;
+                  }
+                } else {
+                  window.location.href = "index.html";
+                }
+              }, 1500);
+            } catch (err) {
+              console.error("Signup error:", err);
+              authError.textContent =
+                err.message || "Signup failed. Please try again.";
+              submitBtn.textContent = originalBtnText;
+              submitBtn.disabled = false;
+            }
+          }
+
+          // Reset button state
+          submitBtn.textContent = originalBtnText;
+          submitBtn.disabled = false;
+
+          if (result.error) {
+            console.error("Auth error:", result.error);
+            authError.style.color = "#ff4757";
+            authError.textContent = result.error.message;
+          } else {
+            console.log("Auth successful:", result.data);
+            console.log("Auth mode:", authMode);
+            console.log(
+              "User email confirmed:",
+              result.data.user?.email_confirmed_at
+            );
+
+            if (
+              authMode === "signup" &&
+              result.data.user &&
+              !result.data.user.email_confirmed_at
+            ) {
+              // Show email verification message for signup
+              authError.style.color = "#ffb347";
+              authError.textContent =
+                "Account created! Please check your email to verify your account before logging in.";
+
+              // Switch back to login mode
+              setTimeout(() => {
+                toggleAuthMode();
+              }, 3000);
+            } else {
+              // Successful login or confirmed signup
+              authError.style.color = "#25d366";
+              authError.textContent =
+                authMode === "login"
+                  ? "Login successful! Redirecting..."
+                  : "Account verified! Redirecting...";
+
+              // Redirect to homepage or redirect param after successful login/signup
+              setTimeout(() => {
+                // Check for redirect param
+                const params = new URLSearchParams(window.location.search);
+                const redirect = params.get("redirect");
+
+                console.log("Redirect param:", redirect); // Debug log
+
+                if (redirect) {
+                  if (redirect === "checkout.html") {
+                    console.log("Redirecting to checkout");
+                    window.location.href = "checkout.html";
+                  } else if (redirect === "index.html" || redirect === "/") {
+                    console.log("Redirecting to homepage");
+                    window.location.href = "index.html";
+                  } else {
+                    console.log("Redirecting to:", redirect);
+                    window.location.href = redirect;
+                  }
+                } else {
+                  console.log("No redirect param, going to homepage");
+                  window.location.href = "index.html";
+                }
+              }, 1500);
+
+              // Fallback redirect after 3 seconds if the first one doesn't work
+              setTimeout(() => {
+                if (window.location.pathname.includes("login.html")) {
+                  console.log("Fallback redirect to homepage");
+                  window.location.href = "index.html";
+                }
+              }, 3000);
+            }
+          }
+        };
+
+        // Password reset logic
+        if (
+          forgotPasswordLink &&
+          resetModal &&
+          resetForm &&
+          resetEmail &&
+          resetMessage
+        ) {
+          forgotPasswordLink.onclick = function (e) {
+            e.preventDefault();
+            resetModal.style.display = "flex";
+            resetMessage.textContent = "";
+            resetEmail.value = "";
+          };
+
+          resetForm.onsubmit = async function (e) {
+            e.preventDefault();
+            const { error } = await supabase.auth.resetPasswordForEmail(
+              resetEmail.value,
+              {
+                redirectTo: window.location.origin + "/login.html",
+              }
+            );
+            if (error) {
+              resetMessage.style.color = "#ff4757";
+              resetMessage.textContent = error.message;
+            } else {
+              resetMessage.style.color = "#25d366";
+              resetMessage.textContent = "Check your email for a reset link!";
+            }
+          };
+        }
+
+        // Show email verification message after login/signup
+        function showEmailVerificationMessage(user) {
+          if (user && !user.email_confirmed_at) {
+            authError.style.color = "#ffb347";
+            authError.textContent =
+              "Please verify your email address. Check your inbox.";
+          }
+        }
+
+        // Show/hide password toggle
+        if (togglePasswordBtn) {
+          togglePasswordBtn.onclick = function () {
+            const pwd = document.getElementById("auth-password");
+            if (pwd.type === "password") {
+              pwd.type = "text";
+              this.textContent = "Hide";
+            } else {
+              pwd.type = "password";
+              this.textContent = "Show";
+            }
+          };
+        }
+
+        // Help link (placeholder)
+        if (helpLink) {
+          helpLink.onclick = function (e) {
+            e.preventDefault();
+            alert("For help, contact support@mobilegearhub.com");
+          };
+        }
+
+        // Make toggleAuthMode globally available
+        window.toggleAuthMode = toggleAuthMode;
+        window.closeResetModal = function () {
+          if (resetModal) {
+            resetModal.style.display = "none";
+          }
+        };
+      }
+    </script>
+    <style>
+      body {
+        background: #111;
+        color: #fff;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .auth-container {
+        background: #222;
+        padding: 40px 32px 32px 32px;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        max-width: 350px;
+        width: 100%;
+        margin: 24px;
+        position: relative;
+      }
+      .auth-container h2 {
+        text-align: center;
+        margin-bottom: 24px;
+        color: #25d366;
+      }
+      .auth-container input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 16px;
+        border-radius: 8px;
+        border: none;
+        background: #333;
+        color: #fff;
+        font-size: 1rem;
+      }
+      .auth-container button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background: #25d366;
+        color: #111;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-bottom: 8px;
+      }
+      .auth-toggle {
+        text-align: center;
+        margin-top: 8px;
+      }
+      .auth-toggle button {
+        background: none;
+        border: none;
+        color: #25d366;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      .auth-error {
+        color: #ff4757;
+        text-align: center;
+        margin-bottom: 8px;
+        min-height: 20px;
+      }
+      .back-home {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        color: #aaa;
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+      .back-home:hover {
+        color: #25d366;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div style="text-align: center; margin-bottom: 18px">
+        <div
+          style="
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #25d366;
+            letter-spacing: 1px;
+          "
+        >
+          Mobile Gear Hub
+        </div>
+      </div>
+      <h2 id="auth-title" style="margin-bottom: 12px">Login</h2>
+      <form id="auth-form">
+        <div id="extra-signup-fields" style="display: none">
+          <label for="auth-name" style="font-size: 0.98rem; color: #aaa"
+            >Full Name</label
+          >
+          <input
+            id="auth-name"
+            type="text"
+            placeholder="Enter your full name"
+            autocomplete="name"
+          />
+
+          <label for="auth-username" style="font-size: 0.98rem; color: #aaa"
+            >Username</label
+          >
+          <input
+            id="auth-username"
+            type="text"
+            placeholder="Choose a username"
+            autocomplete="username"
+          />
+        </div>
+        <label for="auth-email" style="font-size: 0.98rem; color: #aaa"
+          >Email</label
+        >
+        <input
+          id="auth-email"
+          type="email"
+          placeholder="Enter your email"
+          required
+        />
+        <label for="auth-password" style="font-size: 0.98rem; color: #aaa"
+          >Password</label
+        >
+        <div style="position: relative; display: flex; align-items: center">
+          <input
+            id="auth-password"
+            type="password"
+            placeholder="Enter your password"
+            required
+            style="padding-right: 70px"
+          />
+          <button
+            type="button"
+            id="toggle-password"
+            style="
+              position: absolute;
+              right: 10px;
+              height: 32px;
+              top: 50%;
+              transform: translateY(-50%);
+              background: none;
+              border: none;
+              color: #25d366;
+              font-size: 1rem;
+              cursor: pointer;
+              padding: 0 10px;
+              border-radius: 6px;
+            "
+          >
+            Show
+          </button>
+        </div>
+        <div style="text-align: right; margin-bottom: 10px">
+          <a
+            href="#"
+            id="forgot-password-link"
+            style="color: #25d366; font-size: 0.95rem"
+            >Forgot password?</a
+          >
+        </div>
+        <button type="submit">Login</button>
+        <div class="auth-error" id="auth-error"></div>
+      </form>
+      <div class="auth-toggle">
+        <span id="auth-toggle-text">Don't have an account?</span>
+        <button type="button" onclick="toggleAuthMode()">Sign Up</button>
+      </div>
+      <div style="text-align: center; margin-top: 18px">
+        <a
+          href="#"
+          id="help-link"
+          style="
+            color: #25d366;
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-right: 12px;
+          "
+          >Help</a
+        >
+        <a href="/" class="back-home"
+          ><i class="fas fa-arrow-left"></i> Back to Home</a
+        >
+      </div>
+    </div>
+    <div
+      id="reset-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 20000;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          background: #222;
+          padding: 32px 24px;
+          border-radius: 12px;
+          max-width: 350px;
+          margin: auto;
+          color: #fff;
+          position: relative;
+        "
+      >
+        <button
+          onclick="closeResetModal()"
+          style="
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+          "
+        >
+          &times;
+        </button>
+        <h2>Reset Password</h2>
+        <form id="reset-form">
+          <input
+            id="reset-email"
+            type="email"
+            placeholder="Enter your email"
+            required
+            style="
+              width: 100%;
+              margin-bottom: 12px;
+              padding: 10px;
+              border-radius: 6px;
+              border: none;
+              background: #333;
+              color: #fff;
+            "
+          />
+          <button
+            type="submit"
+            style="
+              width: 100%;
+              padding: 10px;
+              background: #25d366;
+              color: #111;
+              font-weight: bold;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+            "
+          >
+            Send Reset Link
+          </button>
+        </form>
+        <div
+          id="reset-message"
+          style="color: #25d366; margin-top: 10px; text-align: center"
+        ></div>
+      </div>
+    </div>
+  </body>
+</html>

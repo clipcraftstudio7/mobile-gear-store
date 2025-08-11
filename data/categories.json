@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "Accessories",
+    "description": "Essential gaming accessories for mobile devices",
+    "productCount": 12
+  },
+  {
+    "id": 2,
+    "name": "Cooling",
+    "description": "Cooling solutions to prevent device overheating",
+    "productCount": 6
+  },
+  {
+    "id": 3,
+    "name": "Audio",
+    "description": "High-quality audio equipment for gaming",
+    "productCount": 4
+  },
+  {
+    "id": 4,
+    "name": "Mounts",
+    "description": "Phone mounts and stands for comfortable gaming",
+    "productCount": 6
+  },
+  {
+    "id": 5,
+    "name": "Controllers",
+    "description": "Gaming controllers and input devices",
+    "productCount": 2
+  },
+  {
+    "id": 6,
+    "name": "Cases",
+    "description": "Protective cases and covers for mobile devices",
+    "productCount": 3
+  },
+  {
+    "id": 7,
+    "name": "Keyboards",
+    "description": "Gaming keyboards and input devices",
+    "productCount": 1
+  },
+  {
+    "id": 8,
+    "name": "Protection",
+    "description": "Screen protectors and device protection",
+    "productCount": 1
+  },
+  {
+    "id": 9,
+    "name": "Furniture",
+    "description": "Gaming chairs, desks, and furniture",
+    "productCount": 4
+  },
+  {
+    "id": 10,
+    "name": "Charging",
+    "description": "Charging solutions and power banks",
+    "productCount": 2
+  },
+  {
+    "id": 11,
+    "name": "Displays",
+    "description": "Gaming monitors and display equipment",
+    "productCount": 1
+  },
+  {
+    "id": 12,
+    "name": "Mice",
+    "description": "Gaming mice and pointing devices",
+    "productCount": 1
+  },
+  {
+    "id": 13,
+    "name": "Lighting",
+    "description": "RGB lighting and illumination products",
+    "productCount": 2
+  },
+  {
+    "id": 14,
+    "name": "Video",
+    "description": "Webcams and video capture equipment",
+    "productCount": 2
+  },
+  {
+    "id": 15,
+    "name": "Networking",
+    "description": "Gaming routers and networking equipment",
+    "productCount": 1
+  },
+  {
+    "id": 16,
+    "name": "Bundles",
+    "description": "Complete gaming setup bundles",
+    "productCount": 1
+  }
+]

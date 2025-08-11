@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Gaming Controller - Premium Bluetooth Controller | MobileGaming
+    </title>
+    <meta
+      name="description"
+      content="Premium Bluetooth gaming controller with customizable buttons, ergonomic design, and enhanced gaming performance for mobile devices."
+    />
+    <meta
+      name="keywords"
+      content="gaming controller, bluetooth controller, mobile gaming, gaming accessories, customizable buttons"
+    />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="" />
+    <meta
+      property="og:title"
+      content="Gaming Controller - Premium Bluetooth Controller | MobileGaming"
+    />
+    <meta
+      property="og:description"
+      content="Premium Bluetooth gaming controller with customizable buttons, ergonomic design, and enhanced gaming performance for mobile devices."
+    />
+    <meta
+      property="og:image"
+      content="../assets/images/6ZEeWmqH9cS37oJjcqtJy1wio.avif"
+    />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="" />
+    <meta
+      property="twitter:title"
+      content="Gaming Controller - Premium Bluetooth Controller | MobileGaming"
+    />
+    <meta
+      property="twitter:description"
+      content="Premium Bluetooth gaming controller with customizable buttons, ergonomic design, and enhanced gaming performance for mobile devices."
+    />
+    <meta
+      property="twitter:image"
+      content="../assets/images/6ZEeWmqH9cS37oJjcqtJy1wio.avif"
+    />
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #111;
+        color: white;
+        line-height: 1.6;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 15px 40px;
+        z-index: 1000;
+        border-bottom: 1px solid #333;
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .nav-logo a {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #25d366;
+        text-decoration: none;
+      }
+
+      .nav-logo a:hover {
+        color: #128c7e;
+      }
+
+      .breadcrumb {
+        padding: 100px 40px 20px;
+        background: #1a1a1a;
+        border-bottom: 1px solid #333;
+      }
+
+      .breadcrumb a {
+        color: #25d366;
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .product-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: start;
+      }
+
+      .product-images {
+        position: sticky;
+        top: 120px;
+      }
+
+      .main-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        border: 2px solid #333;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .main-image:hover {
+        transform: scale(1.02);
+      }
+
+      .thumbnail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .thumbnail {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 2px solid #333;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .thumbnail:hover {
+        border-color: #25d366;
+        transform: scale(1.05);
+      }
+
+      .thumbnail.active {
+        border-color: #25d366;
+        box-shadow: 0 0 15px rgba(37, 211, 102, 0.3);
+      }
+
+      .product-info {
+        background: #1c1c1c;
+        padding: 40px;
+        border-radius: 20px;
+        border: 1px solid #333;
+      }
+
+      .product-category {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+
+      .product-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .product-rating {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .stars {
+        color: #fbbf24;
+        font-size: 18px;
+      }
+
+      .rating-count {
+        color: #888;
+      }
+
+      .product-price {
+        margin-bottom: 30px;
+      }
+
+      .original-price {
+        text-decoration: line-through;
+        color: #888;
+        font-size: 1.2rem;
+        margin-right: 15px;
+      }
+
+      .current-price {
+        color: #25d366;
+        font-size: 2.5rem;
+        font-weight: 700;
+      }
+
+      .savings {
+        color: #25d366;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .product-description {
+        color: #ccc;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 30px;
+      }
+
+      .product-features {
+        margin-bottom: 30px;
+      }
+
+      .features-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .feature-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .feature-tag {
+        background: #333;
+        color: #ccc;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .product-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .add-to-cart-btn {
+        flex: 1;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .add-to-cart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+      }
+
+      .buy-now-btn {
+        flex: 1;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .buy-now-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+      }
+
+      .product-meta {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+        border-top: 1px solid #333;
+        border-bottom: 1px solid #333;
+        margin-bottom: 30px;
+      }
+
+      .meta-item {
+        text-align: center;
+      }
+
+      .meta-icon {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        color: #25d366;
+      }
+
+      .meta-text {
+        font-size: 0.9rem;
+        color: #ccc;
+      }
+
+      .product-details {
+        background: #1a1a1a;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+      }
+
+      .details-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #fff;
+      }
+
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #333;
+      }
+
+      .detail-item:last-child {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        color: #888;
+        font-weight: 500;
+      }
+
+      .detail-value {
+        color: #fff;
+        font-weight: 600;
+      }
+
+
+
+      .success-message {
+        background: rgba(37, 211, 102, 0.1);
+        border: 1px solid #25d366;
+        color: #25d366;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        display: none;
+      }
+
+      /* Footer Styles */
+      .footer {
+        background: #1a1a1a;
+        color: #ccc;
+        padding: 40px 0 20px;
+        margin-top: 60px;
+        border-top: 1px solid #333;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+      }
+
+      .footer-section h3 {
+        color: #25d366;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .footer-section p {
+        line-height: 1.6;
+        margin-bottom: 15px;
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 8px;
+      }
+
+      .footer-section ul li a {
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-section ul li a:hover {
+        color: #25d366;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+      }
+
+      .social-links a {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background: #333;
+        color: #ccc;
+        text-align: center;
+        line-height: 40px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+      }
+
+      .social-links a:hover {
+        background: #25d366;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .footer-bottom {
+        text-align: center;
+        padding-top: 20px;
+        margin-top: 30px;
+        border-top: 1px solid #333;
+      }
+
+      .footer-bottom p {
+        color: #888;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .product-container {
+          grid-template-columns: 1fr;
+          gap: 30px;
+          padding: 20px;
+        }
+
+        .product-info {
+          padding: 25px;
+        }
+
+        .product-title {
+          font-size: 2rem;
+        }
+
+        .product-actions {
+          flex-direction: column;
+        }
+
+        .thumbnail-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
+
+        .thumbnail {
+          height: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <a href="../index.html">🎮 MobileGaming</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> >
+      <a href="../category.html">Controllers</a> >
+      <span>Gaming Controller</span>
+    </div>
+
+    <!-- Product Content -->
+    <div class="product-container">
+      <!-- Product Images -->
+      <div class="product-images">
+        <img
+          class="main-image"
+          id="main-image"
+          src="../assets/images/6ZEeWmqH9cS37oJjcqtJy1wio.avif"
+          alt="Gaming Controller - Main View"
+        />
+
+        <div class="thumbnail-grid">
+          <img
+            class="thumbnail active"
+            src="../assets/images/6ZEeWmqH9cS37oJjcqtJy1wio.avif"
+            alt="Gaming Controller Back View"
+            onclick="changeImage(this, '../assets/images/6ZEeWmqH9cS37oJjcqtJy1wio.avif')"
+          />
+          <img
+            class="thumbnail"
+            src="../assets/images/lSvmE16S4xbC8gtqqSfNlMqisk.avif"
+            alt="Gaming Controller Side View"
+            onclick="changeImage(this, '../assets/images/lSvmE16S4xbC8gtqqSfNlMqisk.avif')"
+          />
+          <img
+            class="thumbnail"
+            src="../assets/images/H2acca1a9b871459994416235ae49be3cw.png_720x720q50.avif"
+            alt="Gaming Controller Front View"
+            onclick="changeImage(this, '../assets/images/H2acca1a9b871459994416235ae49be3cw.png_720x720q50.avif')"
+          />
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        <div class="product-category">Controllers</div>
+        <h1 class="product-title">Gaming Controller</h1>
+
+        <div class="product-rating">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <span class="rating-count">(234 reviews)</span>
+        </div>
+
+        <div class="product-price" id="product-price">
+          <!-- Price will be loaded dynamically -->
+        </div>
+
+        <p class="product-description">
+          Premium Bluetooth gaming controller with customizable buttons and
+          ergonomic design. Perfect for mobile gaming enthusiasts who demand
+          precision and comfort. Features include responsive analog sticks,
+          programmable buttons, vibration feedback, and long battery life.
+          Compatible with most mobile devices and gaming platforms.
+        </p>
+
+        <div class="product-features">
+          <h3 class="features-title">Features</h3>
+          <div class="feature-tags">
+            <span class="feature-tag">Bluetooth Connectivity</span>
+            <span class="feature-tag">Customizable Buttons</span>
+            <span class="feature-tag">Ergonomic Design</span>
+            <span class="feature-tag">Vibration Feedback</span>
+            <span class="feature-tag">Long Battery Life</span>
+            <span class="feature-tag">Mobile Compatible</span>
+          </div>
+        </div>
+
+        <div class="product-actions">
+          <button class="add-to-cart-btn" onclick="addToCart()">
+            <i class="fas fa-shopping-cart"></i> Add to Cart
+          </button>
+          <button class="buy-now-btn" onclick="buyNow()">
+            <i class="fas fa-bolt"></i> Buy Now
+          </button>
+        </div>
+
+        <div class="product-meta">
+          <div class="meta-item">
+            <div class="meta-icon">🚚</div>
+            <div class="meta-text">Free Shipping</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">🔄</div>
+            <div class="meta-text">30-Day Returns</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">🛡️</div>
+            <div class="meta-text">Secure Payment</div>
+          </div>
+        </div>
+
+        <div class="product-details">
+          <h3 class="details-title">Product Details</h3>
+          <div class="detail-item">
+            <span class="detail-label">Category:</span>
+            <span class="detail-value">Controllers</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Stock:</span>
+            <span class="detail-value">8 in stock</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Discount:</span>
+            <span class="detail-value">17% off</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Reviews:</span>
+            <span class="detail-value">234 reviews</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Rating:</span>
+            <span class="detail-value">4.8/5</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Battery Life:</span>
+            <span class="detail-value">Up to 20 hours</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Connectivity:</span>
+            <span class="detail-value">Bluetooth 5.0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>🎮 MobileGaming</h3>
+          <p>Your ultimate destination for premium mobile gaming accessories and gear.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../category.html">Categories</a></li>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="../contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Categories</h3>
+          <ul>
+            <li><a href="../category.html">Accessories</a></li>
+            <li><a href="../category.html">Controllers</a></li>
+            <li><a href="../category.html">Audio</a></li>
+            <li><a href="../category.html">Cooling</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Connect With Us</h3>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 MobileGaming. All rights reserved.</p>
+      </div>
+    </footer>
+      </div>
+    </div>
+
+        <script src="../assets/js/cart.js"></script>
+        <script src="../components/navbar.js"></script>
+<script src="../assets/js/product-page.js"></script>
+    <script>
+      // Image gallery functionality
+      function changeImage(thumbnail, newSrc) {
+        // Update main image
+        document.getElementById("main-image").src = newSrc;
+
+        // Update active thumbnail
+        document.querySelectorAll(".thumbnail").forEach((thumb) => {
+          thumb.classList.remove("active");
+        });
+        thumbnail.classList.add("active");
+      }
+
+      // Add to cart functionality
+      function addToCart() {
+        const product = {
+          id: "gaming-controller",
+          name: "Gaming Controller",
+          price: 149.99,
+          image: "../assets/images/6ZEeWmqH9cS37oJjcqtJy1wio.avif",
+          quantity: 1,
+        };
+
+        // Get existing cart from localStorage
+        let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+        // Check if product is already in cart
+        const existingItem = cart.find((item) => item.id === product.id);
+
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push(product);
+        }
+
+        // Save cart back to localStorage
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        // Show success message
+        alert("Gaming Controller added to cart!");
+      }
+
+      // Buy now functionality
+      function buyNow() {
+        const product = {
+          id: "gaming-controller",
+          name: "Gaming Controller",
+          price: 149.99,
+          image: "../assets/images/6ZEeWmqH9cS37oJjcqtJy1wio.avif",
+          quantity: 1,
+        };
+
+        // Add to cart first
+        let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        const existingItem = cart.find((item) => item.id === product.id);
+
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push(product);
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        // Redirect to checkout
+        window.location.href = "../checkout.html";
+      }
+
+
+
+    </script>
+  </body>
+</html>

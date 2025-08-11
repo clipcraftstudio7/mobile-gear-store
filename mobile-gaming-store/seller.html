@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Become a Seller - Mobile Gear Hub</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Import homepage responsive/mobile CSS for navbar and footer -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <!-- Remove any redundant or conflicting navbar/footer styles from this file -->
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #111;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+      }
+      .seller-hero {
+        background: linear-gradient(135deg, #25d366 60%, #128c7e 100%);
+        padding: 48px 16px 32px 16px;
+        text-align: center;
+      }
+      .seller-hero h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+        color: #fff;
+      }
+      .seller-hero p {
+        font-size: 1.1rem;
+        color: #eafff2;
+        margin-bottom: 24px;
+      }
+      .seller-benefits {
+        max-width: 700px;
+        margin: 32px auto 0 auto;
+        background: #181818;
+        border-radius: 16px;
+        padding: 24px 18px;
+        box-shadow: 0 4px 24px rgba(37, 211, 102, 0.08);
+      }
+      .seller-benefits h2 {
+        font-size: 1.3rem;
+        color: #25d366;
+        margin-bottom: 16px;
+      }
+      .benefit-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 12px 0;
+      }
+      .benefit-list li {
+        margin-bottom: 10px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .benefit-list i {
+        color: #25d366;
+        font-size: 1.1rem;
+      }
+      .seller-form-section {
+        max-width: 500px;
+        margin: 40px auto 0 auto;
+        background: #181818;
+        border-radius: 16px;
+        padding: 24px 18px;
+        box-shadow: 0 4px 24px rgba(37, 211, 102, 0.08);
+      }
+      .seller-form-section h2 {
+        color: #25d366;
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+      }
+      .seller-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .seller-form input,
+      .seller-form textarea {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        background: #222;
+        color: #fff;
+        font-size: 1rem;
+        resize: vertical;
+      }
+      .seller-form textarea {
+        min-height: 80px;
+        max-height: 200px;
+      }
+      .seller-form button {
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 14px 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .seller-form button:hover {
+        background: linear-gradient(135deg, #128c7e, #25d366);
+      }
+      .faq-section {
+        max-width: 700px;
+        margin: 48px auto 32px auto;
+        background: #181818;
+        border-radius: 16px;
+        padding: 24px 18px;
+        box-shadow: 0 4px 24px rgba(37, 211, 102, 0.08);
+      }
+      .faq-section h2 {
+        color: #25d366;
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+      }
+      .faq-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .faq-list li {
+        margin-bottom: 18px;
+      }
+      .faq-q {
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 4px;
+      }
+      .faq-a {
+        color: #b7ffdb;
+        font-size: 0.98rem;
+      }
+      @media (max-width: 600px) {
+        .seller-hero h1 {
+          font-size: 1.3rem;
+        }
+        .seller-hero p {
+          font-size: 0.95rem;
+        }
+        .seller-benefits,
+        .seller-form-section,
+        .faq-section {
+          padding: 14px 4vw;
+        }
+      }
+      .back-home-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 2000;
+        background: #181818;
+        border-bottom: 1px solid #222;
+        padding: 10px 0 8px 0;
+        text-align: left;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .back-home-btn {
+        color: #25d366;
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-decoration: none;
+        padding: 8px 18px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.18s, color 0.18s;
+      }
+      .back-home-btn:hover {
+        background: #222;
+        color: #fff;
+      }
+      @media (max-width: 600px) {
+        .back-home-bar {
+          padding: 7px 0 6px 0;
+        }
+        .back-home-btn {
+          font-size: 1rem;
+          padding: 7px 12px;
+        }
+      }
+      body {
+        padding-top: 48px !important;
+      }
+      @media (max-width: 480px) {
+        .footer {
+          padding: 10px 2px 6px;
+          margin-top: 18px;
+        }
+        .footer-content {
+          display: flex;
+          flex-wrap: wrap;
+        }
+        .footer-section.quick-links,
+        .footer-section.contact-section {
+          width: 50%;
+          min-width: 0;
+          box-sizing: border-box;
+          text-align: center;
+          overflow: hidden;
+          white-space: normal;
+          font-size: 0.6rem;
+          padding: 4px 0;
+        }
+        .footer-section.about-section,
+        .footer-section.newsletter-section,
+        .footer-section.social-section {
+          width: 100%;
+          margin-top: 6px;
+        }
+        .footer-section:nth-child(n + 3) {
+          width: 100%;
+        }
+        .footer-section h3 {
+          font-size: 0.8rem;
+          margin-bottom: 8px;
+        }
+        .footer-section p,
+        .footer-section a {
+          font-size: 0.65rem;
+          line-height: 1.4;
+        }
+        .footer-links li {
+          margin-bottom: 4px;
+        }
+        .newsletter-form {
+          gap: 4px;
+          margin-top: 6px;
+        }
+        .newsletter-input {
+          padding: 7px;
+          font-size: 0.7rem;
+          border-radius: 6px;
+        }
+        .newsletter-btn {
+          padding: 7px 10px;
+          font-size: 0.7rem;
+          border-radius: 6px;
+        }
+        .social-links {
+          display: flex;
+          gap: 12px;
+          margin-top: 8px;
+          justify-content: center;
+        }
+        .social-link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 35px;
+          height: 35px;
+          background: linear-gradient(135deg, #25d366, #128c7e);
+          color: #fff;
+          border-radius: 50%;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          font-size: 16px;
+        }
+        .social-link:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+          background: linear-gradient(135deg, #128c7e, #25d366);
+        }
+        .footer-bottom {
+          padding-top: 10px;
+          font-size: 0.6rem;
+        }
+        .mobile-footer-divider {
+          border: none;
+          border-top: 1.5px solid rgba(200, 200, 200, 0.12);
+          margin: 12px 0 0 0;
+          width: 100%;
+        }
+      }
+      .floating-cta {
+        position: fixed;
+        right: 14px;
+        bottom: 60px;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 18px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 4px 16px rgba(37, 211, 102, 0.18);
+        transition: transform 0.2s, box-shadow 0.2s;
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 1rem;
+        opacity: 0.95;
+      }
+      .floating-cta:hover {
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 8px 24px rgba(37, 211, 102, 0.28);
+        opacity: 1;
+      }
+      .floating-cta-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+      }
+      @media (max-width: 600px) {
+        .floating-cta {
+          padding: 6px 10px;
+          font-size: 0.95rem;
+          border-radius: 14px;
+          right: 7px;
+          bottom: 54px;
+        }
+        .floating-cta-text {
+          font-size: 0.85rem;
+        }
+      }
+      /* Newsletter box improvements */
+      .newsletter-form {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .newsletter-input {
+        flex: 1 1 120px;
+        min-width: 120px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        background: #222;
+        color: #fff;
+        font-size: 1rem;
+        outline: none;
+        transition: border 0.2s;
+      }
+      .newsletter-input:focus {
+        border-color: #25d366;
+      }
+      .newsletter-btn {
+        padding: 10px 18px;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .newsletter-btn:hover {
+        background: linear-gradient(135deg, #128c7e, #25d366);
+      }
+      @media (max-width: 480px) {
+        .newsletter-form {
+          gap: 4px;
+          margin-top: 6px;
+        }
+        .newsletter-input {
+          padding: 7px 8px;
+          font-size: 0.85rem;
+          border-radius: 6px;
+        }
+        .newsletter-btn {
+          padding: 7px 10px;
+          font-size: 0.85rem;
+          border-radius: 6px;
+        }
+      }
+      /* FAQ Section with dropdown animation */
+      .faq-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .faq-item {
+        margin-bottom: 10px;
+        border-radius: 8px;
+        background: #161d18;
+        box-shadow: 0 2px 8px rgba(37, 211, 102, 0.04);
+      }
+      .faq-q {
+        width: 100%;
+        background: none;
+        border: none;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        text-align: left;
+        padding: 16px 18px 16px 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: background 0.18s;
+        border-radius: 8px;
+        outline: none;
+      }
+      .faq-q:focus,
+      .faq-q:hover {
+        background: #232b23;
+      }
+      .faq-arrow {
+        margin-left: 12px;
+        font-size: 1.1em;
+        transition: transform 0.3s;
+      }
+      .faq-item.open .faq-arrow {
+        transform: rotate(180deg);
+      }
+      .faq-a {
+        max-height: 0;
+        overflow: hidden;
+        background: #181818;
+        color: #b7ffdb;
+        font-size: 0.98rem;
+        padding: 0 18px;
+        transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.2s;
+        border-radius: 0 0 8px 8px;
+      }
+      .faq-item.open .faq-a {
+        padding: 12px 18px 18px 18px;
+        max-height: 300px;
+        transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), padding 0.2s;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Remove navbar container and scripts, add back to home button -->
+    <div class="back-home-bar">
+      <a href="index.html" class="back-home-btn"
+        ><i class="fas fa-arrow-left"></i> Back to Home</a
+      >
+    </div>
+    <section class="seller-hero">
+      <h1>Become a Seller on Mobile Gear Hub</h1>
+      <p>
+        Grow your business by reaching thousands of mobile gamers. List your
+        products, manage your sales, and join a thriving gaming community!
+      </p>
+      <a
+        href="#seller-form"
+        style="
+          display: inline-block;
+          background: #fff;
+          color: #25d366;
+          font-weight: 700;
+          padding: 12px 28px;
+          border-radius: 24px;
+          text-decoration: none;
+          font-size: 1.1rem;
+          margin-top: 10px;
+          transition: background 0.2s;
+        "
+        >Get Started</a
+      >
+    </section>
+    <section class="seller-benefits">
+      <h2>Why Sell With Us?</h2>
+      <ul class="benefit-list">
+        <li><i class="fas fa-bolt"></i> Fast, easy product listing</li>
+        <li>
+          <i class="fas fa-users"></i> Access to a large, active gaming audience
+        </li>
+        <li><i class="fas fa-chart-line"></i> Real-time sales analytics</li>
+        <li>
+          <i class="fas fa-shipping-fast"></i> Integrated shipping solutions
+        </li>
+        <li><i class="fas fa-headset"></i> Dedicated seller support</li>
+      </ul>
+    </section>
+    <section class="seller-form-section" id="seller-form">
+      <h2>Register Your Interest</h2>
+      <form
+        class="seller-form"
+        action="https://formspree.io/f/mgvzzlnb"
+        method="POST"
+      >
+        <input type="text" name="name" placeholder="Your Name" required />
+        <input type="email" name="email" placeholder="Your Email" required />
+        <input
+          type="text"
+          name="business"
+          placeholder="Business/Store Name (optional)"
+        />
+        <textarea
+          name="message"
+          placeholder="Tell us about your products or ask a question..."
+          required
+        ></textarea>
+        <input type="hidden" name="form_type" value="seller_registration" />
+        <button type="submit">Submit</button>
+      </form>
+      <p style="color: #aaa; font-size: 0.95rem; margin-top: 10px">
+        We'll get in touch with you within 2 business days.
+      </p>
+    </section>
+    <!-- FAQ Section with dropdown animation -->
+    <section class="faq-section">
+      <h2>Seller FAQ</h2>
+      <ul class="faq-list">
+        <li class="faq-item">
+          <button class="faq-q" type="button">
+            How do I list my products?<span class="faq-arrow">&#9660;</span>
+          </button>
+          <div class="faq-a">
+            Fill out the form above and our team will guide you through the
+            onboarding process, including product listing and store setup.
+          </div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" type="button">
+            What are the fees?<span class="faq-arrow">&#9660;</span>
+          </button>
+          <div class="faq-a">
+            We offer competitive commission rates. All details will be provided
+            during onboarding.
+          </div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" type="button">
+            How do I get paid?<span class="faq-arrow">&#9660;</span>
+          </button>
+          <div class="faq-a">
+            Payouts are made directly to your bank or mobile money account on a
+            regular schedule.
+          </div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" type="button">
+            Can I sell used or refurbished items?<span class="faq-arrow"
+              >&#9660;</span
+            >
+          </button>
+          <div class="faq-a">
+            Yes, as long as they meet our quality standards and are clearly
+            described as such.
+          </div>
+        </li>
+        <li class="faq-item">
+          <button class="faq-q" type="button">
+            Who handles shipping?<span class="faq-arrow">&#9660;</span>
+          </button>
+          <div class="faq-a">
+            We offer integrated shipping solutions, but you can also use your
+            own preferred methods.
+          </div>
+        </li>
+      </ul>
+    </section>
+    <hr class="mobile-footer-divider" />
+    <footer class="footer" id="contact">
+      <div class="footer-content">
+        <!-- Remove Quick Links and About sections -->
+        <div class="footer-section contact-section">
+          <h3>Contact</h3>
+          <p>Email: mobilegearstore06@gmail.com</p>
+          <p>Live Chat: Available 24/7</p>
+        </div>
+        <div class="footer-section newsletter-section">
+          <h3>Newsletter</h3>
+          <form
+            class="newsletter-form"
+            action="https://formspree.io/f/mgvzzlnb"
+            method="POST"
+          >
+            <input
+              type="email"
+              name="email"
+              class="newsletter-input"
+              placeholder="Your email address"
+              required
+            />
+            <input
+              type="hidden"
+              name="form_type"
+              value="newsletter_subscription"
+            />
+            <button type="submit" class="newsletter-btn">Subscribe</button>
+          </form>
+        </div>
+        <div class="footer-section social-section">
+          <h3>Connect With Us</h3>
+          <div class="social-links">
+            <a
+              href="https://www.facebook.com/share/1EtKUXckLm/"
+              target="_blank"
+              class="social-link"
+            >
+              <i class="fab fa-facebook"></i>
+            </a>
+            <a
+              href="https://www.tiktok.com/@mobilegear.hub?_t=ZM-8yVp0OzGZqH&_r=1"
+              target="_blank"
+              class="social-link"
+            >
+              <i class="fab fa-tiktok"></i>
+            </a>
+            <a
+              href="https://www.instagram.com/mobile.gearhub?igsh=MXFyMWI1enlwMzBydQ=="
+              target="_blank"
+              class="social-link"
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a
+              href="https://youtube.com/@mobilegearhub?si=fWzMZvcXYKcIGo0q"
+              target="_blank"
+              class="social-link"
+            >
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2025 Mobile Gear Hub. All rights reserved.
+      </div>
+    </footer>
+    <a href="help-center.html" class="floating-cta"
+      >💬 <span class="floating-cta-text">Need Help</span></a
+    >
+    <script>
+      // FAQ dropdown logic
+      document.addEventListener("DOMContentLoaded", function () {
+        const faqItems = document.querySelectorAll(".faq-item");
+        faqItems.forEach((item) => {
+          const btn = item.querySelector(".faq-q");
+          btn.addEventListener("click", function () {
+            // Close all others
+            faqItems.forEach((i) => {
+              if (i !== item) i.classList.remove("open");
+            });
+            // Toggle this one
+            item.classList.toggle("open");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

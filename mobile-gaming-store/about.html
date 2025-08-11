@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us | Mobile Gear Hub</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      body {
+        background: #101010;
+        color: #fff;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .about-container {
+        max-width: 900px;
+        margin: 60px auto 40px;
+        background: #181818;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        padding: 40px 30px;
+      }
+      .about-title {
+        color: #25d366;
+        font-size: 2.2rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 18px;
+      }
+      .about-mission {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 1.15rem;
+        color: #ccc;
+      }
+      .about-timeline {
+        margin: 40px 0;
+      }
+      .timeline-title {
+        color: #25d366;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        text-align: center;
+      }
+      .timeline-list {
+        border-left: 3px solid #25d366;
+        padding-left: 30px;
+      }
+      .timeline-item {
+        margin-bottom: 28px;
+        position: relative;
+      }
+      .timeline-item:before {
+        content: "";
+        position: absolute;
+        left: -38px;
+        top: 0;
+        width: 18px;
+        height: 18px;
+        background: #25d366;
+        border-radius: 50%;
+        border: 3px solid #181818;
+      }
+      .timeline-year {
+        font-weight: 700;
+        color: #25d366;
+        margin-bottom: 4px;
+      }
+      .timeline-desc {
+        color: #ccc;
+        font-size: 1.05rem;
+      }
+      .about-visuals {
+        display: flex;
+        gap: 24px;
+        justify-content: center;
+        margin: 40px 0;
+        flex-wrap: wrap;
+      }
+      .about-visual {
+        background: #222;
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+        min-width: 180px;
+      }
+      .about-visual i {
+        font-size: 2.5rem;
+        color: #25d366;
+        margin-bottom: 10px;
+      }
+      .about-visual-title {
+        color: #fff;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .about-visual-desc {
+        color: #ccc;
+        font-size: 0.98rem;
+      }
+      .about-cta {
+        text-align: center;
+        margin-top: 40px;
+      }
+      .cta-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: white;
+        padding: 15px 35px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.3s ease;
+      }
+      .cta-btn:hover {
+        background: linear-gradient(135deg, #128c7e, #25d366);
+        transform: translateY(-2px);
+      }
+      @media (max-width: 600px) {
+        .about-container {
+          padding: 18px 5px;
+        }
+        .about-visuals {
+          flex-direction: column;
+          gap: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="about-container">
+      <div class="about-title">
+        <i class="fas fa-info-circle"></i> About Mobile Gear Hub
+      </div>
+      <div class="about-mission">
+        <p>
+          <strong>Mobile Gear Hub</strong> is dedicated to empowering mobile
+          gamers everywhere. Our mission is to provide the best accessories,
+          expert advice, and unbeatable service to help you level up your
+          play—whether you’re a casual gamer or a pro competitor.
+        </p>
+      </div>
+      <div class="about-visuals">
+        <div class="about-visual">
+          <i class="fas fa-gamepad"></i>
+          <div class="about-visual-title">Top Gear</div>
+          <div class="about-visual-desc">
+            Curated selection of the best mobile gaming accessories.
+          </div>
+        </div>
+        <div class="about-visual">
+          <i class="fas fa-shipping-fast"></i>
+          <div class="about-visual-title">Fast Shipping</div>
+          <div class="about-visual-desc">
+            Quick, reliable delivery to gamers worldwide.
+          </div>
+        </div>
+        <div class="about-visual">
+          <i class="fas fa-headset"></i>
+          <div class="about-visual-title">Expert Support</div>
+          <div class="about-visual-desc">
+            Friendly, knowledgeable help whenever you need it.
+          </div>
+        </div>
+        <div class="about-visual">
+          <i class="fas fa-users"></i>
+          <div class="about-visual-title">Community</div>
+          <div class="about-visual-desc">
+            Join thousands of gamers sharing tips, reviews, and more.
+          </div>
+        </div>
+      </div>
+      <div class="about-timeline">
+        <div class="timeline-title">Our Journey</div>
+        <div class="timeline-list">
+          <div class="timeline-item">
+            <div class="timeline-year">2021</div>
+            <div class="timeline-desc">
+              Mobile Gear Hub is founded by passionate gamers, aiming to make
+              pro-level gear accessible to all.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2022</div>
+            <div class="timeline-desc">
+              Launched our online store and shipped our first 1,000 orders
+              worldwide.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2023</div>
+            <div class="timeline-desc">
+              Expanded our product range and built a vibrant gaming community.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2024</div>
+            <div class="timeline-desc">
+              Introduced live chat support, order tracking, and exclusive pro
+              tips for members.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="about-cta">
+        <a href="help-center.html" class="cta-btn">Visit Help Center</a>
+        <a
+          href="#contact"
+          class="cta-btn"
+          style="
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin-left: 18px;
+          "
+          >Contact Us</a
+        >
+      </div>
+    </div>
+    <footer
+      class="footer"
+      style="
+        background: #181818;
+        color: #fff;
+        text-align: center;
+        padding: 24px 0 12px 0;
+        margin-top: 40px;
+        border-top: 1.5px solid #222;
+        font-size: 1rem;
+      "
+    >
+      <div
+        class="footer-content"
+        style="
+          max-width: 900px;
+          margin: 0 auto;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0;
+        "
+      >
+        <div
+          class="footer-section contact-section"
+          style="flex: 1 1 180px; min-width: 140px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 8px; font-size: 1.05rem">
+            Contact
+          </h3>
+          <p style="color: #fff; margin-bottom: 4px; font-size: 0.95rem">
+            Email: mobilegearstore06@gmail.com
+          </p>
+          <p style="color: #fff; font-size: 0.95rem">
+            Live Chat: Available 24/7
+          </p>
+        </div>
+        <div
+          class="footer-section newsletter-section"
+          style="flex: 1 1 180px; min-width: 140px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 8px; font-size: 1.05rem">
+            Newsletter
+          </h3>
+          <form
+            class="newsletter-form"
+            style="
+              display: flex;
+              gap: 6px;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <input
+              type="email"
+              class="newsletter-input"
+              placeholder="Your email address"
+              required
+              style="
+                padding: 7px 10px;
+                border-radius: 6px;
+                border: 1px solid #333;
+                background: #222;
+                color: #fff;
+                font-size: 0.95rem;
+              "
+            />
+            <button
+              type="submit"
+              class="newsletter-btn"
+              style="
+                padding: 7px 16px;
+                border-radius: 6px;
+                background: #25d366;
+                color: #111;
+                border: none;
+                font-weight: 600;
+                font-size: 0.95rem;
+              "
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+      <div
+        class="footer-bottom"
+        style="
+          text-align: center;
+          padding-top: 10px;
+          margin-top: 10px;
+          border-top: 1px solid #222;
+          font-size: 0.95rem;
+        "
+      >
+        &copy; 2025 Mobile Gear Hub. All rights reserved.
+      </div>
+    </footer>
+    <style>
+      @media (max-width: 480px) {
+        .about-container {
+          padding: 12px 6px !important;
+          margin: 16px 0 10px 0 !important;
+          border-radius: 10px !important;
+        }
+        .about-title {
+          font-size: 1.2rem !important;
+          margin-bottom: 10px !important;
+        }
+        .about-title i {
+          font-size: 1.3rem !important;
+        }
+        .about-mission {
+          font-size: 0.7rem !important;
+          margin-bottom: 10px !important;
+        }
+        .about-mission p {
+          margin-bottom: 4px !important;
+        }
+        .about-visuals {
+          gap: 10px !important;
+          margin: 14px 0 !important;
+        }
+        .about-visual {
+          padding: 8px !important;
+          min-width: 80px !important;
+          border-radius: 7px !important;
+        }
+        .about-visual i {
+          font-size: 1.4rem !important;
+          margin-bottom: 4px !important;
+        }
+        .about-visual-title {
+          font-size: 0.7rem !important;
+          margin-bottom: 2px !important;
+        }
+        .about-visual-desc {
+          font-size: 0.55rem !important;
+        }
+        .about-timeline {
+          margin: 18px 0 !important;
+        }
+        .timeline-title {
+          font-size: 0.85rem !important;
+          margin-bottom: 7px !important;
+        }
+        .timeline-list {
+          padding-left: 18px !important;
+          border-left-width: 2.5px !important;
+        }
+        .timeline-item {
+          margin-bottom: 13px !important;
+        }
+        .timeline-item:before {
+          width: 11px !important;
+          height: 11px !important;
+          left: -20px !important;
+          top: 0 !important;
+          border-width: 2.5px !important;
+        }
+        .timeline-year {
+          font-size: 0.65rem !important;
+          margin-bottom: 2px !important;
+        }
+        .timeline-desc {
+          font-size: 0.55rem !important;
+        }
+        .about-cta {
+          margin-top: 14px !important;
+        }
+        .cta-btn {
+          padding: 7px 16px !important;
+          font-size: 0.7rem !important;
+          border-radius: 10px !important;
+          margin: 4px !important;
+        }
+      }
+    </style>
+  </body>
+</html>
