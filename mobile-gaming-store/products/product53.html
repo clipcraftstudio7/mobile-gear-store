@@ -692,7 +692,7 @@
         if (params.has("id")) return parseInt(params.get("id"), 10);
         return null;
       }
-      fetch("http://localhost:3000/products")
+              fetch("/products")
         .then((res) => res.json())
         .then((products) => {
           const currentProductId = getProductId();

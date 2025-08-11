@@ -1443,7 +1443,7 @@
           setTimeout(renderCategoryProducts, 50);
           return;
         }
-        fetch("http://localhost:3000/products")
+        fetch("/products")
           .then((r) => r.json())
           .then((products) => {
             // Enhanced category matching with multiple variations

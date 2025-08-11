@@ -3507,7 +3507,7 @@
             
             // Load products data
             if (!window._allProducts) {
-              fetch('http://localhost:3000/products')
+              fetch('/products')
                 .then(r => r.json())
                 .then(products => {
                   window._allProducts = products;
@@ -3525,7 +3525,7 @@
                 let products = window._allProducts || [];
                 if (!products.length) {
                   try {
-                    products = await fetch('http://localhost:3000/products').then(r => r.json());
+                    products = await fetch('/products').then(r => r.json());
                     window._allProducts = products;
                   } catch {
                     products = [];
@@ -4419,7 +4419,7 @@
         if (mobileSearchInput && mobileSearchBtn) {
           // Load products data
           if (!window._allProducts) {
-            fetch('http://localhost:3000/products')
+            fetch('/products')
               .then(r => r.json())
               .then(products => {
                 window._allProducts = products;
@@ -4437,7 +4437,7 @@
               let products = window._allProducts || [];
               if (!products.length) {
                 try {
-                  products = await fetch('http://localhost:3000/products').then(r => r.json());
+                  products = await fetch('/products').then(r => r.json());
                   window._allProducts = products;
                 } catch (error) {
                   console.error('Error fetching products:', error);

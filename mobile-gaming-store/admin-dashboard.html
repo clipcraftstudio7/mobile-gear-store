@@ -1035,7 +1035,7 @@
       const SUPABASE_URL = "https://kokntkhxkymllafuubun.supabase.co";
       const SUPABASE_ANON_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc";
-      const PRODUCTS_JSON_URL = "http://localhost:3000/products";
+      const PRODUCTS_JSON_URL = "/products";
       const ADD_PRODUCT_ENDPOINT = "/add-product"; // Backend endpoint to update products.json
       let supabase, currentUser;
       // --- AUTH CHECK ---
@@ -1173,7 +1173,7 @@
             msgDiv.style.color = "#fbbf24";
             msgDiv.textContent = "Creating product and organizing images...";
             
-            const res = await fetch("http://localhost:3000/add-product-organized", {
+            const res = await fetch("/add-product-organized", {
               method: "POST",
               body: formData,
             });
@@ -1237,7 +1237,7 @@
           }
           
           try {
-            const res = await fetch('http://localhost:3000/delete-product', {
+            const res = await fetch('/delete-product', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ id: productId })
@@ -1403,7 +1403,7 @@
           msgDiv.style.color = "#fbbf24";
           msgDiv.textContent = "Updating product...";
           
-          const res = await fetch("http://localhost:3000/edit-product-enhanced", {
+          const res = await fetch("/edit-product-enhanced", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updateData),

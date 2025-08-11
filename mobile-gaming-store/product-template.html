@@ -4386,9 +4386,9 @@
       // Load product data from JSON file
       async function loadProductData(productId) {
         try {
-          console.log("🔍 Fetching products from server...");
-          // Fetch the products from server
-          const response = await fetch("http://localhost:3000/products");
+              console.log("🔍 Fetching products from server...");
+    // Fetch the products from server
+    const response = await fetch("/products");
           if (!response.ok) {
             throw new Error("Failed to load products.json");
           }
@@ -5416,8 +5416,8 @@
         relatedContainer.style.position = "relative";
 
         try {
-          // Fetch products from server
-          const response = await fetch("http://localhost:3000/products");
+              // Fetch products from server
+    const response = await fetch("/products");
           if (!response.ok) {
             throw new Error("Failed to load products.json");
           }

@@ -936,7 +936,7 @@
           )
           .join("");
       }
-      fetch("http://localhost:3000/products")
+              fetch("/products")
         .then((r) => r.json())
         .then((products) => {
           allResults = products.filter(
