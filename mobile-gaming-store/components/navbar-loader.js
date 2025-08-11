@@ -263,7 +263,39 @@ async function initializeUserAuth() {
 }
 
 function showLoggedInUser(userArea, user) {
-  const displayName = user.email ? user.email.split("@")[0] : "User";
+  // Helper function to truncate long usernames
+  const truncateUsername = (username, maxLength = 15) => {
+    if (!username) return "User";
+    if (username.length <= maxLength) return username;
+    return username.substring(0, maxLength - 3) + "...";
+  };
+
+  // Get user display info consistently
+  const getUserDisplayInfo = (userData) => {
+    let displayName = "User";
+    let initials = "U";
+    let fullName = "User";
+
+    if (userData.name) {
+      displayName = truncateUsername(userData.name);
+      fullName = userData.name;
+      initials = userData.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+    } else if (userData.username) {
+      displayName = truncateUsername(userData.username);
+      fullName = userData.username;
+      initials = userData.username[0].toUpperCase();
+    } else if (userData.email) {
+      const emailName = userData.email.split("@")[0];
+      displayName = truncateUsername(emailName);
+      fullName = emailName;
+      initials = emailName[0].toUpperCase();
+    }
+
+    return { displayName, initials, fullName };
+  };
+
+  const userInfo = getUserDisplayInfo({ email: user.email, name: user.name, username: user.username });
+  
   userArea.innerHTML = `
     <div class="dropdown" style="position: relative;">
       <button class="nav-btn" style="
@@ -271,7 +303,7 @@ function showLoggedInUser(userArea, user) {
         color: #25d366;
         border: 1px solid rgba(37, 211, 102, 0.4);
         border-radius: 12px;
-        padding: 10px 18px;
+        padding: 10px 16px;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -280,14 +312,19 @@ function showLoggedInUser(userArea, user) {
         font-weight: 600;
         transition: all 0.3s ease;
         min-width: 60px;
+        max-width: 200px;
         justify-content: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       "
       onmouseover="this.style.background='rgba(37, 211, 102, 0.25)'; this.style.borderColor='#25d366';"
       onmouseout="this.style.background='rgba(37, 211, 102, 0.15)'; this.style.borderColor='rgba(37, 211, 102, 0.4)';"
+      title="${userInfo.fullName}"
       >
-        <i class="fas fa-user-circle" style="font-size: 14px; color: #25d366;"></i>
-        <span>${displayName}</span>
-        <i class="fas fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i>
+        <i class="fas fa-user-circle" style="font-size: 14px; color: #25d366; flex-shrink: 0;"></i>
+        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userInfo.displayName}</span>
+        <i class="fas fa-chevron-down" style="font-size: 10px; margin-left: 2px; flex-shrink: 0;"></i>
       </button>
       <div class="dropdown-content" style="
         display: none;
@@ -298,11 +335,16 @@ function showLoggedInUser(userArea, user) {
         border: 1px solid #333;
         border-radius: 12px;
         padding: 8px 0;
-        min-width: 160px;
+        min-width: 200px;
+        max-width: 280px;
         z-index: 1001;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         backdrop-filter: blur(10px);
       ">
+        <div style="padding: 8px 12px; border-bottom: 1px solid #333; margin-bottom: 8px;">
+          <div style="font-weight: 600; color: #25d366; font-size: 0.9rem; word-break: break-word; line-height: 1.3;" title="${userInfo.fullName}">${userInfo.displayName}</div>
+          <div style="color: #999; font-size: 0.75rem; word-break: break-all;">${user.email || "user@example.com"}</div>
+        </div>
         <a href="profile.html" style="
           display: flex;
           align-items: center;
@@ -743,7 +785,39 @@ async function initializeMobileUserAuth() {
 }
 
 function showMobileLoggedInUser(userArea, user) {
-  const displayName = user.email ? user.email.split("@")[0] : "User";
+  // Helper function to truncate long usernames
+  const truncateUsername = (username, maxLength = 15) => {
+    if (!username) return "User";
+    if (username.length <= maxLength) return username;
+    return username.substring(0, maxLength - 3) + "...";
+  };
+
+  // Get user display info consistently
+  const getUserDisplayInfo = (userData) => {
+    let displayName = "User";
+    let initials = "U";
+    let fullName = "User";
+
+    if (userData.name) {
+      displayName = truncateUsername(userData.name);
+      fullName = userData.name;
+      initials = userData.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+    } else if (userData.username) {
+      displayName = truncateUsername(userData.username);
+      fullName = userData.username;
+      initials = userData.username[0].toUpperCase();
+    } else if (userData.email) {
+      const emailName = userData.email.split("@")[0];
+      displayName = truncateUsername(emailName);
+      fullName = emailName;
+      initials = emailName[0].toUpperCase();
+    }
+
+    return { displayName, initials, fullName };
+  };
+
+  const userInfo = getUserDisplayInfo({ email: user.email, name: user.name, username: user.username });
+  
   userArea.innerHTML = `
     <a href="profile.html" class="user-avatar" style="
       display: flex;
@@ -762,8 +836,9 @@ function showMobileLoggedInUser(userArea, user) {
     "
     onmouseover="this.style.background='rgba(37, 211, 102, 0.25)'; this.style.borderColor='#25d366';"
     onmouseout="this.style.background='rgba(37, 211, 102, 0.15)'; this.style.borderColor='rgba(37, 211, 102, 0.4)';"
+    title="${userInfo.fullName}"
     >
-      ${displayName.charAt(0).toUpperCase()}
+      ${userInfo.initials}
     </a>
   `;
 }

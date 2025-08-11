@@ -22,6 +22,190 @@ class NavbarComponent {
     this.init();
   }
 
+  // Helper function to truncate long usernames
+  truncateUsername(username, maxLength = 15) {
+    if (!username) return "User";
+    if (username.length <= maxLength) return username;
+    return username.substring(0, maxLength - 3) + "...";
+  }
+
+  // Helper function to get user display info consistently
+  getUserDisplayInfo(userData) {
+    let displayName = "User";
+    let initials = "U";
+    let fullName = "User";
+
+    if (userData.name) {
+      displayName = this.truncateUsername(userData.name);
+      fullName = userData.name;
+      initials = userData.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
+    } else if (userData.username) {
+      displayName = this.truncateUsername(userData.username);
+      fullName = userData.username;
+      initials = userData.username[0].toUpperCase();
+    } else if (userData.email) {
+      const emailName = userData.email.split("@")[0];
+      displayName = this.truncateUsername(emailName);
+      fullName = emailName;
+      initials = emailName[0].toUpperCase();
+    }
+
+    return { displayName, initials, fullName };
+  }
+
+  // Create consistent desktop user HTML
+  createDesktopUserHTML(userInfo) {
+    return `
+      <div class="user-dropdown" style="position:relative;">
+        <a href="profile.html" class="user-avatar" style="
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #25d366, #128c7e);
+          color: #111;
+          font-weight: 700;
+          font-size: 1.2rem;
+          text-decoration: none;
+          border: 2px solid rgba(37, 211, 102, 0.3);
+          box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+          flex-shrink: 0;
+        ">
+          <span style="position:relative;z-index:2;">${userInfo.initials}</span>
+          <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
+        </a>
+        <div class="user-dropdown-menu" style="
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background: #1a1a1a;
+          border: 1px solid #333;
+          border-radius: 12px;
+          padding: 8px;
+          margin-top: 8px;
+          min-width: 200px;
+          max-width: 280px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-10px);
+          transition: all 0.3s ease;
+          z-index: 1000;
+        ">
+          <div style="padding: 8px 12px; border-bottom: 1px solid #333; margin-bottom: 8px;">
+            <div style="font-weight: 600; color: #25d366; font-size: 0.9rem; word-break: break-word; line-height: 1.3;" title="${userInfo.fullName}">${userInfo.displayName}</div>
+            <div style="color: #999; font-size: 0.75rem; word-break: break-all;">${userInfo.email || "user@example.com"}</div>
+          </div>
+          <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
+            <i class="fas fa-user-edit" style="color:#25d366;"></i>
+            <span>Edit Profile</span>
+          </a>
+          <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
+            <i class="fas fa-shopping-bag" style="color:#25d366;"></i>
+            <span>My Orders</span>
+          </a>
+          <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
+            <i class="fas fa-bell" style="color:#25d366;"></i>
+            <span>Messages</span>
+          </a>
+          <div style="border-top:1px solid #333;margin:8px 0;"></div>
+          <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // Create consistent mobile user HTML
+  createMobileUserHTML(userInfo) {
+    return `
+      <div class="mobile-user-dropdown" style="position:relative;">
+        <a href="profile.html" class="user-avatar" style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 2px;
+          color: #25d366;
+          font-size: 0.65rem;
+          padding: 4px 2px;
+          transition: all 0.3s ease;
+          text-decoration: none;
+        ">
+          <div style="
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 2px;
+            border: 2px solid rgba(37, 211, 102, 0.3);
+            box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+          ">
+            <span style="position:relative;z-index:2;">${userInfo.initials}</span>
+            <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
+          </div>
+          <span style="font-size:0.6rem;color:#25d366;font-weight:600;">Account</span>
+        </a>
+        <div class="mobile-user-dropdown-menu" style="
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #1a1a1a;
+          border: 1px solid #333;
+          border-radius: 12px;
+          padding: 8px;
+          margin-bottom: 8px;
+          min-width: 180px;
+          max-width: 250px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s ease;
+          z-index: 1000;
+        ">
+          <div style="padding: 8px 12px; border-bottom: 1px solid #333; margin-bottom: 8px; text-align: center;">
+            <div style="font-weight: 600; color: #25d366; font-size: 0.85rem; word-break: break-word; line-height: 1.3;" title="${userInfo.fullName}">${userInfo.displayName}</div>
+            <div style="color: #999; font-size: 0.7rem; word-break: break-all;">${userInfo.email || "user@example.com"}</div>
+          </div>
+          <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
+            <i class="fas fa-user-edit" style="color:#25d366;font-size:0.9rem;"></i>
+            <span>Edit Profile</span>
+          </a>
+          <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
+            <i class="fas fa-shopping-bag" style="color:#25d366;font-size:0.9rem;"></i>
+            <span>My Orders</span>
+          </a>
+          <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
+            <i class="fas fa-bell" style="color:#25d366;font-size:0.9rem;"></i>
+            <span>Messages</span>
+          </a>
+          <div style="border-top:1px solid #333;margin:8px 0;"></div>
+          <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;font-size:0.8rem;">
+            <i class="fas fa-sign-out-alt" style="font-size:0.9rem;"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
   async init() {
     this.setupScrollBehavior();
     this.setupSearch();
@@ -468,84 +652,9 @@ class NavbarComponent {
         console.log("Found user in localStorage:", userData);
         this.hideSignInPopup();
 
-        const userHtml = `
-          <div class="user-dropdown" style="position:relative;">
-            <a href="profile.html" class="user-avatar" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);color:#111;font-weight:700;font-size:1.2rem;text-decoration:none;border:2px solid rgba(37,211,102,0.3);box-shadow:0 4px 12px rgba(37,211,102,0.3);transition:all 0.3s ease;position:relative;overflow:hidden;">
-              <span style="position:relative;z-index:2;">${
-                userData.name ? userData.name[0].toUpperCase() : "U"
-              }</span>
-              <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
-            </a>
-            <div class="user-dropdown-menu" style="position:absolute;top:100%;right:0;background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:8px;margin-top:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s ease;z-index:1000;">
-              <div style="padding:8px 12px;border-bottom:1px solid #333;margin-bottom:8px;">
-                <div style="font-weight:600;color:#25d366;font-size:0.9rem;">${
-                  userData.name || "User"
-                }</div>
-                <div style="color:#999;font-size:0.75rem;">${
-                  userData.email || "user@example.com"
-                }</div>
-              </div>
-              <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                <i class="fas fa-user-edit" style="color:#25d366;"></i>
-                <span>Edit Profile</span>
-              </a>
-              <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                <i class="fas fa-shopping-bag" style="color:#25d366;"></i>
-                <span>My Orders</span>
-              </a>
-              <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                <i class="fas fa-bell" style="color:#25d366;"></i>
-                <span>Messages</span>
-              </a>
-              <div style="border-top:1px solid #333;margin:8px 0;"></div>
-              <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
-        `;
+        const userHtml = this.createDesktopUserHTML(this.getUserDisplayInfo(userData));
 
-        const mobileUserHtml = `
-          <div class="mobile-user-dropdown" style="position:relative;">
-            <a href="profile.html" class="user-avatar" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#25d366;font-size:0.65rem;padding:4px 2px;transition:all 0.3s ease;text-decoration:none;">
-              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;color:#111;font-weight:700;font-size:1rem;margin-bottom:2px;border:2px solid rgba(37,211,102,0.3);box-shadow:0 3px 10px rgba(37,211,102,0.3);position:relative;overflow:hidden;">
-                <span style="position:relative;z-index:2;">${
-                  userData.name ? userData.name[0].toUpperCase() : "U"
-                }</span>
-                <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
-              </div>
-              <span style="font-size:0.6rem;color:#25d366;font-weight:600;">Account</span>
-            </a>
-            <div class="mobile-user-dropdown-menu" style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:8px;margin-bottom:8px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:1000;">
-              <div style="padding:8px 12px;border-bottom:1px solid #333;margin-bottom:8px;text-align:center;">
-                <div style="font-weight:600;color:#25d366;font-size:0.85rem;">${
-                  userData.name || "User"
-                }</div>
-                <div style="color:#999;font-size:0.7rem;">${
-                  userData.email || "user@example.com"
-                }</div>
-              </div>
-              <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                <i class="fas fa-user-edit" style="color:#25d366;font-size:0.9rem;"></i>
-                <span>Edit Profile</span>
-              </a>
-              <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                <i class="fas fa-shopping-bag" style="color:#25d366;font-size:0.9rem;"></i>
-                <span>My Orders</span>
-              </a>
-              <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                <i class="fas fa-bell" style="color:#25d366;font-size:0.9rem;"></i>
-                <span>Messages</span>
-              </a>
-              <div style="border-top:1px solid #333;margin:8px 0;"></div>
-              <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;font-size:0.8rem;">
-                <i class="fas fa-sign-out-alt" style="font-size:0.9rem;"></i>
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
-        `;
+        const mobileUserHtml = this.createMobileUserHTML(this.getUserDisplayInfo(userData));
 
         // Hide admin dashboard link for localStorage users (not real auth)
         const adminNavItem = document.getElementById("admin-nav-item");
@@ -602,35 +711,18 @@ class NavbarComponent {
                   .eq("id", user.id)
                   .single();
 
-                if (profile && profile.name) {
-                  return {
-                    displayName: profile.name,
-                    initials: profile.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .toUpperCase(),
-                    hasName: true,
-                  };
-                } else if (profile && profile.username) {
-                  return {
-                    displayName: profile.username,
-                    initials: profile.username[0].toUpperCase(),
-                    hasName: true,
-                  };
-                } else {
-                  return {
-                    displayName: user.email?.split("@")[0] || "User",
-                    initials: letter,
-                    hasName: false,
-                  };
-                }
-              } catch (error) {
-                return {
-                  displayName: user.email?.split("@")[0] || "User",
-                  initials: letter,
-                  hasName: false,
+                const userData = {
+                  name: profile?.name,
+                  username: profile?.username,
+                  email: user.email
                 };
+
+                return this.getUserDisplayInfo(userData);
+              } catch (error) {
+                const userData = {
+                  email: user.email
+                };
+                return this.getUserDisplayInfo(userData);
               }
             };
 
@@ -648,72 +740,8 @@ class NavbarComponent {
             }
 
             getUserDisplay().then((userInfo) => {
-              const userHtml = `
-                <div class="user-dropdown" style="position:relative;">
-                  <a href="profile.html" class="user-avatar" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);color:#111;font-weight:700;font-size:1.2rem;text-decoration:none;border:2px solid rgba(37,211,102,0.3);box-shadow:0 4px 12px rgba(37,211,102,0.3);transition:all 0.3s ease;position:relative;overflow:hidden;">
-                    <span style="position:relative;z-index:2;">${userInfo.initials}</span>
-                    <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
-                  </a>
-                  <div class="user-dropdown-menu" style="position:absolute;top:100%;right:0;background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:8px;margin-top:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s ease;z-index:1000;">
-                    <div style="padding:8px 12px;border-bottom:1px solid #333;margin-bottom:8px;">
-                      <div style="font-weight:600;color:#25d366;font-size:0.9rem;">${userInfo.displayName}</div>
-                      <div style="color:#999;font-size:0.75rem;">${user.email}</div>
-                    </div>
-                    <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                      <i class="fas fa-user-edit" style="color:#25d366;"></i>
-                      <span>Edit Profile</span>
-                    </a>
-                    <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                      <i class="fas fa-shopping-bag" style="color:#25d366;"></i>
-                      <span>My Orders</span>
-                    </a>
-                    <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                      <i class="fas fa-bell" style="color:#25d366;"></i>
-                      <span>Messages</span>
-                    </a>
-                    <div style="border-top:1px solid #333;margin:8px 0;"></div>
-                    <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;">
-                      <i class="fas fa-sign-out-alt"></i>
-                      <span>Logout</span>
-                    </button>
-                  </div>
-                </div>
-              `;
-
-              const mobileUserHtml = `
-                <div class="mobile-user-dropdown" style="position:relative;">
-                  <a href="profile.html" class="user-avatar" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#25d366;font-size:0.65rem;padding:4px 2px;transition:all 0.3s ease;text-decoration:none;">
-                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;color:#111;font-weight:700;font-size:1rem;margin-bottom:2px;border:2px solid rgba(37,211,102,0.3);box-shadow:0 3px 10px rgba(37,211,102,0.3);position:relative;overflow:hidden;">
-                      <span style="position:relative;z-index:2;">${userInfo.initials}</span>
-                      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
-                    </div>
-                    <span style="font-size:0.6rem;color:#25d366;font-weight:600;">Account</span>
-                  </a>
-                  <div class="mobile-user-dropdown-menu" style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:8px;margin-bottom:8px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:1000;">
-                    <div style="padding:8px 12px;border-bottom:1px solid #333;margin-bottom:8px;text-align:center;">
-                      <div style="font-weight:600;color:#25d366;font-size:0.85rem;">${userInfo.displayName}</div>
-                      <div style="color:#999;font-size:0.7rem;">${user.email}</div>
-                    </div>
-                    <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                      <i class="fas fa-user-edit" style="color:#25d366;font-size:0.9rem;"></i>
-                      <span>Edit Profile</span>
-                    </a>
-                    <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                      <i class="fas fa-shopping-bag" style="color:#25d366;font-size:0.9rem;"></i>
-                      <span>My Orders</span>
-                    </a>
-                    <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;">
-                      <i class="fas fa-bell" style="color:#25d366;font-size:0.9rem;"></i>
-                      <span>Messages</span>
-                    </a>
-                    <div style="border-top:1px solid #333;margin:8px 0;"></div>
-                    <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;font-size:0.8rem;">
-                      <i class="fas fa-sign-out-alt" style="font-size:0.9rem;"></i>
-                      <span>Logout</span>
-                    </button>
-                  </div>
-                </div>
-              `;
+              const userHtml = this.createDesktopUserHTML(userInfo);
+              const mobileUserHtml = this.createMobileUserHTML(userInfo);
 
               if (userArea) {
                 userArea.innerHTML = userHtml;
@@ -1515,40 +1543,7 @@ window.updateMobileNavDirect = async function () {
     }
 
     // Create enhanced mobile user HTML
-    const mobileUserHtml = `
-                <div class="mobile-user-dropdown" style="position:relative;">
-                  <a href="profile.html" class="user-avatar" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#25d366;font-size:0.65rem;padding:4px 2px;transition:all 0.3s ease;text-decoration:none;">
-                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;color:#111;font-weight:700;font-size:1rem;margin-bottom:2px;border:2px solid rgba(37,211,102,0.3);box-shadow:0 3px 10px rgba(37,211,102,0.3);position:relative;overflow:hidden;">
-                      <span style="position:relative;z-index:2;">${userInfo.initials}</span>
-                      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
-                    </div>
-                    <span style="font-size:0.6rem;color:#25d366;font-weight:600;">Account</span>
-                  </a>
-                  <div class="mobile-user-dropdown-menu" style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:8px;margin-bottom:8px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:1000;">
-                    <div style="padding:8px 12px;border-bottom:1px solid #333;margin-bottom:8px;text-align:center;">
-                      <div style="font-weight:600;color:#25d366;font-size:0.85rem;">${userInfo.displayName}</div>
-                      <div style="color:#999;font-size:0.7rem;">${user.email}</div>
-                    </div>
-                    <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-                      <i class="fas fa-user-edit" style="color:#25d366;font-size:0.9rem;"></i>
-                      <span>Edit Profile</span>
-                    </a>
-                    <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-                      <i class="fas fa-shopping-bag" style="color:#25d366;font-size:0.9rem;"></i>
-                      <span>My Orders</span>
-                    </a>
-                    <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-                      <i class="fas fa-bell" style="color:#25d366;font-size:0.9rem;"></i>
-                      <span>Messages</span>
-                    </a>
-                    <div style="border-top:1px solid #333;margin:8px 0;"></div>
-                    <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;font-size:0.8rem;">
-                      <i class="fas fa-sign-out-alt" style="font-size:0.9rem;"></i>
-                      <span>Logout</span>
-                    </button>
-                  </div>
-                </div>
-              `;
+    const mobileUserHtml = this.createMobileUserHTML(userInfo);
 
     userAreaMobile.innerHTML = mobileUserHtml;
 
@@ -1696,40 +1691,7 @@ window.testAuthAndUpdate = async function () {
         }
 
         // Create mobile user HTML
-        const mobileUserHtml = `
-          <div class="mobile-user-dropdown" style="position:relative;">
-            <a href="profile.html" class="user-avatar" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#25d366;font-size:0.65rem;padding:4px 2px;transition:all 0.3s ease;text-decoration:none;">
-              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;color:#111;font-weight:700;font-size:1rem;margin-bottom:2px;border:2px solid rgba(37,211,102,0.3);box-shadow:0 3px 10px rgba(37,211,102,0.3);position:relative;overflow:hidden;">
-                <span style="position:relative;z-index:2;">${userInfo.initials}</span>
-                <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
-              </div>
-              <span style="font-size:0.6rem;color:#25d366;font-weight:600;">Account</span>
-            </a>
-            <div class="mobile-user-dropdown-menu" style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:8px;margin-bottom:8px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:1000;">
-              <div style="padding:8px 12px;border-bottom:1px solid #333;margin-bottom:8px;text-align:center;">
-                <div style="font-weight:600;color:#25d366;font-size:0.85rem;">${userInfo.displayName}</div>
-                <div style="color:#999;font-size:0.7rem;">${user.email}</div>
-              </div>
-              <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-                <i class="fas fa-user-edit" style="color:#25d366;font-size:0.9rem;"></i>
-                <span>Edit Profile</span>
-              </a>
-              <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-                <i class="fas fa-shopping-bag" style="color:#25d366;font-size:0.9rem;"></i>
-                <span>My Orders</span>
-              </a>
-              <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-                <i class="fas fa-bell" style="color:#25d366;font-size:0.9rem;"></i>
-                <span>Messages</span>
-              </a>
-              <div style="border-top:1px solid #333;margin:8px 0;"></div>
-              <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;font-size:0.8rem;">
-                <i class="fas fa-sign-out-alt" style="font-size:0.9rem;"></i>
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
-        `;
+        const mobileUserHtml = this.createMobileUserHTML(userInfo);
 
         userAreaMobile.innerHTML = mobileUserHtml;
         userAreaMobile.dataset.loaded = "true";
@@ -1873,40 +1835,7 @@ window.fixMobileNavbarAuth = async function () {
       }
 
       // Create mobile user HTML with Account display
-      const mobileUserHtml = `
-        <div class="mobile-user-dropdown" style="position:relative;">
-          <a href="profile.html" class="user-avatar" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#25d366;font-size:0.65rem;padding:4px 2px;transition:all 0.3s ease;text-decoration:none;">
-            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;color:#111;font-weight:700;font-size:1rem;margin-bottom:2px;border:2px solid rgba(37,211,102,0.3);box-shadow:0 3px 10px rgba(37,211,102,0.3);position:relative;overflow:hidden;">
-              <span style="position:relative;z-index:2;">${userInfo.initials}</span>
-              <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);animation:pulse 2s infinite;"></div>
-            </div>
-            <span style="font-size:0.6rem;color:#25d366;font-weight:600;">Account</span>
-          </a>
-          <div class="mobile-user-dropdown-menu" style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:8px;margin-bottom:8px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:1000;">
-            <div style="padding:8px 12px;border-bottom:1px solid #333;margin-bottom:8px;text-align:center;">
-              <div style="font-weight:600;color:#25d366;font-size:0.85rem;">${userInfo.displayName}</div>
-              <div style="color:#999;font-size:0.7rem;">${user.email}</div>
-            </div>
-            <a href="profile.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-              <i class="fas fa-user-edit" style="color:#25d366;font-size:0.9rem;"></i>
-              <span>Edit Profile</span>
-            </a>
-            <a href="profile.html#orders" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-              <i class="fas fa-shopping-bag" style="color:#25d366;font-size:0.9rem;"></i>
-              <span>My Orders</span>
-            </a>
-            <a href="profile.html#messages" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ccc;text-decoration:none;border-radius:6px;transition:all 0.2s ease;font-size:0.8rem;">
-              <i class="fas fa-bell" style="color:#25d366;font-size:0.9rem;"></i>
-              <span>Messages</span>
-            </a>
-            <div style="border-top:1px solid #333;margin:8px 0;"></div>
-            <button onclick="logout()" style="display:flex;align-items:center;gap:8px;padding:8px 12px;color:#ff4757;text-decoration:none;border-radius:6px;transition:all 0.2s ease;background:none;border:none;width:100%;text-align:left;cursor:pointer;font-size:0.8rem;">
-              <i class="fas fa-sign-out-alt" style="font-size:0.9rem;"></i>
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      `;
+      const mobileUserHtml = this.createMobileUserHTML(userInfo);
 
       // Update the mobile user area
       userAreaMobile.innerHTML = mobileUserHtml;
