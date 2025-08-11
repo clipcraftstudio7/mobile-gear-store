@@ -7,6 +7,11 @@ const multer = require("multer");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Add health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 // Path to your products.json file
 const PRODUCTS_PATH = path.join(
   __dirname,
@@ -18,6 +23,11 @@ app.use(express.json());
 
 // Serve static files from mobile-gaming-store directory
 app.use(express.static(path.join(__dirname, 'mobile-gaming-store')));
+
+// Add a root route to serve index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'mobile-gaming-store', 'index.html'));
+});
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -301,5 +311,17 @@ app.get("/products", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Backend server running at http://localhost:${PORT}`);
+  console.log(`🚀 Backend server running on port ${PORT}`);
+  console.log(`📁 Static files served from: ${path.join(__dirname, 'mobile-gaming-store')}`);
+  console.log(`🌐 Health check available at: /health`);
+  console.log(`📦 Products API available at: /products`);
+});
+
+// Add error handling
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
 });
