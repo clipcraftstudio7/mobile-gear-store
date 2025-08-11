@@ -56,7 +56,7 @@ function createProductCard(product) {
       product.stock <= 3 ? `Only ${product.stock} Left` : "In Stock";
 
     return `
-    <div class="product-card enhanced">
+    <div class="product-card enhanced" data-product-id="${product.id}">
       <div class="product-image-container">
         <img src="${
           product.image || "assets/images/products/default.jpg"
