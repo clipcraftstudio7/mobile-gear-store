@@ -191,7 +191,20 @@ async function clearCart() {
 
 // Get cart total
 function getCartTotal() {
+  const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const shippingFee = subtotal >= 50 ? 0 : 8.99; // Free shipping over $50, otherwise $8.99
+  return subtotal + shippingFee;
+}
+
+// Get subtotal (without shipping)
+function getCartSubtotal() {
   return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+}
+
+// Get shipping fee
+function getShippingFee() {
+  const subtotal = getCartSubtotal();
+  return subtotal >= 50 ? 0 : 8.99;
 }
 
 // Defensive getCartCount

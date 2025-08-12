@@ -3006,58 +3006,10 @@
           <div class="price-note">Free shipping on orders over $50</div>
         </div>
 
-        <!-- Product Options -->
-        <div class="product-options">
-          <div class="option-group">
-            <label class="option-label">Color:</label>
-            <div class="option-buttons" id="color-options">
-              <button
-                class="option-btn selected"
-                data-value="black"
-                onclick="selectOption('color', 'black')"
-              >
-                Black
-              </button>
-              <button
-                class="option-btn"
-                data-value="white"
-                onclick="selectOption('color', 'white')"
-              >
-                White
-              </button>
-              <button
-                class="option-btn"
-                data-value="blue"
-                onclick="selectOption('color', 'blue')"
-              >
-                Blue
-              </button>
-            </div>
-          </div>
-          <div class="option-group">
-            <label class="option-label">Size:</label>
-            <div class="option-buttons" id="size-options">
-              <button
-                class="option-btn selected"
-                data-value="standard"
-                onclick="selectOption('size', 'standard')"
-              >
-                Standard
-              </button>
-              <button
-                class="option-btn"
-                data-value="large"
-                onclick="selectOption('size', 'large')"
-              >
-                Large
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quantity & Stock -->
+        <!-- Quantity Section -->
         <div class="quantity-section">
           <div class="quantity-container">
+            <label class="quantity-label">Quantity:</label>
             <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
             <input
               type="number"
@@ -3071,6 +3023,8 @@
           </div>
           <div class="stock-status" id="stock-status">In Stock</div>
         </div>
+
+
 
         <!-- Action Buttons -->
         <div class="action-buttons">
@@ -5974,13 +5928,12 @@
           const name = productData?.name || 'Product';
           const price = isNaN(Number(productData?.price)) ? 0 : Number(productData.price);
           const image = (Array.isArray(window.productImages) && window.productImages[window.currentImageIndex]) || productData?.image || '';
-          const color = document.querySelector('#color-options .option-btn.selected')?.dataset?.value || 'default';
-          const size = document.querySelector('#size-options .option-btn.selected')?.dataset?.value || 'default';
+
           let quantity = 1;
           const qtyEl = document.getElementById('quantity');
           if (qtyEl && qtyEl.value) quantity = Math.max(1, parseInt(qtyEl.value, 10) || 1);
 
-          return { id, name, price, image, color, size, quantity, added_at: new Date().toISOString() };
+          return { id, name, price, image, quantity, added_at: new Date().toISOString() };
         } catch (e) {
           console.warn('Failed to build product, using minimal fallback', e);
           return { id: productData?.id, name: productData?.name || 'Product', price: Number(productData?.price) || 0, image: productData?.image || '', quantity: 1, added_at: new Date().toISOString() };

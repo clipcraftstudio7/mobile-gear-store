@@ -308,11 +308,18 @@
       `
           )
           .join("");
+        const subtotal = getCartSubtotal();
+        const shippingFee = getShippingFee();
+        const total = getCartTotal();
+        
         cartSummary.innerHTML = `
         <div class="summary-row"><span class="summary-label">Items:</span><span class="summary-value">${
           cart.length
         }</span></div>
-        <div class="summary-row"><span class="summary-label">Total:</span><span class="summary-value">$${getCartTotal().toLocaleString()}</span></div>
+        <div class="summary-row"><span class="summary-label">Subtotal:</span><span class="summary-value">$${subtotal.toLocaleString()}</span></div>
+        <div class="summary-row"><span class="summary-label">Shipping:</span><span class="summary-value">${shippingFee === 0 ? 'FREE' : '$' + shippingFee.toFixed(2)}</span></div>
+        <div class="summary-row" style="border-top: 1px solid #333; padding-top: 10px; font-weight: 700;"><span class="summary-label">Total:</span><span class="summary-value">$${total.toLocaleString()}</span></div>
+        ${subtotal < 50 ? '<div style="color: #25d366; font-size: 0.9rem; text-align: center; margin-top: 10px;">Add $' + (50 - subtotal).toFixed(2) + ' more for FREE shipping!</div>' : ''}
         <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
       `;
       }
