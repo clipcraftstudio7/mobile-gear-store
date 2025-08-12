@@ -23,9 +23,9 @@ let orderPlaced = false;
 let shippingCalcDetails = { city: "", country: "", postal: "" };
 
 const deliveryMethods = [
-  { id: "standard", name: "Standard Shipping", fee: 3.5, eta: "3-7 days" },
-  { id: "express", name: "Express Shipping", fee: 7.5, eta: "1-3 days" },
-  { id: "pickup", name: "Pickup Station", fee: 2.0, eta: "2-5 days" },
+  { id: "standard", name: "Standard Shipping", fee: 5.0, eta: "3-7 days" },
+  { id: "express", name: "Express Shipping", fee: 10.0, eta: "1-3 days" },
+  { id: "pickup", name: "Premium Express Delivery", fee: 23.0, eta: "Same Day" },
 ];
 
 const steps = [
@@ -345,13 +345,22 @@ function renderDeliveryStep() {
     // Shipping calculator logic
     const method = deliveryMethods.find((d) => d.id === selectedDelivery);
     if (!method) return;
-    // Simple rule: if country is not 'Kenya', add $1 per item (international)
-    const isInternational =
-      shippingCalcDetails.country.toLowerCase() !== "kenya";
-    const perItemFee = isInternational
-      ? 1 * cart.reduce((sum, item) => sum + item.quantity, 0)
-      : 0;
-    shippingFee = method.fee + perItemFee;
+    
+    // Calculate subtotal for free shipping check
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    
+    // Free shipping for orders over $200
+    if (subtotal >= 200) {
+      shippingFee = 0;
+    } else {
+      // Simple rule: if country is not 'Kenya', add $1 per item (international)
+      const isInternational =
+        shippingCalcDetails.country.toLowerCase() !== "kenya";
+      const perItemFee = isInternational
+        ? 1 * cart.reduce((sum, item) => sum + item.quantity, 0)
+        : 0;
+      shippingFee = method.fee + perItemFee;
+    }
     renderOrderSummary();
     nextStep();
   };
