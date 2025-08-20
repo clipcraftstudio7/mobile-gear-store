@@ -39,6 +39,33 @@ async function loadProducts() {
   }
 }
 
+// Helper function to get fresh products (added within last 14 days)
+function getFreshProducts(products) {
+  const now = new Date();
+  const fourteenDaysAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+  
+  return products.filter(product => {
+    if (!product.createdAt) return false;
+    const productDate = new Date(product.createdAt);
+    return productDate >= fourteenDaysAgo;
+  }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+// Helper function to format time since added
+function getTimeSinceAdded(createdAt) {
+  if (!createdAt) return '';
+  
+  const now = new Date();
+  const productDate = new Date(createdAt);
+  const diffTime = Math.abs(now - productDate);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 1) return '1 day ago';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 14) return `${Math.ceil(diffDays / 7)} week${Math.ceil(diffDays / 7) > 1 ? 's' : ''} ago`;
+  return '';
+}
+
 function createProductCard(product) {
   try {
     console.log("Creating product card for:", product.name);
@@ -124,6 +151,105 @@ function createProductCard(product) {
   `;
   } catch (error) {
     console.error("Error creating product card for:", product.name, error);
+    return `<div class="product-card enhanced">
+      <div class="product-info">
+        <h3 class="product-title">Error loading product</h3>
+        <p>Unable to display this product</p>
+      </div>
+    </div>`;
+  }
+}
+
+// Enhanced product card for fresh arrivals with special styling
+function createFreshProductCard(product) {
+  try {
+    console.log("Creating fresh product card for:", product.name);
+
+    const discount =
+      product.originalPrice && product.originalPrice > product.price
+        ? Math.round(
+            ((product.originalPrice - product.price) / product.originalPrice) *
+              100
+          )
+        : 0;
+
+    const stockClass = product.stock <= 3 ? "low-stock" : "in-stock";
+    const stockText =
+      product.stock <= 3 ? `Only ${product.stock} Left` : "In Stock";
+
+    const timeSinceAdded = getTimeSinceAdded(product.createdAt);
+
+    return `
+    <div class="product-card enhanced" data-product-id="${product.id}">
+      <div class="product-image-container">
+        <img src="${
+          product.image || "assets/images/products/default.jpg"
+        }" alt="${
+      product.name
+    }" class="product-image" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';" />
+        <div class="product-overlay">
+          <button class="quick-view-btn">👁️ Quick View</button>
+          <button class="wishlist-btn">❤️</button>
+        </div>
+        ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ""}
+        <div class="stock-indicator ${stockClass}">${stockText}</div>
+        <div class="new-badge">NEW</div>
+        ${timeSinceAdded ? `<div class="time-badge">${timeSinceAdded}</div>` : ""}
+      </div>
+      <div class="product-info">
+        <div class="product-header">
+          <h3 class="product-title">${product.name}</h3>
+          <div class="product-rating">
+            <span class="stars">${"⭐".repeat(
+              Math.round(product.rating || 4)
+            )}</span>
+            <span class="rating-count">(${product.reviews || 0})</span>
+          </div>
+        </div>
+        <div class="product-price">
+          ${
+            product.originalPrice && product.originalPrice > product.price
+              ? `<span class="original-price">$${product.originalPrice.toLocaleString()}</span>`
+              : ""
+          }
+          <span class="discount-price">$${product.price.toLocaleString()}</span>
+          ${
+            product.originalPrice && product.originalPrice > product.price
+              ? `<span class="savings">Save $${(
+                  product.originalPrice - product.price
+                ).toLocaleString()}</span>`
+              : ""
+          }
+        </div>
+        <p class="product-description">${product.description.substring(
+          0,
+          80
+        )}...</p>
+        ${
+          product.features && product.features.length > 0
+            ? `<div class="product-features">${product.features
+                .slice(0, 3)
+                .map((f) => `<span class="feature-tag">${f}</span>`)
+                .join("")}</div>`
+            : ""
+        }
+        <div class="product-actions" style="display:flex;gap:10px;">
+          <button class="add-to-cart-btn" style="flex:1;" onclick="addToCartFromCard(${
+            product.id
+          })"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+          <a href="product-template.html?id=${
+            product.id
+          }" class="add-to-cart-btn" style="flex:1;text-align:center;"><i class="fas fa-eye"></i> View Details</a>
+        </div>
+        <div class="product-meta">
+          <span>Category: ${product.category}</span>
+          <span>Stock: ${product.stock}</span>
+        </div>
+      </div>
+    </div>
+  `;
+  } catch (error) {
+    console.error("Error creating fresh product card for:", product.name, error);
     return `<div class="product-card enhanced">
       <div class="product-info">
         <h3 class="product-title">Error loading product</h3>
@@ -222,13 +348,28 @@ async function renderProductGrids() {
       .join("");
   }
 
-  // Render new arrivals (next 6)
-  const newArrivalsGrid = document.getElementById("new-arrivals-grid");
-  if (newArrivalsGrid) {
-    newArrivalsGrid.innerHTML = products
+  // Render trending now (next 6)
+  const trendingNowGrid = document.getElementById("trending-now-grid");
+  if (trendingNowGrid) {
+    trendingNowGrid.innerHTML = products
       .slice(12, 18)
       .map(createProductCard)
       .join("");
+  }
+
+  // Render fresh arrivals (truly new products)
+  const freshArrivalsGrid = document.getElementById("fresh-arrivals-grid");
+  if (freshArrivalsGrid) {
+    const freshProducts = getFreshProducts(products);
+    freshArrivalsGrid.innerHTML = freshProducts
+      .map(createFreshProductCard)
+      .join("");
+    
+    // Update counter
+    const counterElement = document.getElementById("new-products-count");
+    if (counterElement) {
+      counterElement.textContent = freshProducts.length;
+    }
   }
 
   // Render accessories (filter by category)
@@ -506,7 +647,8 @@ function initializeSupabase() {
       let products = window._allProducts;
       let featuredProducts = products.slice(0, 6);
       let bestSellers = products.slice(6, 12);
-      let newArrivals = products.slice(12, 18);
+      let trendingNow = products.slice(12, 18);
+      let freshProducts = getFreshProducts(products);
       let accessories = products
         .filter(
           (p) =>
@@ -530,7 +672,8 @@ function initializeSupabase() {
           ? featuredProducts.filter(filterFn)
           : featuredProducts;
         const filteredBest = q ? bestSellers.filter(filterFn) : bestSellers;
-        const filteredNew = q ? newArrivals.filter(filterFn) : newArrivals;
+        const filteredTrending = q ? trendingNow.filter(filterFn) : trendingNow;
+        const filteredFresh = q ? freshProducts.filter(filterFn) : freshProducts;
         const filteredAccessories = q
           ? accessories.filter(filterFn)
           : accessories;
@@ -547,9 +690,12 @@ function initializeSupabase() {
         const bestGrid = document.getElementById("best-sellers-grid");
         if (bestGrid)
           bestGrid.innerHTML = filteredBest.map(createProductCard).join("");
-        const newGrid = document.getElementById("new-arrivals-grid");
-        if (newGrid)
-          newGrid.innerHTML = filteredNew.map(createProductCard).join("");
+        const trendingGrid = document.getElementById("trending-now-grid");
+        if (trendingGrid)
+          trendingGrid.innerHTML = filteredTrending.map(createProductCard).join("");
+        const freshGrid = document.getElementById("fresh-arrivals-grid");
+        if (freshGrid)
+          freshGrid.innerHTML = filteredFresh.map(createFreshProductCard).join("");
         const accessoriesGrid = document.getElementById("accessories-grid");
         if (accessoriesGrid)
           accessoriesGrid.innerHTML = filteredAccessories

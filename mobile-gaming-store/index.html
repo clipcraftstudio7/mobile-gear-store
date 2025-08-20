@@ -613,6 +613,162 @@
       .product-action-btn.quick-view:hover {
         background: #f39c12;
       }
+
+      /* Fresh Arrivals Section Styling */
+      #fresh-arrivals {
+        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        border-radius: 20px;
+        margin: 40px 0;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #fresh-arrivals::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>');
+        opacity: 0.3;
+        pointer-events: none;
+      }
+
+      .section-title-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .new-products-counter {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+                  .counter-number {
+              font-size: 18px;
+              font-weight: bold;
+              color: #fff;
+              background: linear-gradient(45deg, #ffffff, #cccccc);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+            }
+
+      .counter-text {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+      }
+
+      .section-link {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        padding: 8px 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      .section-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        color: #fff;
+      }
+
+      .fresh-arrivals-container {
+        position: relative;
+        z-index: 1;
+      }
+
+      .fresh-arrivals-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+      }
+
+      /* Enhanced Product Cards for Fresh Arrivals */
+      .fresh-arrivals-grid .product-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+                  .fresh-arrivals-grid .product-card::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 4px;
+              background: linear-gradient(90deg, #ffffff, #cccccc, #999999, #ffffff);
+              background-size: 200% 100%;
+              animation: rainbow 3s ease-in-out infinite;
+            }
+
+      @keyframes rainbow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+
+      .fresh-arrivals-grid .product-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      /* NEW Badge for Fresh Products */
+                  .new-badge {
+              position: absolute;
+              top: 15px;
+              right: 15px;
+              background: linear-gradient(45deg, #000000, #333333);
+              color: #fff;
+              padding: 6px 12px;
+              border-radius: 20px;
+              font-size: 11px;
+              font-weight: bold;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              z-index: 10;
+              animation: pulse 2s ease-in-out infinite;
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+
+      /* Time Since Added Badge */
+      .time-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 500;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+      }
       .product-info {
         padding: 20px;
       }
@@ -3742,14 +3898,14 @@
     <!-- Test Admin Link Script -->
     <script src="test-admin-link.js"></script>
     
-    <!-- Product Sync Test -->
-    <script src="test-product-sync.js"></script>
-    
     <!-- Image Fallback System -->
     <script src="assets/js/image-fallback.js"></script>
     
     <!-- Products API Helper -->
     <script src="assets/js/products-api.js"></script>
+    
+    <!-- Product Sync Test (moved after products-api.js) -->
+    <script src="test-product-sync.js"></script>
     
     <!-- Admin Dashboard Link Backup (in case navbar doesn't load properly) -->
     <script>
@@ -3896,6 +4052,23 @@
       </div>
     </section>
 
+    <!-- Fresh Arrivals Section with Enhanced Styling -->
+    <section class="section" id="fresh-arrivals">
+      <div class="section-header">
+        <div class="section-title-wrapper">
+          <h2 class="section-title">Fresh Arrivals ✨</h2>
+          <div class="new-products-counter">
+            <span class="counter-number" id="new-products-count">0</span>
+            <span class="counter-text">new this week</span>
+          </div>
+        </div>
+        <a href="#all-products" class="section-link">View All New Products →</a>
+      </div>
+      <div class="fresh-arrivals-container">
+        <div class="products-grid fresh-arrivals-grid" id="fresh-arrivals-grid"></div>
+      </div>
+    </section>
+
     <section class="section" id="featured-products">
       <div class="section-header">
         <h2 class="section-title">Featured Products ⭐</h2>
@@ -3910,11 +4083,11 @@
       <div class="products-grid" id="best-sellers-grid"></div>
     </section>
 
-    <section class="section" id="new-arrivals">
+    <section class="section" id="trending-now">
       <div class="section-header">
-        <h2 class="section-title">New Arrivals 🆕</h2>
+        <h2 class="section-title">Trending Now 🔥</h2>
       </div>
-      <div class="products-grid" id="new-arrivals-grid"></div>
+      <div class="products-grid" id="trending-now-grid"></div>
     </section>
 
     <section class="section" id="accessories">

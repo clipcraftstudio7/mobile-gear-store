@@ -176,7 +176,9 @@ app.post('/add-product-organized', organizedUpload.fields([
       rating: parseFloat(rating),
       reviews: parseInt(reviews),
       features: parsedFeatures,
-      link: `product.html?id=${productId}`
+      link: `product.html?id=${productId}`,
+      createdAt: new Date().toISOString(),
+      isNew: true
     };
 
     // Read existing products
