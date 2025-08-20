@@ -1,0 +1,78 @@
+[
+  {
+    "id": 1,
+    "productId": 1,
+    "userId": "user123",
+    "userName": "GamerPro",
+    "userAvatar": "assets/images/default-avatar.png",
+    "rating": 5,
+    "title": "Excellent Gaming Controller!",
+    "comment": "This controller is absolutely amazing! The ergonomic design makes it comfortable for long gaming sessions, and the responsive analog sticks provide precise control. The battery life is impressive too. Highly recommended for mobile gaming enthusiasts!",
+    "verified": true,
+    "helpful": 12,
+    "notHelpful": 1,
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "productId": 1,
+    "userId": "mobileGamer",
+    "userName": "MobileGamer2024",
+    "userAvatar": "assets/images/default-avatar.png",
+    "rating": 4,
+    "title": "Great controller, minor issues",
+    "comment": "Overall a great controller. The build quality is solid and it connects easily. My only complaint is that the buttons could be a bit more responsive, but it's still a great value for the price.",
+    "verified": true,
+    "helpful": 8,
+    "notHelpful": 2,
+    "createdAt": "2024-01-20T14:45:00Z",
+    "updatedAt": "2024-01-20T14:45:00Z"
+  },
+  {
+    "id": 3,
+    "productId": 2,
+    "userId": "audioEnthusiast",
+    "userName": "AudioEnthusiast",
+    "userAvatar": "assets/images/default-avatar.png",
+    "rating": 5,
+    "title": "Crystal clear audio quality!",
+    "comment": "The SY830 headset delivers exceptional audio quality. The noise cancellation works perfectly, and the 7.1 surround sound is immersive. Battery life is excellent - I can game for hours without charging.",
+    "verified": true,
+    "helpful": 15,
+    "notHelpful": 0,
+    "createdAt": "2024-01-18T09:15:00Z",
+    "updatedAt": "2024-01-18T09:15:00Z"
+  },
+  {
+    "id": 4,
+    "productId": 10,
+    "userId": "fpsPlayer",
+    "userName": "FPSMaster",
+    "userAvatar": "assets/images/default-avatar.png",
+    "rating": 5,
+    "title": "Game changer for competitive gaming!",
+    "comment": "These triggers have completely transformed my mobile gaming experience. The precision is incredible and they're so responsive. Perfect for FPS games and battle royales. Worth every penny!",
+    "verified": true,
+    "helpful": 23,
+    "notHelpful": 1,
+    "createdAt": "2024-01-22T16:20:00Z",
+    "updatedAt": "2024-01-22T16:20:00Z"
+  },
+  {
+    "id": 5,
+    "productId": 10,
+    "userId": "casualGamer",
+    "userName": "CasualGamer",
+    "userAvatar": "assets/images/default-avatar.png",
+    "rating": 4,
+    "title": "Good quality triggers",
+    "comment": "These triggers work well and are easy to install. They make a noticeable difference in game performance. The only reason I'm giving 4 stars is because they took a bit to get used to.",
+    "verified": false,
+    "helpful": 5,
+    "notHelpful": 1,
+    "createdAt": "2024-01-25T11:30:00Z",
+    "updatedAt": "2024-01-25T11:30:00Z"
+  }
+]
+

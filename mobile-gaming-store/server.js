@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const fsSync = require('fs');
 const cors = require('cors');
+const { autoBackup, checkAndRestore } = require('./backup-products');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -192,6 +193,9 @@ app.post('/add-product-organized', organizedUpload.fields([
     // Add new product
     products.push(newProduct);
 
+    // Auto-backup before saving
+    await autoBackup();
+    
     // Save updated products
     await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
 
@@ -272,6 +276,9 @@ app.post('/edit-product-enhanced', async (req, res) => {
 
     products[productIndex] = updatedProduct;
 
+    // Auto-backup before saving
+    await autoBackup();
+    
     // Save updated products
     await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
 
@@ -317,6 +324,9 @@ app.post('/delete-product', async (req, res) => {
     // Remove product from array
     products.splice(productIndex, 1);
 
+    // Auto-backup before saving
+    await autoBackup();
+    
     // Save updated products
     await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
 
@@ -426,6 +436,9 @@ app.use((error, req, res, next) => {
 // Start server
 const startServer = async () => {
   await ensureProductsOrganizedDir();
+  
+  // Check and restore products on startup
+  await checkAndRestore();
   
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
