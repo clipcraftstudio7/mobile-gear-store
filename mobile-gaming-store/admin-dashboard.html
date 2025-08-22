@@ -9,7 +9,9 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/admin-performance.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="assets/js/admin-performance.js"></script>
     <style>
       body {
         background: #101010;
@@ -1003,6 +1005,157 @@
         </div>
         <h2 class="section-title" id="orders">Orders & Messages</h2>
         <div class="orders-list" id="orders-list"></div>
+
+        <!-- Performance Optimization Section -->
+        <div class="performance-optimization">
+          <div class="performance-header">
+            <h2 class="performance-title">Performance Optimization ⚡</h2>
+            <p class="performance-subtitle">Monitor and optimize your store's performance</p>
+          </div>
+
+          <div class="performance-grid">
+            <div class="performance-card">
+              <div class="performance-card-header">
+                <div class="performance-icon">
+                  <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3 class="performance-card-title">Page Load Time</h3>
+              </div>
+              <div class="performance-status">
+                <div class="status-indicator" id="page-load-status"></div>
+                <span class="status-text" id="page-load-status-text">Optimized</span>
+              </div>
+              <div class="performance-metrics">
+                <div class="performance-metric">
+                  <div class="metric-value" id="page-load-time">0ms</div>
+                  <div class="metric-label">Load Time</div>
+                </div>
+                <div class="performance-metric">
+                  <div class="metric-value" id="page-size">0KB</div>
+                  <div class="metric-label">Page Size</div>
+                </div>
+              </div>
+              <div class="performance-actions">
+                <button class="performance-btn" data-action="compress-assets">Compress Assets</button>
+                <button class="performance-btn" data-action="enable-lazy-loading">Lazy Loading</button>
+              </div>
+            </div>
+
+            <div class="performance-card">
+              <div class="performance-card-header">
+                <div class="performance-icon">
+                  <i class="fas fa-images"></i>
+                </div>
+                <h3 class="performance-card-title">Image Optimization</h3>
+              </div>
+              <div class="performance-status">
+                <div class="status-indicator" id="image-optimization-status"></div>
+                <span class="status-text" id="image-optimization-status-text">Optimized</span>
+              </div>
+              <div class="performance-metrics">
+                <div class="performance-metric">
+                  <div class="metric-value" id="image-optimization">0%</div>
+                  <div class="metric-label">Optimized</div>
+                </div>
+                <div class="performance-metric">
+                  <div class="metric-value" id="image-count">0</div>
+                  <div class="metric-label">Total Images</div>
+                </div>
+              </div>
+              <div class="performance-actions">
+                <button class="performance-btn" data-action="optimize-images">Optimize Images</button>
+                <button class="performance-btn" data-action="enable-cdn">Enable CDN</button>
+              </div>
+            </div>
+
+            <div class="performance-card">
+              <div class="performance-card-header">
+                <div class="performance-icon">
+                  <i class="fas fa-database"></i>
+                </div>
+                <h3 class="performance-card-title">Database & Cache</h3>
+              </div>
+              <div class="performance-status">
+                <div class="status-indicator" id="cache-efficiency-status"></div>
+                <span class="status-text" id="cache-efficiency-status-text">Optimized</span>
+              </div>
+              <div class="performance-metrics">
+                <div class="performance-metric">
+                  <div class="metric-value" id="cache-efficiency">0%</div>
+                  <div class="metric-label">Cache Hit Rate</div>
+                </div>
+                <div class="performance-metric">
+                  <div class="metric-value" id="database-queries">0</div>
+                  <div class="metric-label">DB Queries</div>
+                </div>
+              </div>
+              <div class="performance-actions">
+                <button class="performance-btn" data-action="clear-cache">Clear Cache</button>
+                <button class="performance-btn" data-action="optimize-database">Optimize DB</button>
+              </div>
+            </div>
+
+            <div class="performance-card">
+              <div class="performance-card-header">
+                <div class="performance-icon">
+                  <i class="fas fa-memory"></i>
+                </div>
+                <h3 class="performance-card-title">System Resources</h3>
+              </div>
+              <div class="performance-status">
+                <div class="status-indicator" id="memory-status"></div>
+                <span class="status-text" id="memory-status-text">Optimized</span>
+              </div>
+              <div class="performance-metrics">
+                <div class="performance-metric">
+                  <div class="metric-value" id="memory-usage">0%</div>
+                  <div class="metric-label">Memory Usage</div>
+                </div>
+                <div class="performance-metric">
+                  <div class="metric-value" id="cdn-status">Active</div>
+                  <div class="metric-label">CDN Status</div>
+                </div>
+              </div>
+              <div class="performance-actions">
+                <button class="performance-btn" data-action="run-full-optimization">Full Optimization</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="optimization-progress">
+            <div class="progress-header">
+              <span class="progress-title">Overall Performance</span>
+              <span class="progress-percentage" data-progress="overall-performance">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="overall-performance" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="optimization-progress">
+            <div class="progress-header">
+              <span class="progress-title">Optimization Progress</span>
+              <span class="progress-percentage" data-progress="optimization-progress">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="optimization-progress" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="performance-insights">
+            <div class="insights-header">
+              <div class="insights-icon">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <h3 class="insights-title">Optimization Suggestions</h3>
+            </div>
+            <div class="insights-list optimization-suggestions">
+              <!-- Suggestions will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <div id="optimization-progress-message" style="display: none; text-align: center; padding: 10px; background: rgba(37, 211, 102, 0.1); border-radius: 8px; margin-top: 15px;"></div>
+        </div>
       </div>
     </div>
     <div class="chat-modal" id="chat-modal">

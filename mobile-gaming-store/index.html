@@ -22,6 +22,8 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <link rel="stylesheet" href="assets/css/fresh-arrivals.css" />
+    <link rel="stylesheet" href="assets/css/smart-recommendations.css" />
+    <link rel="stylesheet" href="assets/css/analytics-dashboard.css" />
     <style>
       * {
         margin: 0;
@@ -4070,6 +4072,186 @@
       </div>
     </section>
 
+    <!-- Smart Product Recommendations Section -->
+    <section class="smart-recommendations">
+      <div class="container">
+        <div class="recommendations-header">
+          <h2 class="recommendations-title">Smart Recommendations 🤖</h2>
+          <p class="recommendations-subtitle">AI-powered suggestions based on your preferences and trending items</p>
+        </div>
+        
+        <div class="recommendations-tabs">
+          <button class="recommendation-tab active" data-tab="personalized">
+            <i class="fas fa-user"></i> Personalized
+          </button>
+          <button class="recommendation-tab" data-tab="trending">
+            <i class="fas fa-fire"></i> Trending
+          </button>
+          <button class="recommendation-tab" data-tab="similar">
+            <i class="fas fa-sync"></i> Similar Items
+          </button>
+          <button class="recommendation-tab" data-tab="bundle">
+            <i class="fas fa-box"></i> Bundles
+          </button>
+        </div>
+
+        <div class="recommendations-content">
+          <div class="recommendation-section active" data-section="personalized">
+            <div class="recommendation-grid"></div>
+          </div>
+          
+          <div class="recommendation-section" data-section="trending">
+            <div class="recommendation-grid"></div>
+          </div>
+          
+          <div class="recommendation-section" data-section="similar">
+            <div class="recommendation-grid"></div>
+          </div>
+          
+          <div class="recommendation-section" data-section="bundle">
+            <div class="recommendation-grid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real-time Analytics Dashboard -->
+    <section class="analytics-dashboard">
+      <div class="container">
+        <div class="analytics-header">
+          <h2 class="analytics-title">Real-time Analytics 📊</h2>
+          <p class="analytics-subtitle">Live insights into your store performance and user behavior</p>
+        </div>
+
+        <div class="analytics-filters">
+          <button class="analytics-filter active" data-timeframe="24h">24 Hours</button>
+          <button class="analytics-filter" data-timeframe="7d">7 Days</button>
+          <button class="analytics-filter" data-timeframe="30d">30 Days</button>
+          <button class="analytics-filter" data-timeframe="90d">90 Days</button>
+        </div>
+
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h3 class="analytics-card-title">Total Visitors</h3>
+              <div class="analytics-card-icon">
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+            <div class="analytics-value" id="visitors-count">0</div>
+            <div class="analytics-change positive" id="visitors-change">
+              <i class="fas fa-arrow-up"></i> +12%
+            </div>
+            <div class="analytics-live-indicator">
+              <div class="live-dot"></div>
+              LIVE
+            </div>
+            <div class="analytics-chart-container">
+              <canvas id="visitors-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h3 class="analytics-card-title">Page Views</h3>
+              <div class="analytics-card-icon">
+                <i class="fas fa-eye"></i>
+              </div>
+            </div>
+            <div class="analytics-value" id="pageviews-count">0</div>
+            <div class="analytics-change positive" id="pageviews-change">
+              <i class="fas fa-arrow-up"></i> +8%
+            </div>
+            <div class="analytics-metrics">
+              <div class="analytics-metric">
+                <div class="metric-value" id="avg-session">0</div>
+                <div class="metric-label">Avg Session</div>
+              </div>
+              <div class="analytics-metric">
+                <div class="metric-value" id="bounce-rate">0%</div>
+                <div class="metric-label">Bounce Rate</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h3 class="analytics-card-title">Conversions</h3>
+              <div class="analytics-card-icon">
+                <i class="fas fa-shopping-cart"></i>
+              </div>
+            </div>
+            <div class="analytics-value" id="conversions-count">0</div>
+            <div class="analytics-change positive" id="conversions-change">
+              <i class="fas fa-arrow-up"></i> +15%
+            </div>
+            <div class="analytics-chart-container">
+              <canvas id="revenue-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h3 class="analytics-card-title">Revenue</h3>
+              <div class="analytics-card-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+            </div>
+            <div class="analytics-value" id="revenue-count">$0</div>
+            <div class="analytics-change positive" id="revenue-change">
+              <i class="fas fa-arrow-up"></i> +22%
+            </div>
+            <div class="analytics-metrics">
+              <div class="analytics-metric">
+                <div class="metric-value" id="avg-order">$0</div>
+                <div class="metric-label">Avg Order</div>
+              </div>
+              <div class="analytics-metric">
+                <div class="metric-value" id="cart-abandonment">0%</div>
+                <div class="metric-label">Cart Abandonment</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h3 class="analytics-card-title">Top Products</h3>
+              <div class="analytics-card-icon">
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+            <div class="analytics-chart-container">
+              <canvas id="top-products-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <h3 class="analytics-card-title">User Behavior</h3>
+              <div class="analytics-card-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+            </div>
+            <div class="analytics-chart-container">
+              <canvas id="user-behavior-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-insights">
+          <div class="insights-header">
+            <div class="insights-icon">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <h3 class="insights-title">AI-Powered Insights</h3>
+          </div>
+          <div class="insights-list">
+            <!-- Insights will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="featured-products">
       <div class="section-header">
         <h2 class="section-title">Featured Products ⭐</h2>
@@ -4315,9 +4497,11 @@
     >
 
     <script src="assets/js/cart.js"></script>
-    <script src="assets/js/messages.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/fresh-arrivals.js"></script>
+                  <script src="assets/js/messages.js"></script>
+              <script src="assets/js/main.js"></script>
+              <script src="assets/js/fresh-arrivals.js"></script>
+              <script src="assets/js/smart-recommendations.js"></script>
+              <script src="assets/js/analytics-dashboard.js"></script>
     <!-- Cart.js must be loaded before main.js so cart functions are available -->
     
     <script>
