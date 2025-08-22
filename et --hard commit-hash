@@ -1,0 +1,5 @@
+[33m943b39b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix admin dashboard image editing functionality - Add image upload and URL update support for existing products - Update server endpoint to handle both file uploads and URL updates - Improve UI with better labels and tooltips for image editing
+[33m6e70605[m Update delivery pricing and shipping logic: Standard , Express , Premium , free shipping over , remove shipping from cart page
+[33md1e77ea[m[33m ([m[1;31morigin/product-page-improvements[m[33m)[m Simplify product page - remove color/size options, keep only quantity, and increase shipping fees to .99
+[33mf426001[m Fix navbar design consistency and quickview modal - improve responsive layout for laptop view and enhance View Details button styling
+[33m56f41b5[m Add quickview functionality to product cards - implement modal popup with product details and add-to-cart

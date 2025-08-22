@@ -90,13 +90,44 @@ app.get('/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
-// Get all products
+// Get all products with enhanced filtering
 app.get('/products', async (req, res) => {
   try {
     const productsPath = path.join(__dirname, 'data', 'products.json');
     const productsData = await fs.readFile(productsPath, 'utf8');
     const products = JSON.parse(productsData);
-    res.json(products);
+    
+    // Check if client wants fresh products only
+    const freshOnly = req.query.fresh === 'true';
+    const lastUpdate = req.query.lastUpdate;
+    
+    if (freshOnly) {
+      const now = new Date();
+      const fourteenDaysAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+      const freshProducts = products.filter(product => {
+        if (!product.createdAt) return false;
+        const productDate = new Date(product.createdAt);
+        return productDate >= fourteenDaysAgo;
+      }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      res.json(freshProducts);
+    } else if (lastUpdate) {
+      // Return only products updated since lastUpdate
+      const lastUpdateTime = new Date(lastUpdate);
+      const updatedProducts = products.filter(product => {
+        if (!product.updatedAt) return false;
+        const productUpdateTime = new Date(product.updatedAt);
+        return productUpdateTime > lastUpdateTime;
+      });
+      
+      res.json({
+        hasUpdates: updatedProducts.length > 0,
+        products: updatedProducts,
+        lastUpdate: new Date().toISOString()
+      });
+    } else {
+      res.json(products);
+    }
   } catch (error) {
     console.error('Error reading products:', error);
     res.status(500).json({ error: 'Failed to read products' });

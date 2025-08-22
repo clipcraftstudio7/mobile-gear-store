@@ -1,0 +1,10 @@
+[33m54e830e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Update admin dashboard and main functionality
+[33m2c9d4a1[m Bypass multer issues temporarily - use default images for now
+[33m86f50ef[m Fix multer errors by making file upload completely flexible and adding error handling
+[33m9d1436a[m Fix multer file upload issues with more flexible configuration
+[33m355790a[m Fix multer upload errors and add better error handling for file uploads
+[33mf7db32b[m Fix Render deployment - ensure server starts properly
+[33m668bbb9[m Implement enhanced Fresh Arrivals system with dynamic updates and admin integration
+[33m2cb81cd[m Add Fresh Arrivals section with black theme and fix script loading order
+[33mfb69efb[m Fix product data persistence: Add Node.js server config, backup system, and Render deployment setup
+[33m6e70605[m Update delivery pricing and shipping logic: Standard , Express , Premium , free shipping over , remove shipping from cart page
