@@ -191,8 +191,8 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .fresh-arrivals-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
   }
   
   .fresh-arrivals-notification,
@@ -206,8 +206,54 @@
 /* Tablet and Laptop Responsive Sizing */
 @media (min-width: 768px) and (max-width: 1024px) {
   .fresh-arrivals-grid {
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 30px;
+  }
+  
+  .fresh-arrivals-grid .product-card {
+    max-width: 500px;
+  }
+  
+  .product-info {
+    padding: 25px;
+  }
+  
+  .product-title {
+    font-size: 1.4rem;
+  }
+  
+  .product-price {
+    font-size: 1.6rem;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .fresh-arrivals-grid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 35px;
+  }
+  
+  .fresh-arrivals-grid .product-card {
+    max-width: 450px;
+  }
+  
+  .product-info {
+    padding: 22px;
+  }
+  
+  .product-title {
+    font-size: 1.3rem;
+  }
+  
+  .product-price {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 1441px) {
+  .fresh-arrivals-grid {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 25px;
+    gap: 40px;
   }
   
   .fresh-arrivals-grid .product-card {
@@ -215,60 +261,14 @@
   }
   
   .product-info {
-    padding: 20px;
+    padding: 25px;
   }
   
   .product-title {
-    font-size: 1.2rem;
-  }
-  
-  .product-price {
-    font-size: 1.4rem;
-  }
-}
-
-@media (min-width: 1025px) and (max-width: 1440px) {
-  .fresh-arrivals-grid {
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 28px;
-  }
-  
-  .fresh-arrivals-grid .product-card {
-    max-width: 380px;
-  }
-  
-  .product-info {
-    padding: 18px;
-  }
-  
-  .product-title {
-    font-size: 1.1rem;
-  }
-  
-  .product-price {
     font-size: 1.3rem;
   }
-}
-
-@media (min-width: 1441px) {
-  .fresh-arrivals-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-  }
-  
-  .fresh-arrivals-grid .product-card {
-    max-width: 350px;
-  }
-  
-  .product-info {
-    padding: 20px;
-  }
-  
-  .product-title {
-    font-size: 1.1rem;
-  }
   
   .product-price {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
   }
 }
