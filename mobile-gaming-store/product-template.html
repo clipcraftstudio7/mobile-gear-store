@@ -99,6 +99,10 @@
         color: #128c7e;
       }
 
+
+
+
+
       .search-container {
         position: relative;
         flex: 1;
@@ -735,6 +739,22 @@
         body {
           padding-bottom: 70px !important;
         }
+        
+        /* Hide product description on mobile to reduce padding */
+        .product-description {
+          display: none;
+        }
+        
+        /* Reduce padding on mobile for better space utilization */
+        .product-container {
+          padding: 20px 15px;
+        }
+        
+        .product-info {
+          padding: 15px 0;
+        }
+        
+
       }
 
       @media (min-width: 769px) {
@@ -3086,10 +3106,6 @@
     <div class="reviews-section" id="reviews">
       <div class="reviews-header">
         <h3 class="reviews-title">Customer Reviews</h3>
-        <button class="write-review-btn" onclick="writeReview()">
-          <i class="fas fa-pen"></i>
-          Write Review
-        </button>
       </div>
       <div id="reviews-container">
         <!-- Reviews will be loaded dynamically -->
@@ -3141,6 +3157,8 @@
       // Initialize cart system like homepage
       document.addEventListener("DOMContentLoaded", async function () {
         console.log("Product Template: Initializing cart system...");
+        
+
 
         // Initialize Supabase client
         const supabaseUrl = "https://kokntkhxkymllafuubun.supabase.co";
@@ -5319,46 +5337,19 @@
       function loadReviews() {
         const reviewsContainer = document.getElementById("reviews-container");
 
-        // Sample reviews (would normally come from database)
-        const reviews = [
-          {
-            name: "Alex Johnson",
-            rating: 5,
-            date: "2024-01-15",
-            text: "Excellent controller! The ergonomic design is perfect for long gaming sessions.",
-          },
-          {
-            name: "Sarah Chen",
-            rating: 4,
-            date: "2024-01-10",
-            text: "Great quality and responsive buttons. Battery life is impressive.",
-          },
-          {
-            name: "Mike Rodriguez",
-            rating: 5,
-            date: "2024-01-05",
-            text: "Best mobile gaming controller I've ever used. Highly recommend!",
-          },
-        ];
-
-        reviewsContainer.innerHTML = reviews
-          .map(
-            (review) => `
-                <div class="review-item">
-                    <div class="review-header">
-                        <span class="reviewer-name">${review.name}</span>
-                        <span class="review-date">${new Date(
-                          review.date
-                        ).toLocaleDateString()}</span>
-                    </div>
-                    <div class="review-rating">${"⭐".repeat(
-                      review.rating
-                    )}</div>
-                    <div class="review-text">${review.text}</div>
-                </div>
-            `
-          )
-          .join("");
+        // Reviews will be loaded dynamically from database or API
+        // For now, show a message that reviews are coming soon
+        reviewsContainer.innerHTML = `
+          <div style="text-align: center; padding: 40px 20px; color: #999;">
+            <i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 15px; color: #25d366;"></i>
+            <h4 style="margin-bottom: 10px; color: #25d366;">Customer Reviews</h4>
+            <p>Reviews will be available soon. Be the first to review this product!</p>
+            <button class="write-review-btn" onclick="writeReview()" style="margin-top: 15px;">
+              <i class="fas fa-pen"></i>
+              Write First Review
+            </button>
+          </div>
+        `;
       }
 
       // Load related products
@@ -5553,6 +5544,8 @@
         // This would open a review modal or redirect to review page
         showMessage("Review feature coming soon!", "success");
       }
+
+
 
       // Header scroll effect
       window.addEventListener("scroll", () => {

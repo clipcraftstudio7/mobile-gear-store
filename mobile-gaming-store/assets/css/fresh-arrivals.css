@@ -19,17 +19,7 @@
   animation: pulse 2s infinite;
 }
 
-.time-badge {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 11px;
-  z-index: 10;
-}
+
 
 .no-fresh-products {
   text-align: center;
@@ -93,11 +83,11 @@
 
 /* Enhanced Product Cards for Fresh Arrivals */
 .fresh-arrivals-grid .product-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(26, 26, 26, 0.95);
   border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(37, 211, 102, 0.2);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -110,7 +100,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #ffffff, #cccccc, #999999, #ffffff);
+  background: linear-gradient(90deg, #25d366, #128c7e, #25d366, #128c7e);
   background-size: 200% 100%;
   animation: rainbow 3s ease-in-out infinite;
 }
@@ -122,7 +112,8 @@
 
 .fresh-arrivals-grid .product-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px rgba(37, 211, 102, 0.2);
+  border-color: rgba(37, 211, 102, 0.4);
 }
 
 /* Notification Styles */
@@ -200,8 +191,8 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .fresh-arrivals-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
   }
   
   .fresh-arrivals-notification,
@@ -209,5 +200,75 @@
     right: 10px;
     left: 10px;
     max-width: none;
+  }
+}
+
+/* Tablet and Laptop Responsive Sizing */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .fresh-arrivals-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+  }
+  
+  .fresh-arrivals-grid .product-card {
+    max-width: 400px;
+  }
+  
+  .product-info {
+    padding: 20px;
+  }
+  
+  .product-title {
+    font-size: 1.2rem;
+  }
+  
+  .product-price {
+    font-size: 1.4rem;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .fresh-arrivals-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+  }
+  
+  .fresh-arrivals-grid .product-card {
+    max-width: 380px;
+  }
+  
+  .product-info {
+    padding: 18px;
+  }
+  
+  .product-title {
+    font-size: 1.1rem;
+  }
+  
+  .product-price {
+    font-size: 1.3rem;
+  }
+}
+
+@media (min-width: 1441px) {
+  .fresh-arrivals-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+  }
+  
+  .fresh-arrivals-grid .product-card {
+    max-width: 350px;
+  }
+  
+  .product-info {
+    padding: 20px;
+  }
+  
+  .product-title {
+    font-size: 1.1rem;
+  }
+  
+  .product-price {
+    font-size: 1.3rem;
   }
 }

@@ -178,29 +178,29 @@ body {
 }
 
 .products-grid {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* wider cards */
-  gap: 40px; /* increased gap */
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* wider cards */
+  gap: 45px; /* increased gap */
 }
 .product-card.compact {
-  min-width: 320px;
-  max-width: 400px;
+  min-width: 350px;
+  max-width: 450px;
   margin: 0 auto;
 }
 .product-image {
-  height: 200px !important; /* increased from 160px */
+  height: 220px !important; /* increased from 200px */
 }
 .product-info {
-  padding: 10px 16px !important;
+  padding: 12px 18px !important;
 }
 .product-title {
-  font-size: 1rem !important;
+  font-size: 1.1rem !important;
   min-height: 2.6em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .product-price {
-  font-size: 1.1rem !important;
+  font-size: 1.2rem !important;
   margin-bottom: 6px;
 }
 .product-description {
@@ -246,7 +246,7 @@ body {
 
 .product-image {
   width: 100%;
-  height: 250px;
+  height: 280px;
   object-fit: cover;
   transition: transform 0.3s ease;
 }

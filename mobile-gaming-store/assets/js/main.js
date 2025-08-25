@@ -39,16 +39,36 @@ async function loadProducts() {
   }
 }
 
-// Helper function to get fresh products (added within last 14 days)
+// Helper function to get fresh products (added within last 30 days or marked as new)
 function getFreshProducts(products) {
   const now = new Date();
-  const fourteenDaysAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+  const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
   
-  return products.filter(product => {
+  // First, try to find products added in the last 30 days
+  let freshProducts = products.filter(product => {
     if (!product.createdAt) return false;
     const productDate = new Date(product.createdAt);
-    return productDate >= fourteenDaysAgo;
-  }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return productDate >= thirtyDaysAgo;
+  });
+
+  // If no recent products, show products marked as new
+  if (freshProducts.length === 0) {
+    freshProducts = products.filter(product => product.isNew === true);
+  }
+
+  // If still no products, show the most recent 6 products
+  if (freshProducts.length === 0) {
+    freshProducts = products
+      .filter(product => product.createdAt)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 6);
+  }
+
+  // Sort by creation date (newest first)
+  return freshProducts.sort((a, b) => {
+    if (!a.createdAt || !b.createdAt) return 0;
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 }
 
 // Helper function to format time since added
@@ -194,7 +214,6 @@ function createFreshProductCard(product) {
         ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ""}
         <div class="stock-indicator ${stockClass}">${stockText}</div>
         <div class="new-badge">NEW</div>
-        ${timeSinceAdded ? `<div class="time-badge">${timeSinceAdded}</div>` : ""}
       </div>
       <div class="product-info">
         <div class="product-header">
@@ -362,6 +381,7 @@ async function renderProductGrids() {
   if (freshArrivalsGrid) {
     const freshProducts = getFreshProducts(products);
     freshArrivalsGrid.innerHTML = freshProducts
+      .slice(0, 6)
       .map(createFreshProductCard)
       .join("");
     
@@ -369,6 +389,12 @@ async function renderProductGrids() {
     const counterElement = document.getElementById("new-products-count");
     if (counterElement) {
       counterElement.textContent = freshProducts.length;
+    }
+    
+    // Also update the fresh arrivals manager if it exists
+    if (window.freshArrivalsManager) {
+      window.freshArrivalsManager.freshProducts = freshProducts;
+      window.freshArrivalsManager.updateCounter();
     }
   }
 

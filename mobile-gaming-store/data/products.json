@@ -1226,7 +1226,9 @@
       "Programmable Buttons",
       "RGB Lighting",
       "Ultra-Lightweight"
-    ]
+    ],
+    "createdAt": "2024-12-15T09:30:00.000Z",
+    "isNew": true
   },
   {
     "id": 1754832650674,
@@ -1250,7 +1252,9 @@
     "description": "43g",
     "features": [
       "43g33g3qh"
-    ]
+    ],
+    "createdAt": "2025-01-15T10:30:00.000Z",
+    "isNew": true
   },
   {
     "id": 1754842115241,
@@ -1274,6 +1278,8 @@
     "description": "etu",
     "features": [
       "esusxu"
-    ]
+    ],
+    "createdAt": "2025-01-16T14:20:00.000Z",
+    "isNew": true
   }
 ]
