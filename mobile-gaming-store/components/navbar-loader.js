@@ -445,44 +445,129 @@ async function logout() {
 }
 
 function initializeMobileNavbar() {
+  console.log("=== Initializing Mobile Navbar ===");
+  
+  // Show mobile navbar on mobile devices
+  const mobileNavbar = document.querySelector(".mobile-bottom-navbar");
+  if (mobileNavbar) {
+    // Check if we're on a mobile device
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      mobileNavbar.style.display = "block";
+      console.log("Mobile navbar shown on mobile device");
+      
+      // Test if mobile navbar is visible
+      setTimeout(() => {
+        const computedStyle = window.getComputedStyle(mobileNavbar);
+        console.log("Mobile navbar display:", computedStyle.display);
+        console.log("Mobile navbar visibility:", computedStyle.visibility);
+        console.log("Mobile navbar opacity:", computedStyle.opacity);
+      }, 100);
+    } else {
+      mobileNavbar.style.display = "none";
+      console.log("Mobile navbar hidden on desktop");
+    }
+  } else {
+    console.log("Mobile navbar element not found");
+  }
+  
   // Mobile categories dropdown
   const categoriesBtn = document.getElementById("mobile-categories-btn");
   const categoriesMenu = document.getElementById(
     "mobile-categories-dropup-menu"
   );
+  
+  console.log("Categories button found:", !!categoriesBtn);
+  console.log("Categories menu found:", !!categoriesMenu);
 
   if (categoriesBtn && categoriesMenu) {
     categoriesBtn.addEventListener("click", function (e) {
       e.preventDefault();
       const isVisible = categoriesMenu.style.display === "block";
-      categoriesMenu.style.display = isVisible ? "none" : "block";
+      if (isVisible) {
+        categoriesMenu.style.display = "none";
+        categoriesMenu.style.opacity = "0";
+        categoriesMenu.style.visibility = "hidden";
+      } else {
+        categoriesMenu.style.display = "block";
+        categoriesMenu.style.opacity = "1";
+        categoriesMenu.style.visibility = "visible";
+      }
 
       // Close messages menu if open
       const messagesMenu = document.getElementById(
         "mobile-messages-dropup-menu"
       );
-      if (messagesMenu) messagesMenu.style.display = "none";
+      if (messagesMenu) {
+        messagesMenu.style.display = "none";
+        messagesMenu.style.opacity = "0";
+        messagesMenu.style.visibility = "hidden";
+      }
     });
   }
 
   // Mobile messages dropdown
   const messagesBtn = document.getElementById("mobile-messages-btn");
   const messagesMenu = document.getElementById("mobile-messages-dropup-menu");
+  
+  console.log("Messages button found:", !!messagesBtn);
+  console.log("Messages menu found:", !!messagesMenu);
+  
+  if (messagesBtn) {
+    console.log("Messages button href:", messagesBtn.href);
+    console.log("Messages button onclick:", messagesBtn.onclick);
+    console.log("Messages button style:", messagesBtn.style.cssText);
+  }
 
   if (messagesBtn && messagesMenu) {
-    messagesBtn.addEventListener("click", function (e) {
+    console.log("Adding click event listener to messages button");
+    
+    // Test if button is clickable
+    messagesBtn.style.cursor = "pointer";
+    messagesBtn.style.pointerEvents = "auto";
+    
+    // Remove any existing event listeners to prevent conflicts
+    const newMessagesBtn = messagesBtn.cloneNode(true);
+    messagesBtn.parentNode.replaceChild(newMessagesBtn, messagesBtn);
+    
+    newMessagesBtn.addEventListener("click", function (e) {
+      console.log("Messages button clicked!");
       e.preventDefault();
+      
+      // Toggle messages dropdown menu
       const isVisible = messagesMenu.style.display === "block";
-      messagesMenu.style.display = isVisible ? "none" : "block";
-
-      // Load messages when opening
-      if (!isVisible) {
-        loadMobileMessages();
+      console.log("Messages menu currently visible:", isVisible);
+      if (isVisible) {
+        messagesMenu.style.display = "none";
+        messagesMenu.style.opacity = "0";
+        messagesMenu.style.visibility = "hidden";
+        console.log("Hiding messages menu");
+      } else {
+        messagesMenu.style.display = "block";
+        messagesMenu.style.opacity = "1";
+        messagesMenu.style.visibility = "visible";
+        messagesMenu.style.zIndex = "1001";
+        messagesMenu.style.pointerEvents = "auto";
+        console.log("Showing messages menu");
+        console.log("Menu display:", messagesMenu.style.display);
+        console.log("Menu opacity:", messagesMenu.style.opacity);
+        console.log("Menu visibility:", messagesMenu.style.visibility);
+        console.log("Menu z-index:", messagesMenu.style.zIndex);
       }
 
       // Close categories menu if open
-      if (categoriesMenu) categoriesMenu.style.display = "none";
+      const categoriesMenu = document.getElementById(
+        "mobile-categories-dropup-menu"
+      );
+      if (categoriesMenu) {
+        categoriesMenu.style.display = "none";
+        categoriesMenu.style.opacity = "0";
+        categoriesMenu.style.visibility = "hidden";
+      }
     });
+    
+    // Update the reference to use the new button
+    const updatedMessagesBtn = newMessagesBtn;
 
     // Mark all read functionality
     const markAllReadBtn = messagesMenu.querySelector(".mark-all-read");
@@ -490,6 +575,16 @@ function initializeMobileNavbar() {
       markAllReadBtn.addEventListener("click", function (e) {
         e.stopPropagation();
         markAllMobileMessagesAsRead();
+      });
+    }
+
+    // View all messages functionality
+    const viewAllMessagesBtn = messagesMenu.querySelector(".view-all-messages");
+    if (viewAllMessagesBtn) {
+      viewAllMessagesBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href = "message-center.html";
       });
     }
   }
@@ -502,13 +597,17 @@ function initializeMobileNavbar() {
       !categoriesMenu.contains(e.target)
     ) {
       categoriesMenu.style.display = "none";
+      categoriesMenu.style.opacity = "0";
+      categoriesMenu.style.visibility = "hidden";
     }
     if (
       messagesMenu &&
-      !messagesBtn.contains(e.target) &&
+      !updatedMessagesBtn.contains(e.target) &&
       !messagesMenu.contains(e.target)
     ) {
       messagesMenu.style.display = "none";
+      messagesMenu.style.opacity = "0";
+      messagesMenu.style.visibility = "hidden";
     }
   });
 
@@ -519,7 +618,39 @@ function initializeMobileNavbar() {
   initializeMobileUserAuth();
 
   // Initialize mobile message count and periodic updates
+  
+  // Handle window resize for mobile navbar visibility
+  window.addEventListener('resize', function() {
+    const mobileNavbar = document.querySelector(".mobile-bottom-navbar");
+    if (mobileNavbar) {
+      const isMobile = window.innerWidth <= 768;
+      mobileNavbar.style.display = isMobile ? "block" : "none";
+    }
+  });
   initializeMobileMessageCount();
+  
+  // Force initial message count update
+  setTimeout(() => {
+    updateMobileMessageCount();
+  }, 1000);
+  
+  // Debug message count
+  setTimeout(() => {
+    const messageCount = document.getElementById("message-count-mobile");
+    if (messageCount) {
+      console.log("=== Message Count Debug ===");
+      console.log("Message count element found:", !!messageCount);
+      console.log("Current count text:", messageCount.textContent);
+      console.log("Current display style:", messageCount.style.display);
+      console.log("Computed display:", window.getComputedStyle(messageCount).display);
+      
+      if (window.messageCenter) {
+        const unreadCount = window.messageCenter.getUnreadMessages().length;
+        console.log("Message center unread count:", unreadCount);
+        console.log("All messages:", window.messageCenter.messages);
+      }
+    }
+  }, 2000);
 }
 
 function updateMobileCartCount() {
@@ -747,6 +878,32 @@ async function initializeMobileMessageCount() {
       updateMobileMessageCount();
     };
   }
+  
+  // Force update message count on page load
+  setTimeout(async () => {
+    try {
+      if (window.supabase) {
+        const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+        if (!userError && user) {
+          const { data: messages, error } = await window.supabase
+            .from("messages")
+            .select("id")
+            .eq("receiver_id", user.id)
+            .eq("is_read", false);
+          
+          const unreadCount = messages ? messages.length : 0;
+          updateMobileMessageCount(unreadCount);
+        }
+      } else {
+        // Fallback to localStorage
+        const savedMessages = JSON.parse(localStorage.getItem("messages") || "[]");
+        const unreadCount = savedMessages.filter(m => m.unread || !m.is_read).length;
+        updateMobileMessageCount(unreadCount);
+      }
+    } catch (error) {
+      console.error("Error updating initial message count:", error);
+    }
+  }, 2000);
 }
 
 async function initializeMobileUserAuth() {

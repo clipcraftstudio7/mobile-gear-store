@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Mobile Messages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .test-button {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .test-button:hover {
+            background: #1ea952;
+        }
+        .status {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Mobile Messages Test</h1>
+        
+        <div class="status" id="status">
+            <h3>Status</h3>
+            <p>Loading...</p>
+        </div>
+        
+                <div>
+          <button class="test-button" onclick="addTestMessage()">Add Test Message</button>
+          <button class="test-button" onclick="clearMessages()">Clear Messages</button>
+          <button class="test-button" onclick="testClick()">Test Message Button Click</button>
+          <button class="test-button" onclick="checkLocalStorage()">Check localStorage</button>
+        </div>
+        
+        <div id="navbar-container"></div>
+    </div>
+
+    <!-- Load required scripts -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    <script src="assets/js/messages.js"></script>
+    <script src="components/navbar-loader.js"></script>
+    
+    <script>
+        let messageCenter;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize message center
+            messageCenter = new MessageCenter();
+            
+            // Update status
+            updateStatus();
+            
+            // Test mobile navbar after a delay
+            setTimeout(() => {
+                testMobileNavbar();
+            }, 2000);
+        });
+        
+        function updateStatus() {
+            const status = document.getElementById('status');
+            const messagesBtn = document.getElementById('mobile-messages-btn');
+            const messagesMenu = document.getElementById('mobile-messages-dropup-menu');
+            const messageCount = document.getElementById('message-count-mobile');
+            
+            let statusHtml = '<h3>Status</h3>';
+            statusHtml += `<p>Message Center: ${messageCenter ? 'Loaded' : 'Not loaded'}</p>`;
+            statusHtml += `<p>Messages Button: ${messagesBtn ? 'Found' : 'Not found'}</p>`;
+            statusHtml += `<p>Messages Menu: ${messagesMenu ? 'Found' : 'Not found'}</p>`;
+            statusHtml += `<p>Message Count: ${messageCount ? 'Found' : 'Not found'}</p>`;
+            
+            if (messageCount) {
+                statusHtml += `<p>Current Count: ${messageCount.textContent}</p>`;
+                statusHtml += `<p>Count Display: ${messageCount.style.display}</p>`;
+            }
+            
+            if (messagesBtn) {
+                statusHtml += `<p>Button Href: ${messagesBtn.href}</p>`;
+                statusHtml += `<p>Button Cursor: ${messagesBtn.style.cursor}</p>`;
+                statusHtml += `<p>Button Pointer Events: ${messagesBtn.style.pointerEvents}</p>`;
+            }
+            
+            status.innerHTML = statusHtml;
+        }
+        
+        function addTestMessage() {
+            if (messageCenter) {
+                messageCenter.addMessage({
+                    type: 'system',
+                    title: 'Test Message',
+                    text: 'This is a test message ' + new Date().toLocaleTimeString()
+                });
+                updateStatus();
+            }
+        }
+        
+                function clearMessages() {
+          if (messageCenter) {
+            messageCenter.messages = [];
+            messageCenter.saveMessages();
+            messageCenter.updateMessageCount();
+            
+            // Also clear localStorage
+            localStorage.removeItem('messages');
+            
+            updateStatus();
+          }
+        }
+        
+        function testClick() {
+            const messagesBtn = document.getElementById('mobile-messages-btn');
+            if (messagesBtn) {
+                console.log('Simulating click on messages button');
+                messagesBtn.click();
+                updateStatus();
+            }
+        }
+        
+                function testMobileNavbar() {
+          console.log('=== Testing Mobile Navbar ===');
+          const messagesBtn = document.getElementById('mobile-messages-btn');
+          const messagesMenu = document.getElementById('mobile-messages-dropup-menu');
+          
+          if (messagesBtn) {
+            console.log('Messages button found');
+            console.log('Adding test click listener');
+            
+            messagesBtn.addEventListener('click', function(e) {
+              console.log('Test click listener triggered!');
+              e.preventDefault();
+              alert('Messages button clicked!');
+            });
+          } else {
+            console.log('Messages button not found');
+          }
+          
+          updateStatus();
+        }
+        
+        function checkLocalStorage() {
+          const messages = localStorage.getItem('messages');
+          console.log('=== localStorage Messages ===');
+          console.log('Raw localStorage:', messages);
+          if (messages) {
+            try {
+              const parsed = JSON.parse(messages);
+              console.log('Parsed messages:', parsed);
+              console.log('Number of messages:', parsed.length);
+              const unread = parsed.filter(m => m.unread);
+              console.log('Unread messages:', unread.length);
+            } catch (e) {
+              console.log('Error parsing messages:', e);
+            }
+          } else {
+            console.log('No messages in localStorage');
+          }
+        }
+    </script>
+</body>
+</html>

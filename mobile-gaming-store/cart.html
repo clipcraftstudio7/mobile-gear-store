@@ -383,33 +383,33 @@
           grid.innerHTML = related
             .map(
               (product) => `
-            <div class="product-card enhanced" style="background: #1c1c1c; border-radius: 14px; overflow: hidden; border: 1px solid #333; display: flex; flex-direction: column; min-width: 0;">
+            <div class="product-card enhanced" style="background: #1c1c1c; border-radius: 12px; overflow: hidden; border: 1px solid #333; display: flex; flex-direction: column; min-width: 0;">
               <div class="product-image-container" style="position: relative; overflow: hidden;">
                 <img src="${product.image}" alt="${
                 product.name
-              }" class="product-image" style="width: 100%; height: 100px; object-fit: cover;" />
+              }" class="product-image" style="width: 100%; height: 80px; object-fit: cover;" />
               </div>
-              <div class="product-info" style="padding: 10px; flex: 1; display: flex; flex-direction: column;">
-                <h3 class="product-title" style="font-size: 0.98rem; font-weight: 600; margin-bottom: 4px; color: #fff;">${
+              <div class="product-info" style="padding: 8px; flex: 1; display: flex; flex-direction: column;">
+                <h3 class="product-title" style="font-size: 0.9rem; font-weight: 600; margin-bottom: 3px; color: #fff;">${
                   product.name
                 }</h3>
-                <div class="product-price" style="font-size: 1.05rem; font-weight: 700; color: #25d366; margin-bottom: 6px;">$${
+                <div class="product-price" style="font-size: 0.95rem; font-weight: 700; color: #25d366; margin-bottom: 4px;">$${
                   product.price
                 }</div>
-                <p class="product-description" style="color: #ccc; font-size: 12px; margin-bottom: 8px;">${product.description.substring(
+                <p class="product-description" style="color: #ccc; font-size: 11px; margin-bottom: 6px;">${product.description.substring(
                   0,
-                  40
+                  35
                 )}...</p>
-                <div style="display: flex; gap: 6px; margin-top: auto;">
+                <div style="display: flex; gap: 4px; margin-top: auto;">
                   <a href="${
                     product.link
-                  }" class="add-to-cart-btn" style="background: #222; color: #25d366; border: 1px solid #25d366; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; text-align: center; text-decoration: none; flex: 1;">View</a>
+                  }" class="add-to-cart-btn" style="background: #222; color: #25d366; border: 1px solid #25d366; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center; text-decoration: none; flex: 1;">View</a>
                   <button class="add-related-btn" data-product='${JSON.stringify(
                     product
                   ).replace(
                     /'/g,
                     "&#39;"
-                  )}' style="background: linear-gradient(135deg, #25d366, #128c7e); color: white; border: none; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; flex: 1;">Add to Cart</button>
+                  )}' style="background: linear-gradient(135deg, #25d366, #128c7e); color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; flex: 1;">Add to Cart</button>
                 </div>
               </div>
             </div>
