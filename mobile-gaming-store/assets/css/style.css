@@ -545,3 +545,44 @@ body {
   box-shadow: 0 8px 32px rgba(37, 211, 102, 0.12);
   border-color: #25d366;
 }
+
+/* ===== VERY LARGE SCREENS (DESKTOPS 1600px+) - SMALLER PRODUCT CARDS ===== */
+@media (min-width: 1600px) {
+  .products-container {
+    max-width: 1600px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .product-image {
+    height: 160px !important;
+  }
+
+  .product-info {
+    padding: 0.7rem !important;
+  }
+
+  .product-title,
+  .product-name {
+    font-size: 1rem !important;
+  }
+
+  .product-price {
+    font-size: 1.05rem !important;
+    margin-bottom: 6px;
+  }
+
+  .product-description {
+    font-size: 0.85rem !important;
+    margin-bottom: 8px;
+  }
+
+  .add-to-cart,
+  .add-to-cart-btn {
+    padding: 0.6rem 0.9rem !important;
+    border-radius: 8px;
+  }
+}

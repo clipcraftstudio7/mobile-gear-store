@@ -3660,6 +3660,22 @@
         });
       })();
     </script>
+    <style>
+      /* Desktop overrides: only on very large screens */
+      @media (min-width: 1600px) {
+        .products-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; gap: 12px !important; }
+        .product-image { height: 160px !important; }
+        .product-info { padding: 10px !important; }
+        .product-title, .product-name { font-size: 0.95rem !important; }
+        .product-price { font-size: 1rem !important; margin-bottom: 6px !important; }
+        .product-description { font-size: 0.8rem !important; margin-bottom: 8px !important; }
+        .add-to-cart-btn { padding: 8px 12px !important; border-radius: 8px !important; font-size: 0.9rem !important; }
+      }
+      @media (min-width: 1920px) {
+        .products-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important; gap: 12px !important; }
+        .product-image { height: 150px !important; }
+      }
+    </style>
   </head>
   <body>
     <!-- Mobile Search Bar (Fixed at top on mobile) -->

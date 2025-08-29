@@ -2,8 +2,11 @@ services:
   - type: web
     name: mobile-gaming-store
     env: node
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: npm install --prefix mobile-gaming-store && npm install
+    startCommand: node mobile-gaming-store/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
     plan: free
     autoDeploy: true
     branch: main
