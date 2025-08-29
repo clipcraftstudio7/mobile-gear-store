@@ -8,12 +8,17 @@
     "dev": "nodemon server.js",
     "predeploy": "node pre-deploy-backup.js",
     "backup": "node backup-products.js backup",
-    "restore": "node backup-products.js restore"
+    "restore": "node backup-products.js restore",
+    "test:campaign": "node test-campaign-system.js",
+    "worker": "node workers/campaign-worker.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "@supabase/supabase-js": "^2.38.0",
+    "express-rate-limit": "^7.1.5",
+    "node-cron": "^3.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

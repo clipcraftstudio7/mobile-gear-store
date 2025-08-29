@@ -14,9 +14,25 @@ class FreshArrivalsManager {
 
   async loadFreshProducts() {
     try {
-      // Load products from the products.json file
-      const response = await fetch('data/products.json');
-      const allProducts = await response.json();
+      console.log('🔄 Loading fresh products...');
+      
+      // Use the same products API as the main system (works with live Supabase data)
+      let allProducts = [];
+      
+      if (typeof window.getProducts === 'function') {
+        console.log('📦 Using window.getProducts() for live data...');
+        allProducts = await window.getProducts();
+      } else if (typeof window.allProducts !== 'undefined' && window.allProducts.length > 0) {
+        console.log('📦 Using global allProducts as fallback...');
+        allProducts = window.allProducts;
+      } else {
+        console.log('📁 Falling back to local products.json...');
+        // Fallback to local file if nothing else works
+        const response = await fetch('data/products.json');
+        allProducts = await response.json();
+      }
+      
+      console.log(`📊 Loaded ${allProducts.length} total products`);
       
       const now = new Date();
       const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
@@ -28,9 +44,12 @@ class FreshArrivalsManager {
         return productDate >= thirtyDaysAgo;
       });
 
+      console.log(`🆕 Found ${freshProducts.length} products from last 30 days`);
+
       // If no recent products, show products marked as new
       if (freshProducts.length === 0) {
         freshProducts = allProducts.filter(product => product.isNew === true);
+        console.log(`🆕 Found ${freshProducts.length} products marked as new`);
       }
 
       // If still no products, show the most recent 6 products
@@ -39,6 +58,7 @@ class FreshArrivalsManager {
           .filter(product => product.createdAt)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 6);
+        console.log(`🆕 Using ${freshProducts.length} most recent products as fallback`);
       }
 
       // Sort by creation date (newest first)
@@ -47,13 +67,15 @@ class FreshArrivalsManager {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
 
+      console.log(`✅ Fresh arrivals loaded: ${this.freshProducts.length} products`);
       this.renderFreshArrivals();
       this.updateCounter();
     } catch (error) {
-      console.error('Error loading fresh products:', error);
-      // Fallback: try to get products from the global allProducts if available
+      console.error('❌ Error loading fresh products:', error);
+      
+      // Final fallback: try to get products from the global allProducts if available
       if (typeof window.allProducts !== 'undefined' && window.allProducts.length > 0) {
-        console.log('Using fallback: global allProducts');
+        console.log('🔄 Using final fallback: global allProducts');
         const now = new Date();
         const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
         
@@ -83,6 +105,9 @@ class FreshArrivalsManager {
 
         this.renderFreshArrivals();
         this.updateCounter();
+      } else {
+        console.error('❌ No products available for fresh arrivals');
+        this.renderFreshArrivals(); // This will show the "no products" message
       }
     }
   }
@@ -115,34 +140,61 @@ class FreshArrivalsManager {
       ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
       : 0;
 
+    const stockClass = product.stock <= 3 ? "low-stock" : "in-stock";
+    const stockText = product.stock <= 3 ? `Only ${product.stock} Left` : "In Stock";
+
     const timeSinceAdded = this.getTimeSinceAdded(product.createdAt);
 
     return `
-      <div class="product-card fresh-arrival" data-product-id="${product.id}">
+      <div class="product-card enhanced fresh-arrival" data-product-id="${product.id}">
         <div class="product-image-container">
           <img src="${product.image || 'assets/images/default-product.svg'}" 
                alt="${product.name}" 
                class="product-image" 
                onerror="this.onerror=null;this.src='assets/images/default-product.svg';" />
-                  <div class="new-badge">NEW</div>
+          <div class="product-overlay">
+            <button class="quick-view-btn">👁️ Quick View</button>
+            <button class="wishlist-btn">❤️</button>
+          </div>
           ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ""}
+          <div class="stock-indicator ${stockClass}">${stockText}</div>
+          <div class="new-badge">NEW</div>
         </div>
         <div class="product-info">
-          <h3 class="product-title">${product.name}</h3>
+          <div class="product-header">
+            <h3 class="product-title">${product.name}</h3>
+            <div class="product-rating">
+              <span class="stars">${"⭐".repeat(Math.round(product.rating || 4))}</span>
+              <span class="rating-count">(${product.reviews || 0})</span>
+            </div>
+          </div>
           <div class="product-price">
             ${product.originalPrice && product.originalPrice > product.price 
               ? `<span class="original-price">$${product.originalPrice.toLocaleString()}</span>` 
               : ""}
             <span class="discount-price">$${product.price.toLocaleString()}</span>
+            ${product.originalPrice && product.originalPrice > product.price
+              ? `<span class="savings">Save $${(product.originalPrice - product.price).toLocaleString()}</span>`
+              : ""}
           </div>
           <p class="product-description">${product.description ? product.description.substring(0, 80) + '...' : ''}</p>
-          <div class="product-actions">
-            <button class="add-to-cart-btn" onclick="addToCartFromCard(${product.id})">
-              Add to Cart
+          ${product.features && product.features.length > 0
+            ? `<div class="product-features">${product.features
+                .slice(0, 3)
+                .map((f) => `<span class="feature-tag">${f}</span>`)
+                .join("")}</div>`
+            : ""}
+          <div class="product-actions" style="display:flex;gap:10px;">
+            <button class="add-to-cart-btn" style="flex:1;" onclick="addToCartFromCard(${product.id})">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
             </button>
-            <a href="product-template.html?id=${product.id}" class="view-details-btn">
-              View Details
+            <a href="product-template.html?id=${product.id}" class="add-to-cart-btn" style="flex:1;text-align:center;">
+              <i class="fas fa-eye"></i> View Details
             </a>
+          </div>
+          <div class="product-meta">
+            <span>Category: ${product.category}</span>
+            <span>Stock: ${product.stock}</span>
           </div>
         </div>
       </div>
@@ -182,3 +234,23 @@ class FreshArrivalsManager {
 document.addEventListener('DOMContentLoaded', () => {
   window.freshArrivalsManager = new FreshArrivalsManager();
 });
+
+// Global function to refresh fresh arrivals (can be called from admin panel)
+window.refreshFreshArrivals = async () => {
+  console.log('🔄 Refreshing fresh arrivals from admin panel...');
+  if (window.freshArrivalsManager) {
+    await window.freshArrivalsManager.loadFreshProducts();
+  } else {
+    console.log('⚠️ Fresh arrivals manager not available, creating new instance...');
+    window.freshArrivalsManager = new FreshArrivalsManager();
+  }
+};
+
+// Global function to clear products cache and refresh
+window.clearCacheAndRefreshFreshArrivals = async () => {
+  console.log('🗑️ Clearing cache and refreshing fresh arrivals...');
+  if (typeof window.clearProductsCache === 'function') {
+    window.clearProductsCache();
+  }
+  await window.refreshFreshArrivals();
+};

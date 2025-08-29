@@ -607,6 +607,7 @@
             ><i class="fas fa-tachometer-alt"></i> Dashboard</a
           >
           <a href="#products"><i class="fas fa-box"></i> Products</a>
+          <a href="#campaigns"><i class="fas fa-bullhorn"></i> Campaigns</a>
           <a href="#orders"><i class="fas fa-shopping-cart"></i> Orders</a>
           <a href="#messages"><i class="fas fa-comments"></i> Messages</a>
         </nav>
@@ -634,6 +635,56 @@
           <div class="stat-box">
             <div class="stat-number" id="stat-orders">0</div>
             <div class="stat-label">Orders</div>
+          </div>
+        </div>
+
+        <!-- Campaigns Section -->
+        <div id="campaigns-section" style="display:none">
+          <h2 class="section-title" id="campaigns">Campaigns</h2>
+          <div style="display:flex; gap:8px; margin:8px 0 12px 0; flex-wrap:wrap; align-items:center">
+            <div style="display:flex; gap:6px; flex-wrap:wrap">
+              <button class="btn" style="background:#25d366;color:#111" onclick="window._campaignAdmin && window._campaignAdmin.openEditor(null)"><i class="fas fa-plus"></i> Create Campaign</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._campaignAdmin && window._campaignAdmin.quickCreate('flash')"><i class="fas fa-bolt"></i> New Flash</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._campaignAdmin && window._campaignAdmin.quickCreate('banner')"><i class="fas fa-image"></i> New Banner</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._campaignAdmin && window._campaignAdmin.quickCreate('popup')"><i class="fas fa-window-maximize"></i> New Popup</button>
+            </div>
+            <div style="display:flex; gap:6px; margin-left:auto">
+              <select id="campaign-type-filter" onchange="window._campaignAdmin && window._campaignAdmin.applyFilter(this.value)" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px">
+                <option value="all">All</option>
+                <option value="flash">Flash</option>
+                <option value="banner">Banner</option>
+                <option value="popup">Popup</option>
+                <option value="hero">Hero</option>
+              </select>
+              <button class="btn" style="background:#666;color:#fff" onclick="window._campaignAdmin && window._campaignAdmin.refresh()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+          </div>
+          <div id="campaigns-container" style="margin-bottom:12px"></div>
+        </div>
+
+        <!-- Campaign Editor Modal -->
+        <div class="editor-overlay" id="campaign-editor" style="display:none">
+          <div class="editor-modal">
+            <div class="editor-header">
+              <div class="editor-title" id="editor-title">New Campaign</div>
+              <button class="editor-close" onclick="window._campaignAdmin && window._campaignAdmin.closeEditor()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="editor-body">
+              <div class="editor-tabs" id="editor-tabs">
+                <button class="editor-tab-btn active" data-tab="details">Details</button>
+                <button class="editor-tab-btn" data-tab="products">Products</button>
+                <button class="editor-tab-btn" data-tab="assets">Banners / Assets</button>
+                <button class="editor-tab-btn" data-tab="popups">Popup Rules</button>
+                <button class="editor-tab-btn" data-tab="preview">Preview</button>
+              </div>
+              <div class="editor-content">
+                <div id="tab-details" class="tab-panel"></div>
+                <div id="tab-products" class="tab-panel" style="display:none"></div>
+                <div id="tab-assets" class="tab-panel" style="display:none"></div>
+                <div id="tab-popups" class="tab-panel" style="display:none"></div>
+                <div id="tab-preview" class="tab-panel" style="display:none"></div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- Admin Messaging Section -->
@@ -1785,7 +1836,7 @@
         // Hide all sections
         document
           .querySelectorAll(
-            ".add-product-form, #admin-messaging-section, #orders-section"
+            ".add-product-form, #admin-messaging-section, #orders-section, #campaigns-section"
           )
           .forEach((section) => {
             section.style.display = "none";
@@ -1795,6 +1846,10 @@
         switch (sectionName) {
           case "products":
             document.querySelector(".add-product-form").style.display = "block";
+            break;
+          case "campaigns":
+            document.getElementById("campaigns-section").style.display = "block";
+            if (!window._campaignAdmin) initCampaignsAdmin();
             break;
           case "messages":
             document.getElementById("admin-messaging-section").style.display =
@@ -2150,6 +2205,149 @@
           if (window.innerWidth <= 900) closeSidebar();
         });
       });
+    </script>
+    <script>
+      // Minimal styles for campaign editor (inline to avoid extra files)
+      (function injectCampaignStyles(){
+        const css = `
+          .editor-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:30000}
+          .editor-modal{width:95%;max-width:1100px;max-height:90vh;overflow:hidden;background:#121212;border:1px solid #333;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:flex;flex-direction:column}
+          .editor-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #333;background:#0f0f0f}
+          .editor-title{font-weight:800;color:#25d366}
+          .editor-close{background:transparent;border:none;color:#aaa;font-size:1.3rem;cursor:pointer}
+          .editor-body{display:flex;min-height:500px}
+          .editor-tabs{width:220px;border-right:1px solid #333;background:#0f0f0f}
+          .editor-tab-btn{width:100%;text-align:left;padding:14px 16px;border:none;background:transparent;color:#ddd;cursor:pointer;border-bottom:1px solid #1f1f1f}
+          .editor-tab-btn.active{background:#151515;color:#25d366}
+          .editor-content{flex:1;overflow-y:auto;padding:18px}
+          .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+          .form-group{display:flex;flex-direction:column;gap:6px}
+          .form-group label{color:#aaa;font-size:.9rem}
+          .form-group input,.form-group select,.form-group textarea{background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:8px;padding:10px}
+          .actions-row{display:flex;gap:10px;margin-top:10px}
+          .btn.primary{background:#25d366;color:#111}
+          .btn.secondary{background:transparent;border:1px solid #25d366;color:#25d366}
+          .btn.danger{background:#ff4757;color:#fff}
+          .list-table{width:100%;border-collapse:collapse}
+          .list-table th,.list-table td{border-bottom:1px solid #333;padding:10px;text-align:left}
+          .hint{color:#888;font-size:.85rem}
+          .uploader{border:1px dashed #333;border-radius:8px;padding:14px}
+          @media (max-width:900px){.form-grid{grid-template-columns:1fr}.editor-tabs{width:160px}}
+        `;
+        const style=document.createElement('style'); style.textContent=css; document.head.appendChild(style);
+      })();
+
+      async function getAuthHeaders(){
+        try{
+          const { data } = await supabase.auth.getSession();
+          const token = data?.session?.access_token;
+          return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type':'application/json' } : { 'Content-Type':'application/json' };
+        }catch{ return { 'Content-Type':'application/json' }; }
+      }
+
+      function initCampaignsAdmin(){
+        class CampaignAdmin {
+          constructor(){ this.current={id:null,data:null}; this.campaigns=[]; this.filter=null; this.load(); }
+          async headers(){ return await getAuthHeaders(); }
+          async load(){ try{ const res=await fetch('/admin/campaigns',{ headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Load failed'); this.campaigns=d.campaigns||[]; this.renderList(); }catch(e){ this.toast(e.message,'error'); } }
+          async refresh(){ await this.load(); }
+          applyFilter(val){ this.filter=(val&&val!=='all')?val:null; this.renderList(); }
+          renderList(){ const c=document.getElementById('campaigns-container'); let list=this.campaigns; if(this.filter){ list=list.filter(x=>x.type===this.filter); } if(!list.length){ c.innerHTML = '<div style="color:#aaa;padding:12px;border:1px solid #333;border-radius:8px;background:#1a1a1a">No campaigns found.</div>'; return; } const cards=list.map(x=>this.card(x)).join(''); c.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px;">${cards}</div>`; }
+          card(c){ const now=new Date(); const s=new Date(c.start_at||0), e=new Date(c.end_at||0); const active=c.is_active && now>=s && now<=e; const expired= now>e && c.end_at; const status = expired?'Expired':(active?'Active':(c.is_active?'Scheduled':'Inactive')); return `
+            <div style="background:#222;border:1px solid #333;border-radius:12px;padding:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+                <div>
+                  <div style="color:#25d366;font-weight:700">${c.title||'(untitled)'}</div>
+                  <div style="font-size:.85rem;color:#aaa;text-transform:uppercase">${c.type}</div>
+                </div>
+                <div style="font-size:.8rem;padding:4px 8px;border-radius:12px;border:1px solid #444;color:#ccc">${status}</div>
+              </div>
+              <div style="margin-top:8px;color:#ccc;font-size:.92rem">${c.description||''}</div>
+              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn" style="background:#ffa502;color:#111" onclick="window._campaignAdmin.openEditor(${c.id})"><i class="fas fa-edit"></i> Edit</button>
+                ${active?`<button class="btn" style="background:#666;color:#fff" onclick="window._campaignAdmin.deactivate(${c.id})"><i class=\"fas fa-pause\"></i> Deactivate</button>`:`<button class="btn" style="background:#25d366;color:#111" onclick="window._campaignAdmin.activate(${c.id})"><i class=\"fas fa-play\"></i> Activate</button>`}
+                <button class="btn" style="background:#ff4757;color:#fff" onclick="window._campaignAdmin.remove(${c.id})"><i class="fas fa-trash"></i> Delete</button>
+              </div>
+            </div>`; }
+          async activate(id){ try{ const res=await fetch(`/admin/campaigns/${id}/activate`,{ method:'POST', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Activate failed'); this.toast('Campaign activated','success'); this.load(); }catch(e){ this.toast(e.message,'error'); } }
+          async deactivate(id){ try{ const res=await fetch(`/admin/campaigns/${id}/deactivate`,{ method:'POST', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Deactivate failed'); this.toast('Campaign deactivated','success'); this.load(); }catch(e){ this.toast(e.message,'error'); } }
+          async remove(id){ if(!confirm('Delete this campaign?')) return; try{ const res=await fetch(`/admin/campaigns/${id}`,{ method:'DELETE', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Delete failed'); this.toast('Campaign deleted','success'); this.load(); }catch(e){ this.toast(e.message,'error'); } }
+          async openEditor(id){ if(id){ try{ const res=await fetch(`/admin/campaigns/${id}`,{ headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Load failed'); this.current={id,data:d.campaign}; }catch(e){ return this.toast(e.message,'error'); } } else { this.current={id:null,data:{ type:'flash', is_active:false }} }
+            this.renderDetails(); this.renderProducts(); this.renderAssets(); this.renderPopups(); this.renderPreview(); document.getElementById('editor-title').textContent = this.current.id?'Edit Campaign':'New Campaign'; document.getElementById('campaign-editor').style.display='flex'; this.bindTabs(); }
+          closeEditor(){ document.getElementById('campaign-editor').style.display='none'; }
+          bindTabs(){ const tabs=document.querySelectorAll('.editor-tab-btn'); tabs.forEach(b=>b.onclick=()=>{ tabs.forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none'); document.getElementById(`tab-${b.dataset.tab}`).style.display=''; }); }
+          renderDetails(){ const c=this.current.data||{}; const el=document.getElementById('tab-details'); el.innerHTML = `
+            <div class="form-grid">
+              <div class="form-group"><label>Slug</label><input id="c-slug" value="${c.slug||''}" placeholder="black-friday-2025"></div>
+              <div class="form-group"><label>Title</label><input id="c-title" value="${c.title||''}" placeholder="Campaign title"></div>
+              <div class="form-group"><label>Type</label><select id="c-type"><option value="flash" ${c.type==='flash'?'selected':''}>Flash</option><option value="hero" ${c.type==='hero'?'selected':''}>Hero</option><option value="banner" ${c.type==='banner'?'selected':''}>Banner</option><option value="popup" ${c.type==='popup'?'selected':''}>Popup</option></select></div>
+              <div class="form-group"><label>Active</label><select id="c-active"><option value="true" ${c.is_active?'selected':''}>Active</option><option value="false" ${!c.is_active?'selected':''}>Inactive</option></select></div>
+              <div class="form-group"><label>Start At (ISO)</label><input id="c-start" value="${c.start_at||''}"></div>
+              <div class="form-group"><label>End At (ISO)</label><input id="c-end" value="${c.end_at||''}"></div>
+              <div class="form-group" style="grid-column:1/-1"><label>Description</label><textarea id="c-desc" rows="3">${c.description||''}</textarea></div>
+              <div class="form-group" style="grid-column:1/-1"><label>Preview Payload (JSON)</label><textarea id="c-preview" rows="4">${c.preview_payload?JSON.stringify(c.preview_payload,null,2):''}</textarea><div class="hint">theme, colors, CTA text, etc.</div></div>
+            </div>
+            <div class="actions-row"><button class="btn primary" onclick="window._campaignAdmin.saveDetails()">Save Details</button>${this.current.id?`<button class="btn danger" onclick="window._campaignAdmin.remove(${this.current.id})">Delete</button>`:''}</div>`; }
+          async saveDetails(){ const payload={ slug:gv('c-slug'), title:gv('c-title'), type:gv('c-type'), is_active:(gv('c-active')==='true'), start_at:gv('c-start')||null, end_at:gv('c-end')||null, description:gv('c-desc')||null }; const pr=gv('c-preview'); if(pr) { try{ payload.preview_payload=JSON.parse(pr);}catch{ return this.toast('Invalid preview JSON','error'); } } try{ let res; if(this.current.id){ res=await fetch(`/admin/campaigns/${this.current.id}`,{ method:'PUT', headers: await this.headers(), body: JSON.stringify(payload)});} else { res=await fetch('/admin/campaigns',{ method:'POST', headers: await this.headers(), body: JSON.stringify(payload)});} const d=await res.json(); if(!res.ok) throw new Error(d.error||'Save failed'); this.toast('Details saved','success'); if(!this.current.id){ this.current.id=d.campaign.id; this.current.data=d.campaign; } await this.load(); await this.openEditor(this.current.id); }catch(e){ this.toast(e.message,'error'); } }
+          renderProducts(){ const el=document.getElementById('tab-products'); if(!this.current.id){ el.innerHTML='<div class="hint">Save Details first to manage products.</div>'; return;} const rows=(this.current.data?.campaign_products||[]).map(p=>`
+            <tr><td>${p.id}</td><td>${p.product_id}</td>
+            <td><input value="${p.original_price??''}" data-field="original_price" data-id="${p.id}" style="width:90px"></td>
+            <td><input value="${p.sale_price??''}" data-field="sale_price" data-id="${p.id}" style="width:90px"></td>
+            <td><input value="${p.reserved_stock??0}" data-field="reserved_stock" data-id="${p.id}" style="width:80px"></td>
+            <td><input value="${p.max_per_customer??1}" data-field="max_per_customer" data-id="${p.id}" style="width:80px"></td>
+            <td><input value="${p.display_order??0}" data-field="display_order" data-id="${p.id}" style="width:70px"></td>
+            <td><button class="btn secondary" onclick="window._campaignAdmin.updateCP(${p.id})">Save</button> <button class="btn danger" onclick="window._campaignAdmin.deleteCP(${p.id})">Delete</button></td></tr>`).join(''); el.innerHTML = `
+              <div class="uploader"><div class="form-group"><label>Bulk CSV Import</label><input type="file" id="csv-file" accept=".csv"></div><div class="actions-row"><button class="btn secondary" onclick="window._campaignAdmin.importCsv()">Import CSV</button></div><div class="hint">CSV: product_id,original_price,sale_price,reserved_stock,max_per_customer,display_order</div></div>
+              <div class="actions-row" style="margin-top:12px"><button class="btn primary" onclick="window._campaignAdmin.addProductPrompt()">Add Product</button></div>
+              <table class="list-table" style="margin-top:12px"><thead><tr><th>ID</th><th>Product</th><th>Original</th><th>Sale</th><th>Stock</th><th>Max/Customer</th><th>Order</th><th></th></tr></thead><tbody id="cp-rows">${rows}</tbody></table>`; }
+          async importCsv(){ const f=document.getElementById('csv-file').files?.[0]; if(!f) return this.toast('Select a CSV','error'); const t=await f.text(); const rows=t.trim().split(/\r?\n/).slice(1).map(r=>r.split(',')); const products=rows.filter(r=>r[0]).map(r=>({ product_id:parseInt(r[0]), original_price:parseFloat(r[1]||0), sale_price:parseFloat(r[2]||0), reserved_stock:parseInt(r[3]||0), max_per_customer:parseInt(r[4]||1), display_order:parseInt(r[5]||0) })); try{ const res=await fetch(`/admin/campaigns/${this.current.id}/products`,{ method:'POST', headers: await this.headers(), body: JSON.stringify({ products })}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Import failed'); this.toast('Products imported','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          addProductPrompt(){ const p={ product_id:parseInt(prompt('Product ID:')||'0'), original_price:parseFloat(prompt('Original Price:')||'0'), sale_price:parseFloat(prompt('Sale Price:')||'0'), reserved_stock:parseInt(prompt('Reserved Stock:')||'0'), max_per_customer:parseInt(prompt('Max/Customer:')||'1'), display_order:parseInt(prompt('Display Order:')||'0') }; if(!p.product_id||!p.sale_price) return this.toast('Missing fields','error'); this.bulkAdd([p]); }
+          async bulkAdd(products){ try{ const res=await fetch(`/admin/campaigns/${this.current.id}/products`,{ method:'POST', headers: await this.headers(), body: JSON.stringify({ products })}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Add failed'); this.toast('Product added','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          async updateCP(id){ const inputs=Array.from(document.querySelectorAll(`#cp-rows input[data-id='${id}']`)); const payload={}; inputs.forEach(i=>payload[i.dataset.field]=i.value); ['original_price','sale_price'].forEach(k=>payload[k]=payload[k]!==''?parseFloat(payload[k]):null); ['reserved_stock','max_per_customer','display_order'].forEach(k=>payload[k]=payload[k]!==''?parseInt(payload[k]):null); try{ const res=await fetch(`/admin/campaign_products/${id}`,{ method:'PUT', headers: await this.headers(), body: JSON.stringify(payload)}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Update failed'); this.toast('Updated','success'); }catch(e){ this.toast(e.message,'error'); } }
+          async deleteCP(id){ if(!confirm('Delete this campaign product?')) return; try{ const res=await fetch(`/admin/campaign_products/${id}`,{ method:'DELETE', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Delete failed'); this.toast('Deleted','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          renderAssets(){ const el=document.getElementById('tab-assets'); if(!this.current.id){ el.innerHTML='<div class="hint">Save Details first to manage assets.</div>'; return;} const a=(this.current.data?.campaign_assets||[]).map(x=>`<tr><td>${x.id}</td><td>${x.asset_type}</td><td style=\"max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\">${x.url}</td><td>${x.alt||''}</td><td><code style=\"font-size:12px\">${x.metadata?JSON.stringify(x.metadata):''}</code></td><td><button class=\"btn danger\" onclick=\"window._campaignAdmin.deleteAsset(${x.id})\">Delete</button></td></tr>`).join(''); el.innerHTML=`
+            <div class="form-grid">
+              <div class="form-group"><label>Asset URL</label><input id="asset-url" placeholder="https://..."></div>
+              <div class="form-group"><label>Alt</label><input id="asset-alt" placeholder="Alt text"></div>
+              <div class="form-group"><label>Type</label><select id="asset-type"><option value="image">Image</option><option value="video">Video</option><option value="html">HTML</option></select></div>
+              <div class="form-group"><label>Width</label><input id="asset-width" type="number" placeholder="1920"></div>
+              <div class="form-group"><label>Height</label><input id="asset-height" type="number" placeholder="600"></div>
+              <div class="form-group" style="grid-column:1/-1"><label>Metadata JSON</label><textarea id="asset-meta" rows="3">{"position":"hero","variant":"A"}</textarea></div>
+            </div>
+            <div class="actions-row"><button class="btn primary" onclick="window._campaignAdmin.addAsset()">Add Asset</button></div>
+            <div class="uploader" style="margin-top:12px">
+              <div class="form-group"><label>Upload Image</label><input id="asset-file" type="file" accept="image/*"></div>
+              <div class="form-grid">
+                <div class="form-group"><label>Position</label><select id="asset-position"><option value="grid" selected>Grid</option><option value="strip">Strip</option><option value="hero">Hero</option><option value="popup">Popup</option></select></div>
+              </div>
+              <div class="actions-row"><button class="btn primary" onclick="window._campaignAdmin.uploadAsset()">Upload Asset</button></div>
+              <div class="hint">Upload from your device or use the URL form above. Alt and metadata apply to both.</div>
+            </div>
+            <table class="list-table" style="margin-top:12px"><thead><tr><th>ID</th><th>Type</th><th>URL</th><th>Alt</th><th>Meta</th><th></th></tr></thead><tbody>${a}</tbody></table>`; }
+          async uploadAsset(){ const fileInput=document.getElementById('asset-file'); if(!fileInput || !fileInput.files || !fileInput.files[0]){ return this.toast('Select an image to upload','error'); } const fd=new FormData(); fd.append('file', fileInput.files[0]); const alt=gv('asset-alt'); if(alt) fd.append('alt', alt); const pos=gv('asset-position'); if(pos) fd.append('position', pos); const metaRaw=gv('asset-meta'); if(metaRaw) fd.append('metadata', metaRaw); try{ const auth=await this.headers(); if('Content-Type' in auth) { delete auth['Content-Type']; } const res=await fetch(`/admin/campaigns/${this.current.id}/assets/upload`,{ method:'POST', headers: auth, body: fd }); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Upload failed'); this.toast('Asset uploaded','success'); const ref=await fetch(`/admin/campaigns/${this.current.id}`,{ headers: await this.headers()}); this.current.data=(await ref.json()).campaign; this.renderAssets(); }catch(e){ this.toast(e.message,'error'); } }
+          async addAsset(){ const payload={ asset_type:gv('asset-type'), url:gv('asset-url').trim(), alt:gv('asset-alt').trim(), width:pi('asset-width'), height:pi('asset-height') }; const mr=gv('asset-meta'); if(mr){ try{ payload.metadata=JSON.parse(mr);}catch{ return this.toast('Invalid metadata JSON','error'); } } if(!payload.url) return this.toast('Asset URL required','error'); try{ const res=await fetch(`/admin/campaigns/${this.current.id}/assets`,{ method:'POST', headers: await this.headers(), body: JSON.stringify(payload)}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Add asset failed'); this.toast('Asset added','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          async deleteAsset(id){ if(!confirm('Delete this asset?')) return; try{ const res=await fetch(`/admin/campaigns/${this.current.id}/assets/${id}`,{ method:'DELETE', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Delete failed'); this.toast('Asset deleted','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          renderPopups(){ const el=document.getElementById('tab-popups'); if(!this.current.id){ el.innerHTML='<div class="hint">Save Details first to manage popup rules.</div>'; return;} const r=(this.current.data?.popup_rules||[]).map(x=>`<tr><td>${x.id}</td><td>${x.trigger_type}</td><td>${x.trigger_value??''}</td><td>${(x.device_target||[]).join(',')}</td><td>${(x.geo_target||[]).join(',')}</td><td>${x.frequency_days??''}</td><td>${x.show_once?'Yes':'No'}</td><td><button class=\"btn danger\" onclick=\"window._campaignAdmin.deleteRule(${x.id})\">Delete</button></td></tr>`).join(''); el.innerHTML=`
+            <div class="form-grid">
+              <div class="form-group"><label>Trigger Type</label><select id="rule-type"><option value="time_on_page">Time on page</option><option value="exit_intent">Exit intent</option><option value="scroll">Scroll</option><option value="cart_value">Cart value</option><option value="manual">Manual</option></select></div>
+              <div class="form-group"><label>Trigger Value</label><input id="rule-value" placeholder="seconds/percent/amount"></div>
+              <div class="form-group"><label>Device Target (comma)</label><input id="rule-device" placeholder="mobile,desktop"></div>
+              <div class="form-group"><label>Geo Target (comma)</label><input id="rule-geo" placeholder="KE,US,UK"></div>
+              <div class="form-group"><label>Frequency Days</label><input id="rule-days" type="number" value="7"></div>
+              <div class="form-group"><label>Show Once</label><select id="rule-once"><option value="true" selected>Yes</option><option value="false">No</option></select></div>
+            </div>
+            <div class="actions-row"><button class="btn primary" onclick="window._campaignAdmin.addRule()">Add Rule</button></div>
+            <table class="list-table" style="margin-top:12px"><thead><tr><th>ID</th><th>Type</th><th>Value</th><th>Device</th><th>Geo</th><th>Freq</th><th>Once</th><th></th></tr></thead><tbody>${r}</tbody></table>`; }
+          async addRule(){ const payload={ trigger_type:gv('rule-type'), trigger_value:pi('rule-value')||null, device_target:gv('rule-device')?gv('rule-device').split(',').map(s=>s.trim()):null, geo_target:gv('rule-geo')?gv('rule-geo').split(',').map(s=>s.trim()):null, frequency_days:pi('rule-days')||7, show_once:(gv('rule-once')==='true') }; try{ const res=await fetch(`/admin/campaigns/${this.current.id}/popup_rules`,{ method:'POST', headers: await this.headers(), body: JSON.stringify(payload)}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Add rule failed'); this.toast('Rule added','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          async deleteRule(id){ if(!confirm('Delete this rule?')) return; try{ const res=await fetch(`/admin/popup_rules/${id}`,{ method:'DELETE', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Delete failed'); this.toast('Rule deleted','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          renderPreview(){ const el=document.getElementById('tab-preview'); if(!this.current.id){ el.innerHTML='<div class="hint">Save Details first to preview.</div>'; return;} el.innerHTML = `<div class=\"actions-row\"><button class=\"btn secondary\" onclick=\"window._campaignAdmin.loadPreview()\">Refresh Preview</button></div><div id=\"preview-json\" class=\"uploader\" style=\"margin-top:12px;white-space:pre;font-family:monospace;overflow:auto;max-height:60vh\"></div>`; }
+          async loadPreview(){ try{ const res=await fetch(`/admin/campaigns/${this.current.id}/preview`,{ headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Preview failed'); document.getElementById('preview-json').textContent = JSON.stringify(d.campaign,null,2); }catch(e){ this.toast(e.message,'error'); } }
+          toast(msg,type){ const el=document.createElement('div'); el.style.cssText='position:fixed;top:16px;right:16px;padding:10px 14px;border-radius:10px;z-index:40000;color:#fff;font-weight:700;max-width:320px;background:'+(type==='success'?'linear-gradient(45deg,#25d366,#128c7e)':'linear-gradient(45deg,#ff4757,#c44569)'); el.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}" style="margin-right:8px"></i>${msg}`; document.body.appendChild(el); setTimeout(()=>el.remove(),4000); }
+        }
+        function gv(id){ const el=document.getElementById(id); return el?el.value:'' }
+        function pi(id){ const v=gv(id); const n=parseInt(v,10); return isNaN(n)?null:n }
+        window._campaignAdmin = new CampaignAdmin();
+      }
     </script>
     <!-- Image Fallback and Admin Testing -->
     <script src="assets/js/image-fallback.js"></script>

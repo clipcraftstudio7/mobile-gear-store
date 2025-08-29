@@ -1,0 +1,20 @@
+[33me83c5a4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Remove large screen sizing changes from general product grids, keep only fresh arrivals
+[33m4c3da68[m Fix fresh arrivals to show last 8 products and adjust large screen product card sizes
+[33m27c8515[m Implement real backend optimization system and update images
+[33m4a6e651[m Increase fresh arrival card sizes even more - now very large cards
+[33m8390c9c[m Increase fresh arrival card sizes significantly - now displays 4 cards per row
+[33m9e7e21d[m Update banner images and increase product card sizes across all pages
+[33mc70fd2c[m Add advanced features: Smart Product Recommendations, Real-time Analytics Dashboard, and Performance Optimization
+[33m536291b[m Implement dynamic Fresh Arrivals system with real-time updates
+[33m2cb81cd[m Add Fresh Arrivals section with black theme and fix script loading order
+[33mfb69efb[m Fix product data persistence: Add Node.js server config, backup system, and Render deployment setup
+[33m6e70605[m Update delivery pricing and shipping logic: Standard , Express , Premium , free shipping over , remove shipping from cart page
+[33md1e77ea[m[33m ([m[1;31morigin/product-page-improvements[m[33m)[m Simplify product page - remove color/size options, keep only quantity, and increase shipping fees to .99
+[33mf426001[m Fix navbar design consistency and quickview modal - improve responsive layout for laptop view and enhance View Details button styling
+[33m56f41b5[m Add quickview functionality to product cards - implement modal popup with product details and add-to-cart
+[33mbc4d344[m Fix navbar username display - add automatic truncation for long usernames and consistent styling across all pages
+[33m619f45b[m Fix category card images - update Holders, Cooling Fans, Joystick, and Accessories with correct image paths
+[33me5155a5[m Fix all localhost URLs to work with deployed site - images should now load properly
+[33m45257d2[m Fix server configuration for Render deployment - add root route and better error handling
+[33m4b5e322[m Add render.yaml for deployment configuration
+[33m9ab1b81[m Initial commit - Mobile Gaming Store ready for Railway deployment

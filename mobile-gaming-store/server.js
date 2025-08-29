@@ -4,10 +4,18 @@ const path = require('path');
 const fs = require('fs').promises;
 const fsSync = require('fs');
 const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
 const { autoBackup, checkAndRestore } = require('./backup-products');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Supabase configuration
+const SUPABASE_URL = "https://kokntkhxkymllafuubun.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc";
+
+// Initialize Supabase client
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Middleware
 app.use(cors());
@@ -83,6 +91,44 @@ const organizedUpload = multer({
   }
 });
 
+// Ensure campaign assets directory exists
+const ensureCampaignAssetsDir = async () => {
+  const dir = path.join(__dirname, 'assets', 'images', 'campaigns');
+  try {
+    await fs.mkdir(dir, { recursive: true });
+  } catch {}
+};
+
+// Multer for campaign asset uploads (images)
+const campaignAssetStorage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    try {
+      const campaignId = String(req.params.id || 'general');
+      const uploadPath = path.join(__dirname, 'assets', 'images', 'campaigns', campaignId);
+      await fs.mkdir(uploadPath, { recursive: true });
+      cb(null, uploadPath);
+    } catch (e) {
+      cb(e);
+    }
+  },
+  filename: (req, file, cb) => {
+    const original = file.originalname.replace(/[^a-zA-Z0-9._-]+/g, '-');
+    const stamp = Date.now();
+    const ext = path.extname(original) || '.jpg';
+    cb(null, `asset-${stamp}${ext}`);
+  }
+});
+
+const campaignAssetUpload = multer({
+  storage: campaignAssetStorage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  fileFilter: (req, file, cb) => {
+    const ok = /^image\/(png|jpe?g|webp|gif|svg\+xml)$/.test(file.mimetype);
+    if (!ok) return cb(new Error('Unsupported file type'));
+    cb(null, true);
+  }
+});
+
 // Routes
 
 // Health check
@@ -90,12 +136,54 @@ app.get('/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
-// Get all products with enhanced filtering
+// Get all products with enhanced filtering from Supabase
 app.get('/products', async (req, res) => {
   try {
-    const productsPath = path.join(__dirname, 'data', 'products.json');
-    const productsData = await fs.readFile(productsPath, 'utf8');
-    const products = JSON.parse(productsData);
+    console.log('📦 Fetching products from Supabase...');
+    
+    // Fetch products from Supabase
+    const { data: products, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('❌ Error fetching from Supabase:', error);
+      // Fallback to local file if Supabase fails
+      try {
+        const productsPath = path.join(__dirname, 'data', 'products.json');
+        const productsData = await fs.readFile(productsPath, 'utf8');
+        const localProducts = JSON.parse(productsData);
+        console.log('📁 Using local products as fallback');
+        res.json(localProducts);
+        return;
+      } catch (fallbackError) {
+        console.error('❌ Fallback also failed:', fallbackError);
+        res.status(500).json({ error: 'Failed to read products' });
+        return;
+      }
+    }
+    
+    // Convert Supabase format to frontend format
+    const formattedProducts = products.map(product => ({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.original_price,
+      discount: product.discount || 0,
+      category: product.category,
+      description: product.description,
+      stock: product.stock || 0,
+      rating: product.rating,
+      reviews: product.reviews || 0,
+      image: product.image,
+      images: product.images,
+      link: product.link,
+      features: product.features || [],
+      createdAt: product.created_at,
+      updatedAt: product.updated_at,
+      isNew: product.is_new || false
+    }));
     
     // Check if client wants fresh products only
     const freshOnly = req.query.fresh === 'true';
@@ -104,7 +192,7 @@ app.get('/products', async (req, res) => {
     if (freshOnly) {
       const now = new Date();
       const fourteenDaysAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
-      const freshProducts = products.filter(product => {
+      const freshProducts = formattedProducts.filter(product => {
         if (!product.createdAt) return false;
         const productDate = new Date(product.createdAt);
         return productDate >= fourteenDaysAgo;
@@ -114,7 +202,7 @@ app.get('/products', async (req, res) => {
     } else if (lastUpdate) {
       // Return only products updated since lastUpdate
       const lastUpdateTime = new Date(lastUpdate);
-      const updatedProducts = products.filter(product => {
+      const updatedProducts = formattedProducts.filter(product => {
         if (!product.updatedAt) return false;
         const productUpdateTime = new Date(product.updatedAt);
         return productUpdateTime > lastUpdateTime;
@@ -126,10 +214,12 @@ app.get('/products', async (req, res) => {
         lastUpdate: new Date().toISOString()
       });
     } else {
-      res.json(products);
+      res.json(formattedProducts);
     }
+    
+    console.log(`✅ Fetched ${formattedProducts.length} products from Supabase`);
   } catch (error) {
-    console.error('Error reading products:', error);
+    console.error('❌ Error reading products:', error);
     res.status(500).json({ error: 'Failed to read products' });
   }
 });
@@ -212,31 +302,67 @@ app.post('/add-product-organized', organizedUpload.fields([
       isNew: true
     };
 
-    // Read existing products
-    const productsPath = path.join(__dirname, 'data', 'products.json');
-    let products = [];
-    
-    try {
-      const productsData = await fs.readFile(productsPath, 'utf8');
-      products = JSON.parse(productsData);
-    } catch (error) {
-      console.log('No existing products file, creating new one');
+    // Save product to Supabase
+    const supabaseProduct = {
+      id: parseInt(productId),
+      name: name.trim(),
+      price: parseFloat(price),
+      original_price: originalPrice,
+      discount: parseInt(discount),
+      category: category.trim(),
+      description: description ? description.trim() : '',
+      stock: parseInt(stock),
+      rating: parseFloat(rating),
+      reviews: parseInt(reviews),
+      image: imagePaths[0], // Main image
+      images: imagePaths, // All images
+      link: `product.html?id=${productId}`,
+      features: parsedFeatures,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      is_new: true
+    };
+
+    // Insert product into Supabase
+    const { data: insertedProduct, error: insertError } = await supabase
+      .from('products')
+      .insert([supabaseProduct])
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('❌ Error inserting product to Supabase:', insertError);
+      
+      // Fallback: save to local JSON if Supabase fails
+      try {
+        const productsPath = path.join(__dirname, 'data', 'products.json');
+        let products = [];
+        
+        try {
+          const productsData = await fs.readFile(productsPath, 'utf8');
+          products = JSON.parse(productsData);
+        } catch (error) {
+          console.log('No existing products file, creating new one');
+        }
+
+        products.push(newProduct);
+        await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
+        console.log('✅ Product saved to local JSON as fallback');
+      } catch (fallbackError) {
+        console.error('❌ Fallback save also failed:', fallbackError);
+        return res.status(500).json({ 
+          error: 'Failed to save product to both Supabase and local file', 
+          details: insertError.message 
+        });
+      }
     }
 
-    // Add new product
-    products.push(newProduct);
-
-    // Auto-backup before saving
-    await autoBackup();
-    
-    // Save updated products
-    await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
-
-    console.log('✅ Product added successfully:', newProduct.name);
+    console.log('✅ Product added successfully to Supabase:', newProduct.name);
     res.json({ 
-      message: 'Product added successfully', 
+      message: 'Product added successfully to Supabase', 
       product: newProduct,
-      imagePaths: imagePaths
+      imagePaths: imagePaths,
+      supabaseId: insertedProduct?.id
     });
 
   } catch (error) {
@@ -260,18 +386,17 @@ app.post('/edit-product-enhanced', async (req, res) => {
       return res.status(400).json({ error: 'Product ID and updates are required' });
     }
 
-    // Read existing products
-    const productsPath = path.join(__dirname, 'data', 'products.json');
-    const productsData = await fs.readFile(productsPath, 'utf8');
-    let products = JSON.parse(productsData);
+    // Get existing product from Supabase
+    const { data: existingProduct, error: fetchError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', parseInt(id))
+      .single();
 
-    // Find product to update
-    const productIndex = products.findIndex(p => p.id === parseInt(id));
-    if (productIndex === -1) {
+    if (fetchError || !existingProduct) {
+      console.error('❌ Error fetching product from Supabase:', fetchError);
       return res.status(404).json({ error: 'Product not found' });
     }
-
-    const existingProduct = products[productIndex];
 
     // Parse features if provided
     let parsedFeatures = existingProduct.features || [];
@@ -292,34 +417,63 @@ app.post('/edit-product-enhanced', async (req, res) => {
       originalPrice = newDiscount > 0 ? Math.round(newPrice / (1 - newDiscount / 100)) : newPrice;
     }
 
-    // Update product with new data
-    const updatedProduct = {
-      ...existingProduct,
+    // Prepare update data for Supabase
+    const updateData = {
       name: updates.name !== undefined ? updates.name.trim() : existingProduct.name,
       price: updates.price !== undefined ? parseFloat(updates.price) : existingProduct.price,
-      originalPrice: originalPrice,
+      original_price: originalPrice,
       discount: updates.discount !== undefined ? parseInt(updates.discount) : existingProduct.discount,
       category: updates.category !== undefined ? updates.category.trim() : existingProduct.category,
       description: updates.description !== undefined ? updates.description.trim() : existingProduct.description,
       stock: updates.stock !== undefined ? parseInt(updates.stock) : existingProduct.stock,
       rating: updates.rating !== undefined ? parseFloat(updates.rating) : existingProduct.rating,
       reviews: updates.reviews !== undefined ? parseInt(updates.reviews) : existingProduct.reviews,
-      features: parsedFeatures
+      features: parsedFeatures,
+      updated_at: new Date().toISOString()
     };
 
-    products[productIndex] = updatedProduct;
+    // Update product in Supabase
+    const { data: updatedProduct, error: updateError } = await supabase
+      .from('products')
+      .update(updateData)
+      .eq('id', parseInt(id))
+      .select()
+      .single();
 
-    // Auto-backup before saving
-    await autoBackup();
-    
-    // Save updated products
-    await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
+    if (updateError) {
+      console.error('❌ Error updating product in Supabase:', updateError);
+      return res.status(500).json({ 
+        error: 'Failed to update product in Supabase', 
+        details: updateError.message 
+      });
+    }
 
-    console.log('✅ Product updated successfully:', updatedProduct.name);
+    // Convert back to frontend format
+    const formattedProduct = {
+      id: updatedProduct.id,
+      name: updatedProduct.name,
+      price: updatedProduct.price,
+      originalPrice: updatedProduct.original_price,
+      discount: updatedProduct.discount || 0,
+      category: updatedProduct.category,
+      description: updatedProduct.description,
+      stock: updatedProduct.stock || 0,
+      rating: updatedProduct.rating,
+      reviews: updatedProduct.reviews || 0,
+      image: updatedProduct.image,
+      images: updatedProduct.images,
+      link: updatedProduct.link,
+      features: updatedProduct.features || [],
+      createdAt: updatedProduct.created_at,
+      updatedAt: updatedProduct.updated_at,
+      isNew: updatedProduct.is_new || false
+    };
+
+    console.log('✅ Product updated successfully in Supabase:', formattedProduct.name);
     res.json({ 
       success: true,
-      message: 'Product updated successfully', 
-      product: updatedProduct 
+      message: 'Product updated successfully in Supabase', 
+      product: formattedProduct 
     });
 
   } catch (error) {
@@ -341,32 +495,57 @@ app.post('/delete-product', async (req, res) => {
       return res.status(400).json({ error: 'Product ID is required' });
     }
 
-    // Read existing products
-    const productsPath = path.join(__dirname, 'data', 'products.json');
-    const productsData = await fs.readFile(productsPath, 'utf8');
-    let products = JSON.parse(productsData);
+    // Get product from Supabase before deleting
+    const { data: existingProduct, error: fetchError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', parseInt(id))
+      .single();
 
-    // Find product to delete
-    const productIndex = products.findIndex(p => p.id === parseInt(id));
-    if (productIndex === -1) {
+    if (fetchError || !existingProduct) {
+      console.error('❌ Error fetching product from Supabase:', fetchError);
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    const deletedProduct = products[productIndex];
-    
-    // Remove product from array
-    products.splice(productIndex, 1);
+    // Delete product from Supabase
+    const { error: deleteError } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', parseInt(id));
 
-    // Auto-backup before saving
-    await autoBackup();
-    
-    // Save updated products
-    await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
+    if (deleteError) {
+      console.error('❌ Error deleting product from Supabase:', deleteError);
+      return res.status(500).json({ 
+        error: 'Failed to delete product from Supabase', 
+        details: deleteError.message 
+      });
+    }
 
-    console.log('✅ Product deleted successfully:', deletedProduct.name);
+    // Convert to frontend format
+    const deletedProduct = {
+      id: existingProduct.id,
+      name: existingProduct.name,
+      price: existingProduct.price,
+      originalPrice: existingProduct.original_price,
+      discount: existingProduct.discount || 0,
+      category: existingProduct.category,
+      description: existingProduct.description,
+      stock: existingProduct.stock || 0,
+      rating: existingProduct.rating,
+      reviews: existingProduct.reviews || 0,
+      image: existingProduct.image,
+      images: existingProduct.images,
+      link: existingProduct.link,
+      features: existingProduct.features || [],
+      createdAt: existingProduct.created_at,
+      updatedAt: existingProduct.updated_at,
+      isNew: existingProduct.is_new || false
+    };
+
+    console.log('✅ Product deleted successfully from Supabase:', deletedProduct.name);
     res.json({ 
       success: true,
-      message: 'Product deleted successfully', 
+      message: 'Product deleted successfully from Supabase', 
       deletedProduct: deletedProduct 
     });
 
@@ -447,6 +626,1017 @@ app.post('/edit-product', async (req, res) => {
   } catch (error) {
     console.error('Error updating product:', error);
     res.status(500).json({ error: 'Failed to update product' });
+  }
+});
+
+// ============================================================================
+// CAMPAIGN API ENDPOINTS
+// ============================================================================
+
+// Helper function to verify admin JWT
+const verifyAdminToken = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    // Verify token with Supabase
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    // Check if user has admin role (you can customize this based on your user roles)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile || profile.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('Token verification error:', error);
+    res.status(401).json({ error: 'Token verification failed' });
+  }
+};
+
+// Rate limiting middleware
+const rateLimit = require('express-rate-limit');
+const campaignLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+// ============================================================================
+// ADMIN ENDPOINTS (Protected)
+// ============================================================================
+
+// List campaigns with nested relations (for admin dashboard)
+app.get('/admin/campaigns', verifyAdminToken, async (req, res) => {
+  try {
+    const { data: campaigns, error } = await supabase
+      .from('campaigns')
+      .select(`
+        *,
+        campaign_products ( id ),
+        campaign_assets ( id ),
+        popup_rules ( id )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Campaigns list error:', error);
+      return res.status(500).json({ error: 'Failed to list campaigns' });
+    }
+
+    // Map counts for light payload
+    const withCounts = (campaigns || []).map(c => ({
+      ...c,
+      campaign_products_count: c.campaign_products?.length || 0,
+      campaign_assets_count: c.campaign_assets?.length || 0,
+      popup_rules_count: c.popup_rules?.length || 0,
+    }));
+
+    res.json({ campaigns: withCounts });
+  } catch (error) {
+    console.error('Campaigns list error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get a single campaign with full relations
+app.get('/admin/campaigns/:id', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .select(`
+        *,
+        campaign_products (*),
+        campaign_assets (*),
+        popup_rules (*)
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Get campaign error:', error);
+      return res.status(500).json({ error: 'Failed to fetch campaign' });
+    }
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+    res.json({ campaign });
+  } catch (error) {
+    console.error('Get campaign error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Create a campaign
+app.post('/admin/campaigns', verifyAdminToken, async (req, res) => {
+  try {
+    const { slug, title, description, type, start_at, end_at, preview_payload } = req.body;
+    
+    if (!slug || !title || !type) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if slug already exists
+    const { data: existingCampaign } = await supabase
+      .from('campaigns')
+      .select('id')
+      .eq('slug', slug)
+      .single();
+
+    if (existingCampaign) {
+      return res.status(400).json({ error: 'Campaign slug already exists' });
+    }
+
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .insert({
+        slug,
+        title,
+        description,
+        type,
+        start_at,
+        end_at,
+        preview_payload,
+        created_by: req.user.id
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Campaign creation error:', error);
+      return res.status(500).json({ error: 'Failed to create campaign' });
+    }
+
+    res.status(201).json({ message: 'Campaign created successfully', campaign });
+  } catch (error) {
+    console.error('Campaign creation error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a campaign (cascade deletes products/assets/rules due to FK)
+app.delete('/admin/campaigns/:id', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { error } = await supabase
+      .from('campaigns')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Delete campaign error:', error);
+      return res.status(500).json({ error: 'Failed to delete campaign' });
+    }
+
+    res.json({ message: 'Campaign deleted' });
+  } catch (error) {
+    console.error('Delete campaign error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ----------------------------------------------------------------------------
+// Campaign Assets (Banners) Management
+// ----------------------------------------------------------------------------
+
+// Add a campaign asset (banner/promo asset)
+app.post('/admin/campaigns/:id/assets', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { asset_type, url, alt, width, height, metadata } = req.body;
+
+    if (!asset_type || !url) {
+      return res.status(400).json({ error: 'asset_type and url are required' });
+    }
+
+    const { data: inserted, error } = await supabase
+      .from('campaign_assets')
+      .insert({
+        campaign_id: parseInt(id),
+        asset_type,
+        url,
+        alt,
+        width,
+        height,
+        metadata: metadata || {}
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Add asset error:', error);
+      return res.status(500).json({ error: 'Failed to add asset' });
+    }
+
+    res.status(201).json({ message: 'Asset added', asset: inserted });
+  } catch (error) {
+    console.error('Add asset error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Upload a campaign asset image and create asset record
+app.post('/admin/campaigns/:id/assets/upload', verifyAdminToken, campaignAssetUpload.single('file'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // Optional fields
+    const alt = req.body.alt || null;
+    const position = req.body.position || null; // e.g., hero|strip|grid|popup
+    const asset_type = req.body.asset_type || 'image';
+    let metadata = {};
+    if (req.body.metadata) {
+      try { metadata = JSON.parse(req.body.metadata); } catch {}
+    }
+    if (position) {
+      metadata.position = position;
+    }
+
+    const relativeUrl = path.join('assets', 'images', 'campaigns', String(id), req.file.filename).replace(/\\/g, '/');
+
+    const { data: inserted, error } = await supabase
+      .from('campaign_assets')
+      .insert({
+        campaign_id: parseInt(id),
+        asset_type,
+        url: `/${relativeUrl}`,
+        alt,
+        width: null,
+        height: null,
+        metadata
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Upload asset error:', error);
+      return res.status(500).json({ error: 'Failed to save asset' });
+    }
+
+    res.status(201).json({ message: 'Asset uploaded', asset: inserted });
+  } catch (error) {
+    console.error('Upload asset error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update a campaign asset
+app.put('/admin/assets/:assetId', verifyAdminToken, async (req, res) => {
+  try {
+    const { assetId } = req.params;
+    const updateData = req.body;
+
+    const { data: asset, error } = await supabase
+      .from('campaign_assets')
+      .update({
+        ...updateData,
+        // metadata can be replaced entirely by client
+      })
+      .eq('id', assetId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Update asset error:', error);
+      return res.status(500).json({ error: 'Failed to update asset' });
+    }
+
+    if (!asset) {
+      return res.status(404).json({ error: 'Asset not found' });
+    }
+
+    res.json({ message: 'Asset updated', asset });
+  } catch (error) {
+    console.error('Update asset error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a campaign asset
+app.delete('/admin/campaigns/:id/assets/:assetId', verifyAdminToken, async (req, res) => {
+  try {
+    const { id, assetId } = req.params;
+
+    const { error } = await supabase
+      .from('campaign_assets')
+      .delete()
+      .eq('id', assetId)
+      .eq('campaign_id', id);
+
+    if (error) {
+      console.error('Delete asset error:', error);
+      return res.status(500).json({ error: 'Failed to delete asset' });
+    }
+
+    res.json({ message: 'Asset deleted' });
+  } catch (error) {
+    console.error('Delete asset error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ----------------------------------------------------------------------------
+// Popup Rules Management
+// ----------------------------------------------------------------------------
+
+// Add popup rule
+app.post('/admin/campaigns/:id/popup_rules', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { trigger_type, trigger_value, device_target, geo_target, frequency_days, show_once } = req.body;
+
+    if (!trigger_type) {
+      return res.status(400).json({ error: 'trigger_type is required' });
+    }
+
+    const { data: rule, error } = await supabase
+      .from('popup_rules')
+      .insert({
+        campaign_id: parseInt(id),
+        trigger_type,
+        trigger_value,
+        device_target,
+        geo_target,
+        frequency_days,
+        show_once
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Add popup rule error:', error);
+      return res.status(500).json({ error: 'Failed to add popup rule' });
+    }
+
+    res.status(201).json({ message: 'Popup rule added', rule });
+  } catch (error) {
+    console.error('Add popup rule error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update popup rule
+app.put('/admin/popup_rules/:ruleId', verifyAdminToken, async (req, res) => {
+  try {
+    const { ruleId } = req.params;
+    const updateData = req.body;
+
+    const { data: rule, error } = await supabase
+      .from('popup_rules')
+      .update(updateData)
+      .eq('id', ruleId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Update popup rule error:', error);
+      return res.status(500).json({ error: 'Failed to update popup rule' });
+    }
+
+    if (!rule) {
+      return res.status(404).json({ error: 'Popup rule not found' });
+    }
+
+    res.json({ message: 'Popup rule updated', rule });
+  } catch (error) {
+    console.error('Update popup rule error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete popup rule
+app.delete('/admin/popup_rules/:ruleId', verifyAdminToken, async (req, res) => {
+  try {
+    const { ruleId } = req.params;
+
+    const { error } = await supabase
+      .from('popup_rules')
+      .delete()
+      .eq('id', ruleId);
+
+    if (error) {
+      console.error('Delete popup rule error:', error);
+      return res.status(500).json({ error: 'Failed to delete popup rule' });
+    }
+
+    res.json({ message: 'Popup rule deleted' });
+  } catch (error) {
+    console.error('Delete popup rule error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update a campaign
+app.put('/admin/campaigns/:id', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .update({
+        ...updateData,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Campaign update error:', error);
+      return res.status(500).json({ error: 'Failed to update campaign' });
+    }
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+
+    res.json({ message: 'Campaign updated successfully', campaign });
+  } catch (error) {
+    console.error('Campaign update error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Bulk add products to campaign
+app.post('/admin/campaigns/:id/products', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { products } = req.body;
+
+    if (!products || !Array.isArray(products)) {
+      return res.status(400).json({ error: 'Products array is required' });
+    }
+
+    // Verify campaign exists
+    const { data: campaign } = await supabase
+      .from('campaigns')
+      .select('id')
+      .eq('id', id)
+      .single();
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+
+    // Prepare products data
+    const campaignProducts = products.map(product => ({
+      campaign_id: parseInt(id),
+      product_id: product.product_id,
+      original_price: product.original_price,
+      sale_price: product.sale_price,
+      reserved_stock: product.reserved_stock || 0,
+      max_per_customer: product.max_per_customer || 1,
+      display_order: product.display_order || 0,
+      metadata: product.metadata || {}
+    }));
+
+    const { data: insertedProducts, error } = await supabase
+      .from('campaign_products')
+      .insert(campaignProducts)
+      .select();
+
+    if (error) {
+      console.error('Product addition error:', error);
+      return res.status(500).json({ error: 'Failed to add products to campaign' });
+    }
+
+    res.json({ 
+      message: 'Products added to campaign successfully', 
+      products: insertedProducts 
+    });
+  } catch (error) {
+    console.error('Product addition error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update a campaign product (e.g., sale_price, reserved_stock, limits)
+app.put('/admin/campaign_products/:campaignProductId', verifyAdminToken, async (req, res) => {
+  try {
+    const { campaignProductId } = req.params;
+    const updateData = req.body;
+
+    const { data: cp, error } = await supabase
+      .from('campaign_products')
+      .update({
+        original_price: updateData.original_price,
+        sale_price: updateData.sale_price,
+        reserved_stock: updateData.reserved_stock,
+        max_per_customer: updateData.max_per_customer,
+        display_order: updateData.display_order,
+        metadata: updateData.metadata
+      })
+      .eq('id', campaignProductId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Update campaign product error:', error);
+      return res.status(500).json({ error: 'Failed to update campaign product' });
+    }
+
+    if (!cp) {
+      return res.status(404).json({ error: 'Campaign product not found' });
+    }
+
+    res.json({ message: 'Campaign product updated', campaign_product: cp });
+  } catch (error) {
+    console.error('Update campaign product error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a campaign product
+app.delete('/admin/campaign_products/:campaignProductId', verifyAdminToken, async (req, res) => {
+  try {
+    const { campaignProductId } = req.params;
+
+    const { error } = await supabase
+      .from('campaign_products')
+      .delete()
+      .eq('id', campaignProductId);
+
+    if (error) {
+      console.error('Delete campaign product error:', error);
+      return res.status(500).json({ error: 'Failed to delete campaign product' });
+    }
+
+    res.json({ message: 'Campaign product deleted' });
+  } catch (error) {
+    console.error('Delete campaign product error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Activate campaign
+app.post('/admin/campaigns/:id/activate', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .update({ 
+        is_active: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Campaign activation error:', error);
+      return res.status(500).json({ error: 'Failed to activate campaign' });
+    }
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+
+    res.json({ message: 'Campaign activated successfully', campaign });
+  } catch (error) {
+    console.error('Campaign activation error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Deactivate campaign
+app.post('/admin/campaigns/:id/deactivate', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .update({ 
+        is_active: false,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Campaign deactivation error:', error);
+      return res.status(500).json({ error: 'Failed to deactivate campaign' });
+    }
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+
+    res.json({ message: 'Campaign deactivated successfully', campaign });
+  } catch (error) {
+    console.error('Campaign deactivation error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get campaign preview
+app.get('/admin/campaigns/:id/preview', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .select(`
+        *,
+        campaign_products (
+          *,
+          product:products (*)
+        ),
+        campaign_assets (*)
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Campaign preview error:', error);
+      return res.status(500).json({ error: 'Failed to get campaign preview' });
+    }
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+
+    // Calculate time left for flash sales
+    if (campaign.type === 'flash' && campaign.start_at && campaign.end_at) {
+      const now = new Date();
+      const startTime = new Date(campaign.start_at);
+      const endTime = new Date(campaign.end_at);
+      
+      if (now < startTime) {
+        campaign.time_left_seconds = Math.floor((startTime - now) / 1000);
+        campaign.status = 'upcoming';
+      } else if (now >= startTime && now <= endTime) {
+        campaign.time_left_seconds = Math.floor((endTime - now) / 1000);
+        campaign.status = 'active';
+      } else {
+        campaign.time_left_seconds = 0;
+        campaign.status = 'expired';
+      }
+    }
+
+    res.json({ campaign });
+  } catch (error) {
+    console.error('Campaign preview error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ============================================================================
+// PUBLIC ENDPOINTS (Rate Limited)
+// ============================================================================
+
+// Get active hero/banner/popup campaigns with assets and rules
+app.get('/campaigns/active', campaignLimiter, async (req, res) => {
+  try {
+    const nowIso = new Date().toISOString();
+    const { data: campaigns, error } = await supabase
+      .from('campaigns')
+      .select(`
+        *,
+        campaign_assets (*),
+        popup_rules (*)
+      `)
+      .in('type', ['hero', 'banner', 'popup'])
+      .eq('is_active', true)
+      .or(`and(start_at.lte.${nowIso},end_at.gte.${nowIso}),and(start_at.is.null,end_at.is.null),and(start_at.is.null,end_at.gte.${nowIso}),and(start_at.lte.${nowIso},end_at.is.null)`) // active window or open-ended
+      .order('start_at', { ascending: true });
+
+    if (error) {
+      console.error('Active campaigns fetch error:', error);
+      return res.status(500).json({ error: 'Failed to fetch active campaigns' });
+    }
+
+    res.json({ campaigns: campaigns || [] });
+  } catch (error) {
+    console.error('Active campaigns fetch error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get active and upcoming flash sales
+app.get('/flashsales', campaignLimiter, async (req, res) => {
+  try {
+    const now = new Date().toISOString();
+    
+    const { data: campaigns, error } = await supabase
+      .from('campaigns')
+      .select(`
+        *,
+        campaign_products (
+          *,
+          product:products (*)
+        ),
+        campaign_assets (*)
+      `)
+      .eq('type', 'flash')
+      .or(`start_at.gte.${now},and(is_active.eq.true,end_at.gte.${now})`)
+      .order('start_at', { ascending: true });
+
+    if (error) {
+      console.error('Flash sales fetch error:', error);
+      return res.status(500).json({ error: 'Failed to fetch flash sales' });
+    }
+
+    // Calculate time left for each campaign
+    const campaignsWithTimeLeft = campaigns.map(campaign => {
+      const now = new Date();
+      const startTime = new Date(campaign.start_at);
+      const endTime = new Date(campaign.end_at);
+      
+      if (now < startTime) {
+        campaign.time_left_seconds = Math.floor((startTime - now) / 1000);
+        campaign.status = 'upcoming';
+      } else if (now >= startTime && now <= endTime) {
+        campaign.time_left_seconds = Math.floor((endTime - now) / 1000);
+        campaign.status = 'active';
+      } else {
+        campaign.time_left_seconds = 0;
+        campaign.status = 'expired';
+      }
+      
+      return campaign;
+    });
+
+    res.json({ campaigns: campaignsWithTimeLeft });
+  } catch (error) {
+    console.error('Flash sales fetch error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get campaign detail by slug
+app.get('/flashsales/:slug', campaignLimiter, async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .select(`
+        *,
+        campaign_products (
+          *,
+          product:products (*)
+        ),
+        campaign_assets (*)
+      `)
+      .eq('slug', slug)
+      .eq('type', 'flash')
+      .single();
+
+    if (error) {
+      console.error('Campaign detail error:', error);
+      return res.status(500).json({ error: 'Failed to fetch campaign' });
+    }
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Campaign not found' });
+    }
+
+    // Calculate remaining reserved stock for each product
+    const productsWithStock = await Promise.all(
+      campaign.campaign_products.map(async (cp) => {
+        const { data: reservations } = await supabase
+          .from('stock_reservations')
+          .select('quantity')
+          .eq('campaign_product_id', cp.id)
+          .eq('consumed', false)
+          .gte('reserved_until', new Date().toISOString());
+
+        const reservedQuantity = reservations?.reduce((sum, r) => sum + r.quantity, 0) || 0;
+        const remainingStock = Math.max(0, cp.reserved_stock - reservedQuantity);
+
+        return {
+          ...cp,
+          remaining_reserved_stock: remainingStock
+        };
+      })
+    );
+
+    campaign.campaign_products = productsWithStock;
+
+    // Calculate time left
+    const now = new Date();
+    const startTime = new Date(campaign.start_at);
+    const endTime = new Date(campaign.end_at);
+    
+    if (now < startTime) {
+      campaign.time_left_seconds = Math.floor((startTime - now) / 1000);
+      campaign.status = 'upcoming';
+    } else if (now >= startTime && now <= endTime) {
+      campaign.time_left_seconds = Math.floor((endTime - now) / 1000);
+      campaign.status = 'active';
+    } else {
+      campaign.time_left_seconds = 0;
+      campaign.status = 'expired';
+    }
+
+    res.json({ campaign });
+  } catch (error) {
+    console.error('Campaign detail error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Reserve product for cart
+app.post('/cart/reserve', campaignLimiter, async (req, res) => {
+  try {
+    const { campaign_product_id, quantity, session_id } = req.body;
+    
+    if (!campaign_product_id || !quantity || !session_id) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Get campaign product details
+    const { data: campaignProduct, error: cpError } = await supabase
+      .from('campaign_products')
+      .select(`
+        *,
+        campaign:campaigns (*)
+      `)
+      .eq('id', campaign_product_id)
+      .single();
+
+    if (cpError || !campaignProduct) {
+      return res.status(404).json({ error: 'Campaign product not found' });
+    }
+
+    // Check if campaign is active
+    if (!campaignProduct.campaign.is_active) {
+      return res.status(400).json({ error: 'Campaign is not active' });
+    }
+
+    // Check campaign time
+    const now = new Date();
+    const startTime = new Date(campaignProduct.campaign.start_at);
+    const endTime = new Date(campaignProduct.campaign.end_at);
+    
+    if (now < startTime || now > endTime) {
+      return res.status(400).json({ error: 'Campaign is not running' });
+    }
+
+    // Check if user has already reserved this product
+    const { data: existingReservations } = await supabase
+      .from('stock_reservations')
+      .select('quantity')
+      .eq('campaign_product_id', campaign_product_id)
+      .eq('session_id', session_id)
+      .eq('consumed', false)
+      .gte('reserved_until', now.toISOString());
+
+    const alreadyReserved = existingReservations?.reduce((sum, r) => sum + r.quantity, 0) || 0;
+    
+    if (alreadyReserved + quantity > campaignProduct.max_per_customer) {
+      return res.status(400).json({ 
+        error: `Maximum ${campaignProduct.max_per_customer} items per customer. Already reserved: ${alreadyReserved}` 
+      });
+    }
+
+    // Check available stock
+    const { data: allReservations } = await supabase
+      .from('stock_reservations')
+      .select('quantity')
+      .eq('campaign_product_id', campaign_product_id)
+      .eq('consumed', false)
+      .gte('reserved_until', now.toISOString());
+
+    const totalReserved = allReservations?.reduce((sum, r) => sum + r.quantity, 0) || 0;
+    const availableStock = campaignProduct.reserved_stock - totalReserved;
+
+    if (quantity > availableStock) {
+      return res.status(400).json({ 
+        error: `Only ${availableStock} items available` 
+      });
+    }
+
+    // Create reservation
+    const reservationTTL = 10 * 60 * 1000; // 10 minutes for guests
+    const reservedUntil = new Date(Date.now() + reservationTTL);
+
+    const { data: reservation, error: reservationError } = await supabase
+      .from('stock_reservations')
+      .insert({
+        campaign_product_id,
+        session_id,
+        quantity,
+        reserved_until: reservedUntil.toISOString()
+      })
+      .select()
+      .single();
+
+    if (reservationError) {
+      console.error('Reservation creation error:', reservationError);
+      return res.status(500).json({ error: 'Failed to create reservation' });
+    }
+
+    res.json({ 
+      message: 'Product reserved successfully',
+      reservation,
+      reserved_until: reservedUntil.toISOString()
+    });
+  } catch (error) {
+    console.error('Reservation error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Checkout endpoint (consumes reservations)
+app.post('/cart/checkout', campaignLimiter, async (req, res) => {
+  try {
+    const { session_id, reservation_ids } = req.body;
+    
+    if (!session_id || !reservation_ids || !Array.isArray(reservation_ids)) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Get all reservations for this session
+    const { data: reservations, error: reservationsError } = await supabase
+      .from('stock_reservations')
+      .select(`
+        *,
+        campaign_product:campaign_products (*)
+      `)
+      .in('id', reservation_ids)
+      .eq('session_id', session_id)
+      .eq('consumed', false)
+      .gte('reserved_until', new Date().toISOString());
+
+    if (reservationsError) {
+      console.error('Reservations fetch error:', reservationsError);
+      return res.status(500).json({ error: 'Failed to fetch reservations' });
+    }
+
+    if (reservations.length === 0) {
+      return res.status(400).json({ error: 'No valid reservations found' });
+    }
+
+    // Use transaction to consume reservations and update stock
+    const { error: transactionError } = await supabase.rpc('consume_reservations', {
+      reservation_ids: reservation_ids
+    });
+
+    if (transactionError) {
+      console.error('Transaction error:', transactionError);
+      return res.status(500).json({ error: 'Failed to process checkout' });
+    }
+
+    res.json({ 
+      message: 'Checkout completed successfully',
+      consumed_reservations: reservations.length
+    });
+  } catch (error) {
+    console.error('Checkout error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get campaign metrics
+app.get('/campaigns/:id/metrics', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { start_date, end_date } = req.query;
+
+    let query = supabase
+      .from('campaign_metrics')
+      .select('*')
+      .eq('campaign_id', id)
+      .order('metric_date', { ascending: true });
+
+    if (start_date) {
+      query = query.gte('metric_date', start_date);
+    }
+    if (end_date) {
+      query = query.lte('metric_date', end_date);
+    }
+
+    const { data: metrics, error } = await query;
+
+    if (error) {
+      console.error('Metrics fetch error:', error);
+      return res.status(500).json({ error: 'Failed to fetch metrics' });
+    }
+
+    res.json({ metrics });
+  } catch (error) {
+    console.error('Metrics fetch error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

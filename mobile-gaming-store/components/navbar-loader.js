@@ -2,8 +2,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const navbarContainer = document.getElementById("navbar-container");
   
-  console.log("Navbar loader initialized");
-  console.log("Navbar container found:", !!navbarContainer);
+  // Navbar loader initialized
 
   if (navbarContainer) {
     // Load navbar HTML with better path resolution
@@ -20,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((html) => {
         navbarContainer.innerHTML = html;
-        console.log("Navbar loaded successfully from:", navbarPath);
+        // Navbar loaded successfully
 
         // Initialize navbar functionality after loading
         initializeNavbar();
@@ -47,10 +46,10 @@ document.addEventListener("DOMContentLoaded", function () {
           navbar.style.left = '0';
           navbar.style.width = '100%';
           navbar.style.zIndex = '1000';
-          console.log("Navbar visibility ensured");
-        } else {
-          console.log("Navbar element not found after loading");
-        }
+                  // Navbar visibility ensured
+      } else {
+        // Navbar element not found after loading
+      }
       })
       .catch((error) => {
         console.error("Error loading navbar:", error);
@@ -162,7 +161,7 @@ function _getSupabaseClientSafe() {
 async function updateCartCount() {
   const cartCount = document.getElementById("cart-count");
   if (cartCount) {
-    console.log("=== Updating Cart Count ===");
+    // Updating Cart Count
 
     // Try to get current user ID from multiple sources
     let currentUserId = window.currentUserId;
@@ -180,28 +179,20 @@ async function updateCartCount() {
     }
 
     const cartKey = currentUserId ? `cart_user_${currentUserId}` : "cart_guest";
-    console.log("Cart key:", cartKey);
-    console.log("Current user ID:", currentUserId);
-
     const cart = JSON.parse(localStorage.getItem(cartKey) || "[]");
     const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
-    console.log("Cart items:", cart);
-    console.log("Total items:", totalItems);
-
     cartCount.textContent = totalItems;
     cartCount.style.display = totalItems > 0 ? "flex" : "none";
-
-    console.log("Cart count updated:", totalItems);
 
     const mobileCartCount = document.getElementById("cart-count-mobile");
     if (mobileCartCount) {
       mobileCartCount.textContent = totalItems;
       mobileCartCount.style.display = totalItems > 0 ? "flex" : "none";
-      console.log("Mobile cart count updated:", totalItems);
+      // Mobile cart count updated
     }
   } else {
-    console.log("Cart count element not found");
+    // Cart count element not found
   }
 }
 

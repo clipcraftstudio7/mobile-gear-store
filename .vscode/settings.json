@@ -1,4 +1,8 @@
 {
   "liveServer.settings.multiRootWorkspaceName": "gaming gear",
-  "liveServer.settings.port": 5501
+  "liveServer.settings.port": 5501,
+  "liveServer.settings.host": "0.0.0.0",
+  "liveServer.settings.useLocalIp": true,
+  "liveServer.settings.root": "/",
+  "liveServer.settings.wait": 500
 }

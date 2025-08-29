@@ -1,0 +1,13 @@
+product_id,original_price,sale_price,reserved_stock,max_per_customer,display_order,notes
+1,2999.00,899.00,50,2,1,Black Friday special
+2,1999.00,599.00,75,3,2,Weekend sale item
+3,3999.00,1199.00,25,1,3,Premium controller
+4,1499.00,449.00,100,5,4,Popular trigger
+5,2499.00,1749.00,40,2,1,Weekend special
+6,1799.00,1259.00,60,3,2,Controller bundle
+7,3299.00,2309.00,30,1,3,Premium gaming set
+8,1999.00,1999.00,0,0,1,Hero showcase item
+9,2999.00,2999.00,0,0,2,Hero showcase item
+10,3999.00,2399.00,35,2,1,Festival exclusive
+11,2799.00,1679.00,50,3,2,Festival special
+12,1899.00,1139.00,80,4,3,Festival popular item

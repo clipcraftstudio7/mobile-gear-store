@@ -22,6 +22,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <link rel="stylesheet" href="assets/css/fresh-arrivals.css" />
+    <link rel="stylesheet" href="assets/css/campaign-components.css" />
     <!-- Glide.js for Image Gallery -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide@3.6.0/dist/css/glide.core.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide@3.6.0/dist/css/glide.theme.min.css">
@@ -619,223 +620,9 @@
         background: #f39c12;
       }
 
-      /* Fresh Arrivals Section Styling */
-      #fresh-arrivals {
-        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-        border-radius: 20px;
-        margin: 40px 0;
-        padding: 30px;
-        position: relative;
-        overflow: hidden;
-      }
+      /* Fresh Arrivals Section Styling - Moved to external CSS file */
 
-      #fresh-arrivals::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>');
-        opacity: 0.3;
-        pointer-events: none;
-      }
-
-      .section-title-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        flex-wrap: wrap;
-      }
-
-      .new-products-counter {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 20px;
-        padding: 8px 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-      }
-
-                  .counter-number {
-              font-size: 18px;
-              font-weight: bold;
-              color: #fff;
-              background: linear-gradient(45deg, #ffffff, #cccccc);
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
-              background-clip: text;
-            }
-
-      .counter-text {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.8);
-        font-weight: 500;
-      }
-
-      .section-link {
-        color: rgba(255, 255, 255, 0.9);
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        padding: 8px 16px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-      }
-
-      .section-link:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: translateY(-2px);
-        color: #fff;
-      }
-
-      .fresh-arrivals-container {
-        position: relative;
-        z-index: 1;
-      }
-
-      .fresh-arrivals-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
-      }
-
-      /* Enhanced Product Cards for Fresh Arrivals */
-      .fresh-arrivals-grid .product-card {
-        background: rgba(26, 26, 26, 0.95);
-        border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(37, 211, 102, 0.2);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .fresh-arrivals-grid .product-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #25d366, #128c7e, #25d366, #128c7e);
-        background-size: 200% 100%;
-        animation: rainbow 3s ease-in-out infinite;
-      }
-
-      @keyframes rainbow {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-      }
-
-      .fresh-arrivals-grid .product-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 20px 40px rgba(37, 211, 102, 0.2);
-        border-color: rgba(37, 211, 102, 0.4);
-      }
-
-      /* Tablet and Laptop Responsive Sizing */
-      @media (min-width: 768px) and (max-width: 1024px) {
-        .products-grid,
-        .fresh-arrivals-grid {
-          grid-template-columns: repeat(3, 1fr);
-          gap: 12px;
-        }
-        
-        .product-card,
-        .fresh-arrivals-grid .product-card {
-          max-width: none;
-        }
-        
-        .product-info {
-          padding: 12px;
-        }
-        
-        .product-title {
-          font-size: 0.95rem;
-        }
-        
-        .product-price {
-          font-size: 1.1rem;
-        }
-      }
-
-      @media (min-width: 1025px) and (max-width: 1440px) {
-        .products-grid,
-        .fresh-arrivals-grid {
-          grid-template-columns: repeat(4, 1fr);
-          gap: 15px;
-        }
-        
-        .product-card,
-        .fresh-arrivals-grid .product-card {
-          max-width: none;
-        }
-        
-        .product-info {
-          padding: 15px;
-        }
-        
-        .product-title {
-          font-size: 1rem;
-        }
-        
-        .product-price {
-          font-size: 1.2rem;
-        }
-      }
-
-      @media (min-width: 1441px) {
-        .products-grid,
-        .fresh-arrivals-grid {
-          grid-template-columns: repeat(5, 1fr);
-          gap: 18px;
-        }
-        
-        .product-card,
-        .fresh-arrivals-grid .product-card {
-          max-width: none;
-        }
-        
-        .product-info {
-          padding: 16px;
-        }
-        
-        .product-title {
-          font-size: 1.1rem;
-        }
-        
-        .product-price {
-          font-size: 1.3rem;
-        }
-      }
-
-      /* NEW Badge for Fresh Products */
-                  .new-badge {
-              position: absolute;
-              top: 15px;
-              right: 15px;
-              background: linear-gradient(45deg, #000000, #333333);
-              color: #fff;
-              padding: 6px 12px;
-              border-radius: 20px;
-              font-size: 11px;
-              font-weight: bold;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-              z-index: 10;
-              animation: pulse 2s ease-in-out infinite;
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            }
-
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
+      /* Responsive styles moved to external CSS files */
 
 
       .product-info {
@@ -4171,7 +3958,7 @@
     </script>
     
     <!-- Test Admin Link Script -->
-    <script src="test-admin-link.js"></script>
+    <!-- test-admin-link.js removed -->
     
     <!-- Image Fallback System -->
     <script src="assets/js/image-fallback.js"></script>
@@ -4180,7 +3967,7 @@
     <script src="assets/js/products-api.js"></script>
     
     <!-- Product Sync Test (moved after products-api.js) -->
-    <script src="test-product-sync.js"></script>
+    <!-- test-product-sync.js removed -->
     
 
     
@@ -4364,6 +4151,24 @@
         </a>
       </div>
     </section>
+
+    <!-- Campaign Hero Banner -->
+    <div id="campaign-hero"></div>
+
+    <!-- Campaign Banner Strip (small banners) -->
+    <div id="campaign-banner-strip"></div>
+
+    <!-- Banner Grid Section -->
+    <section class="banner-grid-section" id="banner-grid-section">
+      <div class="banner-grid-header">
+        <h2 class="banner-grid-title">Featured Banners</h2>
+        <a href="#" class="section-link" onclick="return false;">&nbsp;</a>
+      </div>
+      <div class="banner-grid" id="banner-grid"></div>
+    </section>
+
+    <!-- Flash Sales Section (shows 4 items + CTA) -->
+    <div id="flash-sales-section"></div>
 
     <!-- Fresh Arrivals Section with Enhanced Styling -->
     <section class="section" id="fresh-arrivals">
@@ -4748,6 +4553,8 @@
                   <script src="assets/js/messages.js"></script>
               <script src="assets/js/main.js"></script>
               <script src="assets/js/fresh-arrivals.js"></script>
+    <script src="assets/js/campaign-components.js"></script>
+    <!-- test-fresh-arrivals.js removed -->
     <!-- Cart.js must be loaded before main.js so cart functions are available -->
     
     <script>
