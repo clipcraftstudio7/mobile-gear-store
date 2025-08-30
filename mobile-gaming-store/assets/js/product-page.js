@@ -19,7 +19,7 @@ function getProductIdFromUrl() {
 async function loadProductData(productId) {
   try {
     // Load products data
-    const response = await fetch("http://localhost:3000/products");
+    const response = await fetch("/products");
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -159,7 +159,7 @@ function populateProductPage(product) {
 }
 
 function loadRelatedProducts(category, currentProductId) {
-  fetch("http://localhost:3000/products")
+  fetch("/products")
     .then((response) => response.json())
     .then((products) => {
       // Filter products by category and exclude current product

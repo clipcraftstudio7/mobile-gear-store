@@ -16,7 +16,7 @@ class ProductLoader {
 
   async loadProducts() {
     try {
-      const response = await fetch("http://localhost:3000/products");
+      const response = await fetch("/products");
       this.products = await response.json();
     } catch (error) {
       console.error("Error loading products:", error);

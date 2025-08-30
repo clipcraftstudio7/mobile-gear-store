@@ -3,7 +3,7 @@
 
 class ProductsAPI {
   constructor() {
-    this.serverUrl = 'http://localhost:3000/products';
+    this.serverUrl = '/products';
     this.fallbackUrl = 'data/products.json';
     this.cache = null;
     this.cacheTime = null;
@@ -64,7 +64,7 @@ class ProductsAPI {
   // Check if server is available
   async isServerAvailable() {
     try {
-      const response = await fetch('http://localhost:3000/health');
+      const response = await fetch('/health');
       return response.ok;
     } catch {
       return false;

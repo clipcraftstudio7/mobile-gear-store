@@ -1365,11 +1365,12 @@
             formData.append("features", JSON.stringify(featuresArray));
           }
           
-          // Collect image files
+          // Collect image files using server-expected field names
+          const fieldNames = ['mainImage','angleImage','detailImage','featureImage','packageImage'];
           for (let i = 1; i <= 5; i++) {
             const fileInput = document.getElementById(`product-image${i}-file`);
             if (fileInput && fileInput.files && fileInput.files[0]) {
-              formData.append(`imageFile${i}`, fileInput.files[0]);
+              formData.append(fieldNames[i-1], fileInput.files[0]);
             }
           }
           
