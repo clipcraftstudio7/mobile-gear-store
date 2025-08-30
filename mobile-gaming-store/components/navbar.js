@@ -238,9 +238,9 @@ class NavbarComponent {
 
   // Search functionality
   setupSearch() {
-    // Fetch products.json and cache
+    // Fetch products and cache
     if (!window._allProducts) {
-      fetch("http://localhost:3000/products")
+      fetch("/products")
         .then((r) => r.json())
         .then((products) => {
           window._allProducts = products;
@@ -268,11 +268,11 @@ class NavbarComponent {
     this.searchInput.addEventListener("input", async (e) => {
       const query = e.target.value.toLowerCase().trim();
       if (query.length > 0) {
-        // Show product suggestions from products.json
+        // Show product suggestions from server cache
         let products = window._allProducts || [];
         if (!products.length) {
           try {
-            products = await fetch("http://localhost:3000/products").then((r) => r.json());
+            products = await fetch("/products").then((r) => r.json());
             window._allProducts = products;
           } catch {
             products = [];
