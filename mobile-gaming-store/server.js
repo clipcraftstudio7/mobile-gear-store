@@ -22,8 +22,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the current directory
-app.use(express.static('.'));
+// Serve static files from this app's directory
+app.use(express.static(__dirname));
+
+// Serve index.html at root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Ensure products-organized directory exists
 const ensureProductsOrganizedDir = async () => {
