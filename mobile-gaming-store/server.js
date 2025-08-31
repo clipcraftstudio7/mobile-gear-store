@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3000;
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://kokntkhxkymllafuubun.supabase.co";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const PRODUCTS_SOURCE = (process.env.PRODUCTS_SOURCE || 'json').toLowerCase();
 
 // Initialize Supabase clients
 // - Public for auth/user context
@@ -145,11 +146,19 @@ app.get('/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
-// Get all products with enhanced filtering from Supabase
+// Get all products with enhanced filtering (source: Supabase or JSON)
 app.get('/products', async (req, res) => {
   try {
+    if (PRODUCTS_SOURCE === 'json') {
+      console.log('📦 Fetching products from local JSON...');
+      const productsPath = path.join(__dirname, 'data', 'products.json');
+      const productsData = await fs.readFile(productsPath, 'utf8');
+      const localProducts = JSON.parse(productsData);
+      return res.json(localProducts);
+    }
+
     console.log('📦 Fetching products from Supabase...');
-    
+
     // Fetch products from Supabase
     const { data: products, error } = await supabase
       .from('products')
