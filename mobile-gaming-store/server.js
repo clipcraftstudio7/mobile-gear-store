@@ -49,20 +49,14 @@ const ensureProductsOrganizedDir = async () => {
   }
 };
 
-// Multer configuration for organized uploads
+// Multer configuration for organized uploads (write to base, move later)
 const organizedUpload = multer({
   storage: multer.diskStorage({
     destination: async (req, file, cb) => {
-      const { folderName } = req.body;
-      if (!folderName) {
-        return cb(new Error('Folder name is required'));
-      }
-
-      const uploadPath = path.join(__dirname, 'assets', 'images', 'products-organized', folderName);
-      
       try {
-        await fs.mkdir(uploadPath, { recursive: true });
-        cb(null, uploadPath);
+        const basePath = path.join(__dirname, 'assets', 'images', 'products-organized');
+        await fs.mkdir(basePath, { recursive: true });
+        cb(null, basePath);
       } catch (error) {
         cb(error);
       }
@@ -70,21 +64,12 @@ const organizedUpload = multer({
     filename: (req, file, cb) => {
       const { originalname } = file;
       const ext = path.extname(originalname);
-      
-      // Determine file number based on existing files
+      // Determine filename from field name
       const imageFields = ['mainImage', 'angleImage', 'detailImage', 'featureImage', 'packageImage'];
       const fieldIndex = imageFields.indexOf(file.fieldname);
       const imageNumber = fieldIndex !== -1 ? fieldIndex + 1 : 1;
-      
-      const imageNames = {
-        1: '1-main',
-        2: '2-angle', 
-        3: '3-detail',
-        4: '4-context',
-        5: '5-package'
-      };
-      
-      const filename = `${imageNames[imageNumber] || `${imageNumber}-image`}${ext}`;
+      const imageNames = { 1: '1-main', 2: '2-angle', 3: '3-detail', 4: '4-context', 5: '5-package' };
+      const filename = `${imageNames[imageNumber] || `${imageNumber}-image`}${ext || '.jpg'}`;
       cb(null, filename);
     }
   }),
@@ -335,6 +320,11 @@ app.post('/add-product-organized', organizedUpload.fields([
       }
     }
 
+    // Move uploaded files into the correct folder (if not using storage)
+    const basePath = path.join(__dirname, 'assets', 'images', 'products-organized');
+    const targetFolder = path.join(basePath, folderName);
+    await fs.mkdir(targetFolder, { recursive: true });
+
     // Generate image paths using actual uploaded filenames (preserve extensions)
     let imagePaths = [];
     const imageFields = ['mainImage', 'angleImage', 'detailImage', 'featureImage', 'packageImage'];
@@ -345,6 +335,15 @@ app.post('/add-product-organized', organizedUpload.fields([
       const filename = fileMeta?.filename || defaultNames[idx];
       return `assets/images/products-organized/${folderName}/${filename}`;
     });
+
+    // Move physical files into the folderName directory (non-storage path)
+    for (const field of imageFields) {
+      const fileMeta = (req.files && req.files[field] && req.files[field][0]) ? req.files[field][0] : null;
+      if (!fileMeta) continue;
+      const src = fileMeta.path;
+      const dest = path.join(targetFolder, path.basename(fileMeta.filename));
+      try { await fs.rename(src, dest); } catch {}
+    }
 
     // Optionally upload to Supabase Storage and replace URLs with public URLs
     if (USE_SUPABASE_STORAGE) {
@@ -358,8 +357,8 @@ app.post('/add-product-organized', organizedUpload.fields([
             continue;
           }
 
-          // Read the file saved locally by multer
-          const localPath = fileMeta.path;
+          // Read the file (now moved) from target folder
+          const localPath = path.join(targetFolder, fileMeta.filename);
           const buffer = await fs.readFile(localPath);
           const ext = path.extname(localPath).toLowerCase();
           const contentType = ext === '.png' ? 'image/png'
