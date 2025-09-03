@@ -14,7 +14,10 @@ const PORT = process.env.PORT || 3000;
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://kokntkhxkymllafuubun.supabase.co";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-const PRODUCTS_SOURCE = (process.env.PRODUCTS_SOURCE || 'json').toLowerCase();
+const USE_SUPABASE_STORAGE = (process.env.USE_SUPABASE_STORAGE || 'false').toLowerCase() === 'true';
+const SUPABASE_STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'product-images';
+// Prefer Supabase as the primary data source; fallback to JSON only if explicitly set
+const PRODUCTS_SOURCE = (process.env.PRODUCTS_SOURCE || 'supabase').toLowerCase();
 
 // Initialize Supabase clients
 // - Public for auth/user context
@@ -77,7 +80,7 @@ const organizedUpload = multer({
         1: '1-main',
         2: '2-angle', 
         3: '3-detail',
-        4: '4-feature',
+        4: '4-context',
         5: '5-package'
       };
       
@@ -144,6 +147,50 @@ const campaignAssetUpload = multer({
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
+});
+
+// Detailed health status: server, Supabase DB, and Storage (if enabled)
+app.get('/health/details', async (req, res) => {
+  const status = {
+    server: { ok: true, time: new Date().toISOString() },
+    supabase: { ok: false, error: null },
+    storage: { enabled: USE_SUPABASE_STORAGE, ok: false, error: null },
+    config: {
+      productsSource: PRODUCTS_SOURCE,
+      useStorage: USE_SUPABASE_STORAGE,
+      storageBucket: SUPABASE_STORAGE_BUCKET
+    }
+  };
+
+  try {
+    const { error } = await supabase.from('products').select('id').limit(1);
+    if (error) {
+      status.supabase.error = error.message;
+    } else {
+      status.supabase.ok = true;
+    }
+  } catch (e) {
+    status.supabase.error = e.message;
+  }
+
+  if (USE_SUPABASE_STORAGE) {
+    try {
+      // Attempt a lightweight public URL generation (does not create objects)
+      const testPath = 'health/ok.txt';
+      const { data } = supabase.storage.from(SUPABASE_STORAGE_BUCKET).getPublicUrl(testPath);
+      if (data && data.publicUrl) {
+        status.storage.ok = true;
+      } else {
+        status.storage.error = 'Failed to derive public URL';
+      }
+    } catch (e) {
+      status.storage.error = e.message;
+    }
+  } else {
+    status.storage.ok = false;
+  }
+
+  res.json(status);
 });
 
 // Get all products with enhanced filtering (source: Supabase or JSON)
@@ -253,7 +300,7 @@ app.post('/add-product-organized', organizedUpload.fields([
   try {
     console.log('📦 Adding new product with organized structure');
     console.log('Request body:', req.body);
-    console.log('Files:', req.files);
+    console.log('Files:', Object.keys(req.files || {}));
 
     const {
       name,
@@ -288,13 +335,64 @@ app.post('/add-product-organized', organizedUpload.fields([
       }
     }
 
-    // Generate image paths
-    const imagePaths = [];
+    // Generate image paths using actual uploaded filenames (preserve extensions)
+    let imagePaths = [];
     const imageFields = ['mainImage', 'angleImage', 'detailImage', 'featureImage', 'packageImage'];
-    const imageNames = ['1-main.jpg', '2-angle.jpg', '3-detail.jpg', '4-feature.jpg', '5-package.jpg'];
-    
-    for (let i = 0; i < 5; i++) {
-      imagePaths.push(`assets/images/products-organized/${folderName}/${imageNames[i]}`);
+    const defaultNames = ['1-main.jpg', '2-angle.jpg', '3-detail.jpg', '4-context.jpg', '5-package.jpg'];
+
+    imagePaths = imageFields.map((field, idx) => {
+      const fileMeta = (req.files && req.files[field] && req.files[field][0]) ? req.files[field][0] : null;
+      const filename = fileMeta?.filename || defaultNames[idx];
+      return `assets/images/products-organized/${folderName}/${filename}`;
+    });
+
+    // Optionally upload to Supabase Storage and replace URLs with public URLs
+    if (USE_SUPABASE_STORAGE) {
+      const uploadedPaths = [];
+      for (let i = 0; i < imageFields.length; i++) {
+        try {
+          const field = imageFields[i];
+          const fileMeta = (req.files && req.files[field] && req.files[field][0]) ? req.files[field][0] : null;
+          if (!fileMeta) {
+            uploadedPaths.push(null);
+            continue;
+          }
+
+          // Read the file saved locally by multer
+          const localPath = fileMeta.path;
+          const buffer = await fs.readFile(localPath);
+          const ext = path.extname(localPath).toLowerCase();
+          const contentType = ext === '.png' ? 'image/png'
+            : (ext === '.webp' ? 'image/webp'
+            : (ext === '.gif' ? 'image/gif'
+            : (ext === '.avif' ? 'image/avif' : 'image/jpeg')));
+
+          // Use the same filename saved by multer to preserve extension
+          const storagePath = `products-organized/${folderName}/${fileMeta.filename}`;
+          const { error: upErr } = await supabase
+            .storage
+            .from(SUPABASE_STORAGE_BUCKET)
+            .upload(storagePath, buffer, { upsert: true, contentType });
+          if (upErr) {
+            console.warn('Storage upload failed for', storagePath, upErr.message);
+            uploadedPaths.push(null);
+            continue;
+          }
+
+          const { data: pub } = supabase.storage.from(SUPABASE_STORAGE_BUCKET).getPublicUrl(storagePath);
+          if (pub && pub.publicUrl) {
+            uploadedPaths.push(pub.publicUrl);
+          } else {
+            uploadedPaths.push(null);
+          }
+        } catch (e) {
+          console.warn('Storage upload exception:', e.message);
+          uploadedPaths.push(null);
+        }
+      }
+
+      // Replace any successfully uploaded URLs
+      imagePaths = imagePaths.map((localUrl, idx) => uploadedPaths[idx] || localUrl);
     }
 
     // Calculate original price
@@ -348,6 +446,7 @@ app.post('/add-product-organized', organizedUpload.fields([
       .select()
       .single();
 
+    let savedTo = 'supabase';
     if (insertError) {
       console.error('❌ Error inserting product to Supabase:', insertError);
       
@@ -366,6 +465,7 @@ app.post('/add-product-organized', organizedUpload.fields([
         products.push(newProduct);
         await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
         console.log('✅ Product saved to local JSON as fallback');
+        savedTo = 'json';
       } catch (fallbackError) {
         console.error('❌ Fallback save also failed:', fallbackError);
         return res.status(500).json({ 
@@ -377,10 +477,12 @@ app.post('/add-product-organized', organizedUpload.fields([
 
     console.log('✅ Product added successfully to Supabase:', newProduct.name);
     res.json({ 
-      message: 'Product added successfully to Supabase', 
+      message: savedTo === 'supabase' ? 'Product added to Supabase' : 'Product saved to local JSON (Supabase insert failed)', 
+      savedTo,
       product: newProduct,
       imagePaths: imagePaths,
-      supabaseId: insertedProduct?.id
+      supabaseId: insertedProduct?.id || null,
+      storage: { enabled: USE_SUPABASE_STORAGE, bucket: SUPABASE_STORAGE_BUCKET }
     });
 
   } catch (error) {
@@ -654,8 +756,17 @@ app.post('/edit-product', async (req, res) => {
 // Helper function to verify admin JWT
 const verifyAdminToken = async (req, res, next) => {
   try {
+    // Dev bypass: allow ADMIN_ID header to pass when no token (non-production convenience)
+    const adminIdHeader = req.headers['x-admin-id'];
+    const isDevBypassEnabled = process.env.ALLOW_ADMIN_BYPASS === 'true';
+
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) {
+      if (isDevBypassEnabled && adminIdHeader) {
+        // Minimal profile with admin role for bypass
+        req.user = { id: String(adminIdHeader) };
+        return next();
+      }
       return res.status(401).json({ error: 'No token provided' });
     }
 

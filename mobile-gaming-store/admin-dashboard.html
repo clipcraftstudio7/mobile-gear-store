@@ -1259,7 +1259,9 @@
           return;
         }
         currentUser = user;
+        window.currentUser = user;
         loadStats();
+        renderHealthCard();
         loadProducts();
         loadOrders();
         // Utility functions for organized image handling
@@ -1370,7 +1372,10 @@
           for (let i = 1; i <= 5; i++) {
             const fileInput = document.getElementById(`product-image${i}-file`);
             if (fileInput && fileInput.files && fileInput.files[0]) {
+              // Preferred names used by current backend
               formData.append(fieldNames[i-1], fileInput.files[0]);
+              // Backward compatible names some older endpoints used
+              formData.append(`imageFile${i}`, fileInput.files[0]);
             }
           }
           
@@ -1388,7 +1393,9 @@
             
             const result = await res.json();
             msgDiv.style.color = "#25d366";
-            msgDiv.textContent = `Product "${name}" added successfully with organized images!`;
+            msgDiv.textContent = result.savedTo === 'supabase'
+              ? `Product "${name}" added to Supabase successfully!`
+              : `Product "${name}" saved locally (Supabase insert failed).`;
             
             // Reset form and reload products
             document.getElementById("add-product-form").reset();
@@ -1487,6 +1494,30 @@
           .from("orders")
           .select("*", { count: "exact", head: true });
         document.getElementById("stat-orders").textContent = orderCount || 0;
+      }
+
+      // --- HEALTH CARD ---
+      async function renderHealthCard(){
+        try {
+          const res = await fetch('/health/details');
+          const details = await res.json();
+          const container = document.querySelector('.stats-grid');
+          if (!container) return;
+          const ok = (b) => b ? '✅' : '❌';
+          const card = document.createElement('div');
+          card.className = 'stat-box';
+          card.style.cursor = 'default';
+          card.innerHTML = `
+            <div class="stat-title">System Health</div>
+            <div class="stat-number" style="font-size:20px;">${ok(details.server?.ok)} Server</div>
+            <div style="color:#aaa;font-size:12px;margin-top:6px;line-height:1.6;">
+              ${ok(details.supabase?.ok)} Supabase DB<br/>
+              ${ok(details.storage?.enabled && details.storage?.ok)} Storage ${details.storage?.enabled ? '(on)' : '(off)'}<br/>
+              Source: ${details.config?.productsSource || 'supabase'}
+            </div>
+          `;
+          container.appendChild(card);
+        } catch {}
       }
       // --- LOAD PRODUCTS ---
       async function loadProducts() {
@@ -2243,7 +2274,11 @@
         try{
           const { data } = await supabase.auth.getSession();
           const token = data?.session?.access_token;
-          return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type':'application/json' } : { 'Content-Type':'application/json' };
+          const headers = { 'Content-Type':'application/json' };
+          if (token) headers['Authorization'] = `Bearer ${token}`;
+          // Dev bypass support: send admin id header so server can accept when ALLOW_ADMIN_BYPASS=true
+          if (window.currentUser && window.currentUser.id) headers['x-admin-id'] = window.currentUser.id;
+          return headers;
         }catch{ return { 'Content-Type':'application/json' }; }
       }
 
