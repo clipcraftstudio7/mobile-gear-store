@@ -282,6 +282,7 @@ app.post('/add-product-organized', organizedUpload.fields([
   { name: 'featureImage', maxCount: 1 },
   { name: 'packageImage', maxCount: 1 }
 ]), async (req, res) => {
+  let step = 'start';
   try {
     console.log('📦 Adding new product with organized structure');
     console.log('Request body:', req.body);
@@ -301,6 +302,7 @@ app.post('/add-product-organized', organizedUpload.fields([
       folderName
     } = req.body;
 
+    step = 'validate-inputs';
     // Validate required fields
     if (!name || !price || !category || !productId || !folderName) {
       return res.status(400).json({ 
@@ -321,9 +323,15 @@ app.post('/add-product-organized', organizedUpload.fields([
     }
 
     // Move uploaded files into the correct folder (if not using storage)
+    step = 'prepare-folders';
     const basePath = path.join(__dirname, 'assets', 'images', 'products-organized');
     const targetFolder = path.join(basePath, folderName);
-    await fs.mkdir(targetFolder, { recursive: true });
+    try {
+      await fs.mkdir(targetFolder, { recursive: true });
+    } catch (e) {
+      console.error('❌ Failed to ensure target folder', targetFolder, e.message);
+      return res.status(500).json({ error: 'Failed to create product images folder', details: e.message, step });
+    }
 
     // Generate image paths using actual uploaded filenames (preserve extensions)
     let imagePaths = [];
@@ -337,16 +345,31 @@ app.post('/add-product-organized', organizedUpload.fields([
     });
 
     // Move physical files into the folderName directory (non-storage path)
+    step = 'move-files';
     for (const field of imageFields) {
       const fileMeta = (req.files && req.files[field] && req.files[field][0]) ? req.files[field][0] : null;
       if (!fileMeta) continue;
       const src = fileMeta.path;
       const dest = path.join(targetFolder, path.basename(fileMeta.filename));
-      try { await fs.rename(src, dest); } catch {}
+      try {
+        if (src !== dest) {
+          await fs.rename(src, dest);
+        }
+      } catch (e) {
+        console.warn('⚠️ File move failed, attempting copy', { src, dest, err: e.message });
+        try {
+          const buf = await fs.readFile(src);
+          await fs.writeFile(dest, buf);
+        } catch (e2) {
+          console.error('❌ File move+copy failed for', dest, e2.message);
+          return res.status(500).json({ error: 'Failed to store uploaded image', details: e2.message, step });
+        }
+      }
     }
 
     // Optionally upload to Supabase Storage and replace URLs with public URLs
     if (USE_SUPABASE_STORAGE) {
+      step = 'storage-upload';
       const uploadedPaths = [];
       for (let i = 0; i < imageFields.length; i++) {
         try {
@@ -398,6 +421,7 @@ app.post('/add-product-organized', organizedUpload.fields([
     const originalPrice = discount > 0 ? Math.round(parseFloat(price) / (1 - discount / 100)) : parseFloat(price);
 
     // Create new product object
+    step = 'build-product';
     const newProduct = {
       id: parseInt(productId),
       name: name.trim(),
@@ -439,6 +463,7 @@ app.post('/add-product-organized', organizedUpload.fields([
     };
 
     // Insert product into Supabase
+    step = 'insert-supabase';
     const { data: insertedProduct, error: insertError } = await supabase
       .from('products')
       .insert([supabaseProduct])
@@ -451,6 +476,7 @@ app.post('/add-product-organized', organizedUpload.fields([
       
       // Fallback: save to local JSON if Supabase fails
       try {
+        step = 'fallback-json';
         const productsPath = path.join(__dirname, 'data', 'products.json');
         let products = [];
         
@@ -461,6 +487,10 @@ app.post('/add-product-organized', organizedUpload.fields([
           console.log('No existing products file, creating new one');
         }
 
+        // Ensure data directory exists before writing
+        const dataDir = path.dirname(productsPath);
+        try { await fs.mkdir(dataDir, { recursive: true }); } catch {}
+
         products.push(newProduct);
         await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
         console.log('✅ Product saved to local JSON as fallback');
@@ -469,7 +499,8 @@ app.post('/add-product-organized', organizedUpload.fields([
         console.error('❌ Fallback save also failed:', fallbackError);
         return res.status(500).json({ 
           error: 'Failed to save product to both Supabase and local file', 
-          details: insertError.message 
+          details: insertError?.message || String(insertError),
+          step
         });
       }
     }
@@ -488,7 +519,8 @@ app.post('/add-product-organized', organizedUpload.fields([
     console.error('❌ Error adding product:', error);
     res.status(500).json({ 
       error: 'Failed to add product', 
-      details: error.message 
+      details: error?.message || String(error),
+      step
     });
   }
 });
