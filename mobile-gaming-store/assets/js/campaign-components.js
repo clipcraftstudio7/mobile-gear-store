@@ -3,7 +3,9 @@
 
 class CampaignComponents {
   constructor() {
-    this.activeCampaigns = [];
+    // Separate sources: non-flash (hero/banner/popup) vs flash sales
+    this.heroBannerCampaigns = [];
+    this.flashCampaigns = [];
     this.popupShown = false;
     this.sessionId = this.generateSessionId();
     this.init();
@@ -12,7 +14,7 @@ class CampaignComponents {
   // Initialize campaign components
   async init() {
     try {
-      await this.loadActiveCampaigns();
+      await this.loadCampaigns();
       this.renderCampaignHero();
       this.renderBannerStrip();
       this.renderFlashSales();
@@ -34,22 +36,32 @@ class CampaignComponents {
     return newId;
   }
 
-  // Load active campaigns from API
-  async loadActiveCampaigns() {
+  // Load campaigns from APIs: non-flash for banners/popups and flash for sales
+  async loadCampaigns() {
     try {
-      const response = await fetch('/flashsales');
-      const data = await response.json();
-      this.activeCampaigns = data.campaigns || [];
-      console.log('Loaded campaigns:', this.activeCampaigns.length);
+      const [nonFlashRes, flashRes] = await Promise.all([
+        fetch('/campaigns/active'), // hero/banner/popup
+        fetch('/flashsales') // flash
+      ]);
+      const nonFlashData = await nonFlashRes.json();
+      const flashData = await flashRes.json();
+      this.heroBannerCampaigns = (nonFlashData && nonFlashData.campaigns) ? nonFlashData.campaigns : [];
+      this.flashCampaigns = (flashData && flashData.campaigns) ? flashData.campaigns : [];
+      console.log('Loaded campaigns:', {
+        nonFlash: this.heroBannerCampaigns.length,
+        flash: this.flashCampaigns.length
+      });
     } catch (error) {
       console.error('Error loading campaigns:', error);
+      this.heroBannerCampaigns = [];
+      this.flashCampaigns = [];
     }
   }
 
   // Render campaign hero banner
   renderCampaignHero() {
-    const heroCampaigns = this.activeCampaigns.filter(c => 
-      c.type === 'hero' && c.is_active && c.status === 'active'
+    const heroCampaigns = this.heroBannerCampaigns.filter(c => 
+      c.type === 'hero' && c.is_active
     );
 
     if (heroCampaigns.length === 0) return;
@@ -82,7 +94,7 @@ class CampaignComponents {
 
   // Render small banner strip under hero
   renderBannerStrip() {
-    const bannerCampaigns = this.activeCampaigns.filter(c => (c.type === 'banner' || c.type === 'hero') && c.is_active);
+    const bannerCampaigns = this.heroBannerCampaigns.filter(c => (c.type === 'banner' || c.type === 'hero') && c.is_active);
     if (bannerCampaigns.length === 0) return;
     const strip = document.getElementById('campaign-banner-strip');
     if (!strip) return;
@@ -111,7 +123,7 @@ class CampaignComponents {
     const section = document.getElementById('banner-grid');
     if (!section) return;
     // Use active hero/banner types
-    const bannerCampaigns = this.activeCampaigns.filter(c => (c.type === 'banner' || c.type === 'hero') && c.is_active);
+    const bannerCampaigns = this.heroBannerCampaigns.filter(c => (c.type === 'banner' || c.type === 'hero') && c.is_active);
     const cards = [];
     bannerCampaigns.forEach(c => {
       (c.campaign_assets || []).forEach(a => {
@@ -139,7 +151,7 @@ class CampaignComponents {
 
   // Render flash sales section
   renderFlashSales() {
-    const flashCampaigns = this.activeCampaigns.filter(c => 
+    const flashCampaigns = this.flashCampaigns.filter(c => 
       c.type === 'flash' && c.is_active && c.status === 'active'
     );
 
@@ -233,8 +245,8 @@ class CampaignComponents {
 
   // Initialize popup system
   initPopupSystem() {
-    const popupCampaigns = this.activeCampaigns.filter(c => 
-      c.type === 'popup' && c.is_active && c.status === 'active'
+    const popupCampaigns = this.heroBannerCampaigns.filter(c => 
+      c.type === 'popup' && c.is_active
     );
 
     if (popupCampaigns.length === 0) return;
