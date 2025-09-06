@@ -65,10 +65,22 @@ const organizedUpload = multer({
     filename: (req, file, cb) => {
       const { originalname } = file;
       const ext = path.extname(originalname);
-      // Determine filename from field name
-      const imageFields = ['mainImage', 'angleImage', 'detailImage', 'featureImage', 'packageImage'];
-      const fieldIndex = imageFields.indexOf(file.fieldname);
-      const imageNumber = fieldIndex !== -1 ? fieldIndex + 1 : 1;
+      // Determine filename from field name (supports canonical and legacy fields)
+      const canonicalFields = ['mainImage', 'angleImage', 'detailImage', 'featureImage', 'packageImage'];
+      const legacyFields = ['imageFile1', 'imageFile2', 'imageFile3', 'imageFile4', 'imageFile5'];
+      let imageNumber = 1;
+      const canonIdx = canonicalFields.indexOf(file.fieldname);
+      if (canonIdx !== -1) {
+        imageNumber = canonIdx + 1;
+      } else {
+        const legacyIdx = legacyFields.indexOf(file.fieldname);
+        if (legacyIdx !== -1) {
+          imageNumber = legacyIdx + 1;
+        } else if (/^imageFile(\d+)$/.test(file.fieldname)) {
+          const n = parseInt(file.fieldname.replace('imageFile', ''), 10);
+          if (!Number.isNaN(n) && n >= 1 && n <= 5) imageNumber = n;
+        }
+      }
       const imageNames = { 1: '1-main', 2: '2-angle', 3: '3-detail', 4: '4-context', 5: '5-package' };
       const filename = `${imageNames[imageNumber] || `${imageNumber}-image`}${ext || '.jpg'}`;
       cb(null, filename);
@@ -281,7 +293,13 @@ app.post('/add-product-organized', organizedUpload.fields([
   { name: 'angleImage', maxCount: 1 },
   { name: 'detailImage', maxCount: 1 },
   { name: 'featureImage', maxCount: 1 },
-  { name: 'packageImage', maxCount: 1 }
+  { name: 'packageImage', maxCount: 1 },
+  // Accept legacy names as well to avoid Unexpected field
+  { name: 'imageFile1', maxCount: 1 },
+  { name: 'imageFile2', maxCount: 1 },
+  { name: 'imageFile3', maxCount: 1 },
+  { name: 'imageFile4', maxCount: 1 },
+  { name: 'imageFile5', maxCount: 1 }
 ]), async (req, res) => {
   let step = 'start';
   try {
@@ -336,19 +354,26 @@ app.post('/add-product-organized', organizedUpload.fields([
 
     // Generate image paths using actual uploaded filenames (preserve extensions)
     let imagePaths = [];
-    const imageFields = ['mainImage', 'angleImage', 'detailImage', 'featureImage', 'packageImage'];
+    const canonicalFields = ['mainImage', 'angleImage', 'detailImage', 'featureImage', 'packageImage'];
+    const legacyFields = ['imageFile1', 'imageFile2', 'imageFile3', 'imageFile4', 'imageFile5'];
     const defaultNames = ['1-main.jpg', '2-angle.jpg', '3-detail.jpg', '4-context.jpg', '5-package.jpg'];
 
-    imagePaths = imageFields.map((field, idx) => {
-      const fileMeta = (req.files && req.files[field] && req.files[field][0]) ? req.files[field][0] : null;
+    const getFileMetaAt = (index) => {
+      return (req.files && req.files[canonicalFields[index]] && req.files[canonicalFields[index]][0])
+        || (req.files && req.files[legacyFields[index]] && req.files[legacyFields[index]][0])
+        || null;
+    };
+
+    imagePaths = Array.from({ length: 5 }).map((_, idx) => {
+      const fileMeta = getFileMetaAt(idx);
       const filename = fileMeta?.filename || defaultNames[idx];
       return `assets/images/products-organized/${folderName}/${filename}`;
     });
 
     // Move physical files into the folderName directory (non-storage path)
     step = 'move-files';
-    for (const field of imageFields) {
-      const fileMeta = (req.files && req.files[field] && req.files[field][0]) ? req.files[field][0] : null;
+    for (let i = 0; i < 5; i++) {
+      const fileMeta = getFileMetaAt(i);
       if (!fileMeta) continue;
       const src = fileMeta.path;
       const dest = path.join(targetFolder, path.basename(fileMeta.filename));
@@ -372,10 +397,9 @@ app.post('/add-product-organized', organizedUpload.fields([
     if (USE_SUPABASE_STORAGE) {
       step = 'storage-upload';
       const uploadedPaths = [];
-      for (let i = 0; i < imageFields.length; i++) {
+      for (let i = 0; i < 5; i++) {
         try {
-          const field = imageFields[i];
-          const fileMeta = (req.files && req.files[field] && req.files[field][0]) ? req.files[field][0] : null;
+          const fileMeta = getFileMetaAt(i);
           if (!fileMeta) {
             uploadedPaths.push(null);
             continue;
