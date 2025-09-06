@@ -1389,9 +1389,16 @@
               body: formData,
             });
             
-            if (!res.ok) throw new Error("Failed to add product.");
+            let result = null;
+            try { result = await res.json(); } catch {}
             
-            const result = await res.json();
+            if (!res.ok) {
+              const message = (result && result.error) || "Failed to add product.";
+              const details = result && result.details ? ` (${result.details})` : "";
+              const step = result && result.step ? ` [step: ${result.step}]` : "";
+              throw new Error(`${message}${details}${step}`);
+            }
+
             msgDiv.style.color = "#25d366";
             msgDiv.textContent = result.savedTo === 'supabase'
               ? `Product "${name}" added to Supabase successfully!`
