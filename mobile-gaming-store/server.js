@@ -9,6 +9,7 @@ const { autoBackup, checkAndRestore } = require('./backup-products');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 // Supabase configuration (prefer env vars, fallback to current values)
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://kokntkhxkymllafuubun.supabase.co";
@@ -1823,8 +1824,9 @@ const startServer = async () => {
   // Check and restore products on startup
   await checkAndRestore();
   
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  app.listen(PORT, HOST, () => {
+    const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
+    console.log(`🚀 Server running on http://${displayHost}:${PORT}`);
     console.log(`📁 Serving files from: ${__dirname}`);
     console.log(`🛒 Products endpoint: http://localhost:${PORT}/products`);
     console.log(`⚡ Health check: http://localhost:${PORT}/health`);
