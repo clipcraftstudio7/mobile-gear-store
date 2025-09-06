@@ -30,6 +30,9 @@ const ADMIN_SECRET = process.env.ADMIN_SECRET || '';
 const supabasePublic = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY);
 
+// Local fallback storage for campaigns (dev-friendly)
+const CAMPAIGNS_FILE = path.join(__dirname, 'data', 'campaigns.json');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -886,20 +889,24 @@ app.get('/admin/campaigns', verifyAdminToken, async (req, res) => {
       `)
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Campaigns list error:', error);
-      return res.status(500).json({ error: 'Failed to list campaigns' });
-    }
-
-    // Map counts for light payload
+    if (!error) {
     const withCounts = (campaigns || []).map(c => ({
       ...c,
       campaign_products_count: c.campaign_products?.length || 0,
       campaign_assets_count: c.campaign_assets?.length || 0,
       popup_rules_count: c.popup_rules?.length || 0,
     }));
+      return res.json({ campaigns: withCounts });
+    }
 
-    res.json({ campaigns: withCounts });
+    console.warn('⚠️ Falling back to local campaigns.json due to Supabase error:', error.message);
+    try {
+      const raw = await fs.readFile(CAMPAIGNS_FILE, 'utf8');
+      const localCampaigns = JSON.parse(raw);
+      return res.json({ campaigns: localCampaigns });
+    } catch (e) {
+      return res.status(500).json({ error: 'Failed to list campaigns' });
+    }
   } catch (error) {
     console.error('Campaigns list error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -921,21 +928,26 @@ app.get('/admin/campaigns/:id', verifyAdminToken, async (req, res) => {
       .eq('id', id)
       .single();
 
-    if (error) {
-      console.error('Get campaign error:', error);
+    if (!error && campaign) {
+      return res.json({ campaign });
+    }
+    // Fallback to local file
+    try {
+      const raw = await fs.readFile(CAMPAIGNS_FILE, 'utf8');
+      const localCampaigns = JSON.parse(raw);
+      const local = localCampaigns.find(c => String(c.id) === String(id));
+      if (!local) return res.status(404).json({ error: 'Campaign not found' });
+      return res.json({ campaign: local });
+    } catch (e) {
       return res.status(500).json({ error: 'Failed to fetch campaign' });
     }
-    if (!campaign) {
-      return res.status(404).json({ error: 'Campaign not found' });
-    }
-    res.json({ campaign });
   } catch (error) {
     console.error('Get campaign error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Create a campaign
+// Create a campaign (with local JSON fallback)
 app.post('/admin/campaigns', verifyAdminToken, async (req, res) => {
   try {
     const { slug, title, description, type, start_at, end_at, preview_payload } = req.body;
@@ -944,17 +956,29 @@ app.post('/admin/campaigns', verifyAdminToken, async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Check if slug already exists
+    // Try to check slug in Supabase (best-effort)
+    let slugTaken = false;
+    try {
     const { data: existingCampaign } = await supabase
       .from('campaigns')
       .select('id')
       .eq('slug', slug)
       .single();
+      if (existingCampaign) slugTaken = true;
+    } catch {}
 
-    if (existingCampaign) {
+    // Also check slug in local file
+    try {
+      const raw = await fs.readFile(CAMPAIGNS_FILE, 'utf8');
+      const locals = JSON.parse(raw);
+      if (locals.find(c => c.slug === slug)) slugTaken = true;
+    } catch {}
+
+    if (slugTaken) {
       return res.status(400).json({ error: 'Campaign slug already exists' });
     }
 
+    // Attempt Supabase insert first
     const { data: campaign, error } = await supabase
       .from('campaigns')
       .insert({
@@ -970,12 +994,41 @@ app.post('/admin/campaigns', verifyAdminToken, async (req, res) => {
       .select()
       .single();
 
-    if (error) {
-      console.error('Campaign creation error:', error);
-      return res.status(500).json({ error: 'Failed to create campaign' });
+    if (!error && campaign) {
+      return res.status(201).json({ message: 'Campaign created successfully', campaign });
     }
 
-    res.status(201).json({ message: 'Campaign created successfully', campaign });
+    console.warn('⚠️ Supabase insert failed, falling back to local campaigns.json');
+    // Fallback to local JSON
+    try {
+      let locals = [];
+      try {
+        const raw = await fs.readFile(CAMPAIGNS_FILE, 'utf8');
+        locals = JSON.parse(raw);
+      } catch {}
+
+      const newCampaign = {
+        id: Date.now(),
+        slug,
+        title,
+        description: description || '',
+        type,
+        start_at: start_at || null,
+        end_at: end_at || null,
+        preview_payload: preview_payload || null,
+        is_active: false,
+        created_at: new Date().toISOString(),
+        created_by: req.user?.id || null
+      };
+      locals.unshift(newCampaign);
+      // ensure directory exists
+      try { await fs.mkdir(path.dirname(CAMPAIGNS_FILE), { recursive: true }); } catch {}
+      await fs.writeFile(CAMPAIGNS_FILE, JSON.stringify(locals, null, 2));
+      return res.status(201).json({ message: 'Campaign created (local)', campaign: newCampaign });
+    } catch (e) {
+      console.error('Campaign creation fallback error:', e);
+      return res.status(500).json({ error: 'Failed to create campaign' });
+    }
   } catch (error) {
     console.error('Campaign creation error:', error);
     res.status(500).json({ error: 'Internal server error' });
