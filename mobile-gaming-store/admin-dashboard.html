@@ -2285,6 +2285,8 @@
           if (token) headers['Authorization'] = `Bearer ${token}`;
           // Dev bypass support: send admin id header so server can accept when ALLOW_ADMIN_BYPASS=true
           if (window.currentUser && window.currentUser.id) headers['x-admin-id'] = window.currentUser.id;
+          // Optional: ADMIN_SECRET header if provided via global for dev
+          if (window.ADMIN_SECRET) headers['x-admin-secret'] = window.ADMIN_SECRET;
           return headers;
         }catch{ return { 'Content-Type':'application/json' }; }
       }

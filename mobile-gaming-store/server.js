@@ -19,6 +19,10 @@ const USE_SUPABASE_STORAGE = (process.env.USE_SUPABASE_STORAGE || 'false').toLow
 const SUPABASE_STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'product-images';
 // Prefer Supabase as the primary data source; fallback to JSON only if explicitly set
 const PRODUCTS_SOURCE = (process.env.PRODUCTS_SOURCE || 'supabase').toLowerCase();
+// Admin overrides for development or fixed admin
+const ALLOW_ADMIN_BYPASS = (process.env.ALLOW_ADMIN_BYPASS || 'false').toLowerCase() === 'true';
+const ADMIN_ID_ENV = process.env.ADMIN_ID || '';
+const ADMIN_SECRET = process.env.ADMIN_SECRET || '';
 
 // Initialize Supabase clients
 // - Public for auth/user context
@@ -812,15 +816,16 @@ app.post('/edit-product', async (req, res) => {
 // Helper function to verify admin JWT
 const verifyAdminToken = async (req, res, next) => {
   try {
-    // Dev bypass: allow ADMIN_ID header to pass when no token (non-production convenience)
-    const adminIdHeader = req.headers['x-admin-id'];
-    const isDevBypassEnabled = process.env.ALLOW_ADMIN_BYPASS === 'true';
+    // Dev bypass: allow ADMIN_ID header or ADMIN_SECRET to pass when no token (non-production convenience)
+    const adminIdHeader = req.headers['x-admin-id'] || '';
+    const adminSecretHeader = req.headers['x-admin-secret'] || '';
+    const isDevBypassEnabled = ALLOW_ADMIN_BYPASS;
 
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) {
-      if (isDevBypassEnabled && adminIdHeader) {
+      if (isDevBypassEnabled && (adminIdHeader || adminSecretHeader)) {
         // Minimal profile with admin role for bypass
-        req.user = { id: String(adminIdHeader) };
+        req.user = { id: String(adminIdHeader || ADMIN_ID_ENV || 'dev-admin') };
         return next();
       }
       return res.status(401).json({ error: 'No token provided' });
@@ -837,9 +842,14 @@ const verifyAdminToken = async (req, res, next) => {
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (!profile || profile.role !== 'admin') {
+    const idIsEnvAdmin = ADMIN_ID_ENV && user.id === ADMIN_ID_ENV;
+    const headerIdIsEnvAdmin = ADMIN_ID_ENV && adminIdHeader && String(adminIdHeader) === ADMIN_ID_ENV;
+    const secretMatches = ADMIN_SECRET && adminSecretHeader && adminSecretHeader === ADMIN_SECRET;
+    const hasAdminRole = !!profile && profile.role === 'admin';
+
+    if (!(hasAdminRole || idIsEnvAdmin || headerIdIsEnvAdmin || (isDevBypassEnabled && secretMatches))) {
       return res.status(403).json({ error: 'Admin access required' });
     }
 
