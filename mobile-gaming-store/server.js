@@ -1448,16 +1448,25 @@ app.post('/admin/campaigns/:id/activate', verifyAdminToken, async (req, res) => 
       .select()
       .single();
 
-    if (error) {
-      console.error('Campaign activation error:', error);
+    if (!error && campaign) {
+      return res.json({ message: 'Campaign activated successfully', campaign });
+    }
+
+    // Fallback to local JSON when Supabase fails
+    console.warn('⚠️ Supabase activation failed, falling back to local campaigns.json');
+    try {
+      const raw = await fs.readFile(CAMPAIGNS_FILE, 'utf8');
+      const campaigns = JSON.parse(raw);
+      const idx = campaigns.findIndex(c => String(c.id) === String(id));
+      if (idx === -1) return res.status(404).json({ error: 'Campaign not found' });
+      campaigns[idx].is_active = true;
+      campaigns[idx].updated_at = new Date().toISOString();
+      await fs.writeFile(CAMPAIGNS_FILE, JSON.stringify(campaigns, null, 2));
+      return res.json({ message: 'Campaign activated (local)', campaign: campaigns[idx] });
+    } catch (e) {
+      console.error('Local activation fallback error:', e);
       return res.status(500).json({ error: 'Failed to activate campaign' });
     }
-
-    if (!campaign) {
-      return res.status(404).json({ error: 'Campaign not found' });
-    }
-
-    res.json({ message: 'Campaign activated successfully', campaign });
   } catch (error) {
     console.error('Campaign activation error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -1479,16 +1488,25 @@ app.post('/admin/campaigns/:id/deactivate', verifyAdminToken, async (req, res) =
       .select()
       .single();
 
-    if (error) {
-      console.error('Campaign deactivation error:', error);
+    if (!error && campaign) {
+      return res.json({ message: 'Campaign deactivated successfully', campaign });
+    }
+
+    // Fallback to local JSON when Supabase fails
+    console.warn('⚠️ Supabase deactivation failed, falling back to local campaigns.json');
+    try {
+      const raw = await fs.readFile(CAMPAIGNS_FILE, 'utf8');
+      const campaigns = JSON.parse(raw);
+      const idx = campaigns.findIndex(c => String(c.id) === String(id));
+      if (idx === -1) return res.status(404).json({ error: 'Campaign not found' });
+      campaigns[idx].is_active = false;
+      campaigns[idx].updated_at = new Date().toISOString();
+      await fs.writeFile(CAMPAIGNS_FILE, JSON.stringify(campaigns, null, 2));
+      return res.json({ message: 'Campaign deactivated (local)', campaign: campaigns[idx] });
+    } catch (e) {
+      console.error('Local deactivation fallback error:', e);
       return res.status(500).json({ error: 'Failed to deactivate campaign' });
     }
-
-    if (!campaign) {
-      return res.status(404).json({ error: 'Campaign not found' });
-    }
-
-    res.json({ message: 'Campaign deactivated successfully', campaign });
   } catch (error) {
     console.error('Campaign deactivation error:', error);
     res.status(500).json({ error: 'Internal server error' });
