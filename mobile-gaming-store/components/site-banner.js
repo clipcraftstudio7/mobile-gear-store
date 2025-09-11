@@ -30,33 +30,50 @@ class SiteBanner {
 
   async loadBanners() {
     try {
+      console.log('🔄 Loading site banners...');
       const response = await fetch('/api/site-banners/active');
-      if (!response.ok) throw new Error('Failed to fetch banners');
+      console.log('📡 Banner API response:', response.status, response.statusText);
+      
+      if (!response.ok) throw new Error(`Failed to fetch banners: ${response.status}`);
       
       const data = await response.json();
+      console.log('📊 Banner data received:', data);
       this.banners = data.banners || [];
+      console.log('🎯 Active banners found:', this.banners.length);
       
       // Filter banners for current page
+      const currentPath = window.location.pathname;
+      console.log('📍 Current page path:', currentPath);
+      
       this.banners = this.banners.filter(banner => {
-        if (banner.show_on_pages.includes('all')) return true;
-        
-        const currentPath = window.location.pathname;
-        return banner.show_on_pages.some(page => 
+        const showOnAll = banner.show_on_pages.includes('all');
+        const showOnCurrentPage = banner.show_on_pages.some(page => 
           currentPath.includes(page) || page === currentPath
         );
+        
+        console.log(`🎨 Banner "${banner.title}": show_on_pages=${JSON.stringify(banner.show_on_pages)}, showOnAll=${showOnAll}, showOnCurrentPage=${showOnCurrentPage}`);
+        
+        return showOnAll || showOnCurrentPage;
       });
       
+      console.log('✅ Filtered banners for current page:', this.banners.length);
+      
     } catch (error) {
-      console.error('Error loading site banners:', error);
+      console.error('❌ Error loading site banners:', error);
       this.banners = [];
     }
   }
 
   renderBanners() {
+    console.log('🎨 Rendering banners...', this.banners.length, 'banners to render');
+    
     // Remove existing banners
     this.removeExistingBanners();
     
-    if (this.banners.length === 0) return;
+    if (this.banners.length === 0) {
+      console.log('ℹ️ No banners to render');
+      return;
+    }
     
     // Group banners by position
     const topBanners = this.banners.filter(b => b.position === 'top');
@@ -349,7 +366,9 @@ styleSheet.textContent = bannerStyles;
 document.head.appendChild(styleSheet);
 
 // Initialize site banner system
+console.log('🚀 Initializing site banner system...');
 window.siteBanner = new SiteBanner();
+console.log('✅ Site banner system initialized:', window.siteBanner);
 
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {

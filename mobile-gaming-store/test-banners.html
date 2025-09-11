@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #111;
+            color: #fff;
+        }
+        .test-section {
+            background: #222;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #128c7e;
+        }
+        #console-output {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Banner System Test Page</h1>
+    
+    <div class="test-section">
+        <h2>API Test</h2>
+        <button onclick="testAPI()">Test Banner API</button>
+        <button onclick="testBannerSystem()">Test Banner System</button>
+        <button onclick="clearConsole()">Clear Console</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <div id="console-output"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Manual Banner Test</h2>
+        <button onclick="createTestBanner()">Create Test Banner</button>
+        <button onclick="removeAllBanners()">Remove All Banners</button>
+    </div>
+
+    <!-- Site Banner System -->
+    <script src="components/site-banner.js"></script>
+    
+    <script>
+        // Override console.log to show in our test page
+        const originalLog = console.log;
+        const originalError = console.error;
+        const consoleOutput = document.getElementById('console-output');
+        
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f00' : '#0f0';
+            consoleOutput.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+        
+        async function testAPI() {
+            try {
+                console.log('🧪 Testing banner API...');
+                const response = await fetch('/api/site-banners/active');
+                console.log('📡 API Response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 API Data:', JSON.stringify(data, null, 2));
+                } else {
+                    console.error('❌ API Error:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('❌ API Test failed:', error.message);
+            }
+        }
+        
+        function testBannerSystem() {
+            console.log('🧪 Testing banner system...');
+            if (window.siteBanner) {
+                console.log('✅ Site banner system exists:', window.siteBanner);
+                console.log('🔄 Manually loading banners...');
+                window.siteBanner.loadBanners().then(() => {
+                    console.log('🎨 Manually rendering banners...');
+                    window.siteBanner.renderBanners();
+                });
+            } else {
+                console.error('❌ Site banner system not found!');
+            }
+        }
+        
+        function createTestBanner() {
+            console.log('🧪 Creating manual test banner...');
+            const testBanner = document.createElement('div');
+            testBanner.className = 'site-banner site-banner-success';
+            testBanner.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #25d366, #128c7e);
+                color: white;
+                padding: 12px 20px;
+                z-index: 10000;
+                text-align: center;
+                font-weight: bold;
+            `;
+            testBanner.innerHTML = '🧪 MANUAL TEST BANNER - This should be visible!';
+            document.body.appendChild(testBanner);
+            console.log('✅ Manual test banner created');
+        }
+        
+        function removeAllBanners() {
+            console.log('🧹 Removing all banners...');
+            const banners = document.querySelectorAll('.site-banner, .site-banner-container');
+            banners.forEach(banner => banner.remove());
+            console.log('✅ All banners removed');
+        }
+        
+        function clearConsole() {
+            consoleOutput.innerHTML = '';
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            console.log('🚀 Page loaded, running auto-tests...');
+            setTimeout(() => {
+                testAPI();
+                testBannerSystem();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

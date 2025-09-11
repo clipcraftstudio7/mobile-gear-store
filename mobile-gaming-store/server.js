@@ -46,6 +46,96 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// ===== SITE-WIDE BANNER MANAGEMENT ENDPOINTS =====
+console.log('🎯 Loading site banner endpoints...');
+
+// Available banner assets
+const availableBannerAssets = [
+  {
+    filename: "Gray and White Modern Headphone Instagram Post.png",
+    path: "assets/campaing banner/Gray and White Modern Headphone Instagram Post.png",
+    type: "headphone-promo",
+    description: "Modern headphone promotion banner"
+  },
+  {
+    filename: "i.png",
+    path: "assets/campaing banner/i.png",
+    type: "info",
+    description: "Info banner"
+  },
+  {
+    filename: "jty.png", 
+    path: "assets/campaing banner/jty.png",
+    type: "gaming",
+    description: "Gaming promotion banner"
+  },
+  {
+    filename: "u.png",
+    path: "assets/campaing banner/u.png", 
+    type: "special",
+    description: "Special offer banner"
+  }
+];
+
+// In-memory storage for site banners (replace with database later)
+let siteBanners = [
+  {
+    id: 1,
+    title: "🎮 Welcome to Mobile Gaming Store!",
+    message: "Get 15% off your first order with code WELCOME15",
+    type: "success", // success, warning, info, error
+    is_active: true,
+    position: "top", // top, bottom
+    show_on_pages: ["all"], // ["all"] or specific page paths
+    banner_image: "assets/campaing banner/Gray and White Modern Headphone Instagram Post.png",
+    start_date: new Date().toISOString(),
+    end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 2,
+    title: "🔥 TEST BANNER - This Should Show!",
+    message: "If you can see this, the banner system is working!",
+    type: "warning",
+    is_active: true,
+    position: "top",
+    show_on_pages: ["all"],
+    banner_image: "assets/campaing banner/i.png",
+    start_date: new Date().toISOString(),
+    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
+
+// Get active site banners (public endpoint)
+app.get('/api/site-banners/active', async (req, res) => {
+  try {
+    console.log('📡 Site banners API called');
+    const now = new Date().toISOString();
+    console.log('⏰ Current time:', now);
+    console.log('📊 Total banners in storage:', siteBanners.length);
+    
+    const activeBanners = siteBanners.filter(banner => {
+      const isActive = banner.is_active;
+      const isInDateRange = banner.start_date <= now && banner.end_date >= now;
+      
+      console.log(`🎯 Banner "${banner.title}": active=${isActive}, inRange=${isInDateRange}, start=${banner.start_date}, end=${banner.end_date}`);
+      
+      return isActive && isInDateRange;
+    });
+    
+    console.log('✅ Active banners found:', activeBanners.length);
+    res.json({ banners: activeBanners });
+  } catch (error) {
+    console.error('❌ Get active banners error:', error);
+    res.status(500).json({ error: 'Failed to fetch active banners' });
+  }
+});
+
+console.log('✅ Site banner endpoints loaded successfully!');
+
 // Ensure products-organized directory exists
 const ensureProductsOrganizedDir = async () => {
   const dir = path.join(__dirname, 'assets', 'images', 'products-organized');
@@ -2206,96 +2296,6 @@ app.get('/admin/campaigns/:id/preview', verifyAdmin, async (req, res) => {
   }
 });
 
-// ===== SITE-WIDE BANNER MANAGEMENT ENDPOINTS =====
-
-// Available banner assets
-const availableBannerAssets = [
-  {
-    filename: "Gray and White Modern Headphone Instagram Post.png",
-    path: "assets/campaing banner/Gray and White Modern Headphone Instagram Post.png",
-    type: "headphone-promo",
-    description: "Modern headphone promotion banner"
-  },
-  {
-    filename: "i.png",
-    path: "assets/campaing banner/i.png",
-    type: "info",
-    description: "Info banner"
-  },
-  {
-    filename: "jty.png", 
-    path: "assets/campaing banner/jty.png",
-    type: "gaming",
-    description: "Gaming promotion banner"
-  },
-  {
-    filename: "u.png",
-    path: "assets/campaing banner/u.png", 
-    type: "special",
-    description: "Special offer banner"
-  }
-];
-
-// In-memory storage for site banners (replace with database later)
-let siteBanners = [
-  {
-    id: 1,
-    title: "🎮 Welcome to Mobile Gaming Store!",
-    message: "Get 15% off your first order with code WELCOME15",
-    type: "success", // success, warning, info, error
-    is_active: true,
-    position: "top", // top, bottom
-    show_on_pages: ["all"], // ["all"] or specific page paths
-    banner_image: "assets/campaing banner/Gray and White Modern Headphone Instagram Post.png",
-    start_date: new Date().toISOString(),
-    end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  }
-];
-
-// Get available banner assets
-app.get('/admin/site-banners/assets', verifyAdmin, async (req, res) => {
-  try {
-    res.json({ 
-      assets: availableBannerAssets,
-      message: 'Banner assets retrieved successfully'
-    });
-  } catch (error) {
-    console.error('Get banner assets error:', error);
-    res.status(500).json({ error: 'Failed to fetch banner assets' });
-  }
-});
-
-// Get all site banners
-app.get('/admin/site-banners', verifyAdmin, async (req, res) => {
-  try {
-    res.json({ 
-      banners: siteBanners,
-      message: 'Site banners retrieved successfully'
-    });
-  } catch (error) {
-    console.error('Get site banners error:', error);
-    res.status(500).json({ error: 'Failed to fetch site banners' });
-  }
-});
-
-// Get active site banners (public endpoint)
-app.get('/api/site-banners/active', async (req, res) => {
-  try {
-    const now = new Date().toISOString();
-    const activeBanners = siteBanners.filter(banner => 
-      banner.is_active && 
-      banner.start_date <= now && 
-      banner.end_date >= now
-    );
-    
-    res.json({ banners: activeBanners });
-  } catch (error) {
-    console.error('Get active banners error:', error);
-    res.status(500).json({ error: 'Failed to fetch active banners' });
-  }
-});
 
 // Get single site banner
 app.get('/admin/site-banners/:id', verifyAdmin, async (req, res) => {
