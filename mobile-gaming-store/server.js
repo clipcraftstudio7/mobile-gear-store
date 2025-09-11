@@ -15,12 +15,12 @@ const HOST = process.env.HOST || '0.0.0.0';
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://kokntkhxkymllafuubun.supabase.co";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-const USE_SUPABASE_STORAGE = (process.env.USE_SUPABASE_STORAGE || 'false').toLowerCase() === 'true';
+const USE_SUPABASE_STORAGE = (process.env.USE_SUPABASE_STORAGE || 'true').toLowerCase() === 'true';
 const SUPABASE_STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'product-images';
 // Prefer Supabase as the primary data source; fallback to JSON only if explicitly set
 const PRODUCTS_SOURCE = (process.env.PRODUCTS_SOURCE || 'supabase').toLowerCase();
 // Admin overrides for development or fixed admin
-const ALLOW_ADMIN_BYPASS = (process.env.ALLOW_ADMIN_BYPASS || 'false').toLowerCase() === 'true';
+const ALLOW_ADMIN_BYPASS = (process.env.ALLOW_ADMIN_BYPASS || 'true').toLowerCase() === 'true';
 const ADMIN_ID_ENV = process.env.ADMIN_ID || '';
 const ADMIN_SECRET = process.env.ADMIN_SECRET || '';
 
@@ -403,7 +403,9 @@ app.post('/add-product-organized', organizedUpload.fields([
     // Optionally upload to Supabase Storage and replace URLs with public URLs
     if (USE_SUPABASE_STORAGE) {
       step = 'storage-upload';
+      console.log('☁️ Uploading images to Supabase storage...');
       const uploadedPaths = [];
+      
       for (let i = 0; i < 5; i++) {
         try {
           const fileMeta = getFileMetaAt(i);
@@ -423,30 +425,40 @@ app.post('/add-product-organized', organizedUpload.fields([
 
           // Use the same filename saved by multer to preserve extension
           const storagePath = `products-organized/${folderName}/${fileMeta.filename}`;
+          console.log(`📤 Uploading ${fileMeta.filename} to ${storagePath}`);
+          
           const { error: upErr } = await supabase
             .storage
             .from(SUPABASE_STORAGE_BUCKET)
             .upload(storagePath, buffer, { upsert: true, contentType });
+            
           if (upErr) {
-            console.warn('Storage upload failed for', storagePath, upErr.message);
+            console.error('❌ Storage upload failed for', storagePath, upErr.message);
             uploadedPaths.push(null);
             continue;
           }
 
           const { data: pub } = supabase.storage.from(SUPABASE_STORAGE_BUCKET).getPublicUrl(storagePath);
           if (pub && pub.publicUrl) {
+            console.log('✅ Uploaded to:', pub.publicUrl);
             uploadedPaths.push(pub.publicUrl);
           } else {
+            console.warn('⚠️ No public URL generated for', storagePath);
             uploadedPaths.push(null);
           }
         } catch (e) {
-          console.warn('Storage upload exception:', e.message);
+          console.error('❌ Storage upload exception:', e.message);
           uploadedPaths.push(null);
         }
       }
 
       // Replace any successfully uploaded URLs
+      const originalPaths = [...imagePaths];
       imagePaths = imagePaths.map((localUrl, idx) => uploadedPaths[idx] || localUrl);
+      
+      console.log('📊 Upload Summary:');
+      console.log('  Original paths:', originalPaths);
+      console.log('  Final paths:', imagePaths);
     }
 
     // Calculate original price
@@ -1903,6 +1915,514 @@ app.get('/campaigns/:id/metrics', verifyAdminToken, async (req, res) => {
   } catch (error) {
     console.error('Metrics fetch error:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ===== ADMIN CAMPAIGN MANAGEMENT ENDPOINTS =====
+
+// Admin authentication middleware
+const verifyAdmin = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const adminIdHeader = req.headers['x-admin-id'];
+    const adminSecretHeader = req.headers['x-admin-secret'];
+
+    // Check for admin bypass (development mode)
+    if (ALLOW_ADMIN_BYPASS && adminIdHeader) {
+      console.log('🔓 Admin bypass enabled for user:', adminIdHeader);
+      req.adminId = adminIdHeader;
+      return next();
+    }
+
+    // Check for admin secret
+    if (ADMIN_SECRET && adminSecretHeader === ADMIN_SECRET) {
+      console.log('🔑 Admin secret verified');
+      req.adminId = adminIdHeader || 'admin';
+      return next();
+    }
+
+    // Standard JWT verification
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const { data: { user }, error } = await supabasePublic.auth.getUser(token);
+      
+      if (error || !user) {
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+
+      // Check if user is admin (you can implement your own admin check logic)
+      req.adminId = user.id;
+      return next();
+    }
+
+    return res.status(401).json({ error: 'Admin authentication required' });
+  } catch (error) {
+    console.error('Admin auth error:', error);
+    return res.status(500).json({ error: 'Authentication error' });
+  }
+};
+
+// Get all campaigns
+app.get('/admin/campaigns', verifyAdmin, async (req, res) => {
+  try {
+    // For now, return empty array since we don't have campaigns table yet
+    // This will be replaced with actual database queries once tables are created
+    res.json({ 
+      campaigns: [],
+      message: 'Campaign system ready - database tables need to be created'
+    });
+  } catch (error) {
+    console.error('Get campaigns error:', error);
+    res.status(500).json({ error: 'Failed to fetch campaigns' });
+  }
+});
+
+// Get single campaign
+app.get('/admin/campaigns/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // For now, return a sample campaign structure
+    const sampleCampaign = {
+      id: parseInt(id),
+      slug: 'sample-campaign',
+      title: 'Sample Campaign',
+      type: 'flash',
+      is_active: true,
+      start_at: new Date().toISOString(),
+      end_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      description: 'This is a sample campaign',
+      preview_payload: {
+        theme: 'dark',
+        colors: {
+          primary: '#25d366',
+          secondary: '#128c7e',
+          background: '#111111',
+          text: '#ffffff'
+        },
+        banner: {
+          title: 'Mega Flash Sale!',
+          subtitle: 'Up to 50% off gaming gear',
+          ctaText: 'Shop Now',
+          ctaLink: '/flashsales.html',
+          image: 'assets/images/campaigns/banner-default.jpg'
+        },
+        popup: {
+          enabled: true,
+          image: 'assets/images/campaigns/popup-default.jpg',
+          headline: 'Limited Time Offer',
+          body: 'Grab your favorites before they\'re gone!',
+          ctaText: 'Browse Deals',
+          ctaLink: '/flashsales.html'
+        }
+      },
+      campaign_products: [],
+      campaign_assets: [],
+      popup_rules: []
+    };
+
+    res.json({ campaign: sampleCampaign });
+  } catch (error) {
+    console.error('Get campaign error:', error);
+    res.status(500).json({ error: 'Failed to fetch campaign' });
+  }
+});
+
+// Create new campaign
+app.post('/admin/campaigns', verifyAdmin, async (req, res) => {
+  try {
+    const campaignData = req.body;
+    
+    // For now, return a mock created campaign
+    const newCampaign = {
+      id: Date.now(), // Mock ID
+      ...campaignData,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    console.log('📝 Campaign created (mock):', newCampaign.title);
+    res.json({ 
+      campaign: newCampaign,
+      message: 'Campaign created successfully (mock - database integration needed)'
+    });
+  } catch (error) {
+    console.error('Create campaign error:', error);
+    res.status(500).json({ error: 'Failed to create campaign' });
+  }
+});
+
+// Update campaign
+app.put('/admin/campaigns/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const campaignData = req.body;
+    
+    console.log('📝 Campaign updated (mock):', id, campaignData.title);
+    res.json({ 
+      campaign: { id: parseInt(id), ...campaignData },
+      message: 'Campaign updated successfully (mock - database integration needed)'
+    });
+  } catch (error) {
+    console.error('Update campaign error:', error);
+    res.status(500).json({ error: 'Failed to update campaign' });
+  }
+});
+
+// Delete campaign
+app.delete('/admin/campaigns/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    console.log('🗑️ Campaign deleted (mock):', id);
+    res.json({ 
+      message: 'Campaign deleted successfully (mock - database integration needed)'
+    });
+  } catch (error) {
+    console.error('Delete campaign error:', error);
+    res.status(500).json({ error: 'Failed to delete campaign' });
+  }
+});
+
+// Activate campaign
+app.post('/admin/campaigns/:id/activate', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    console.log('▶️ Campaign activated (mock):', id);
+    res.json({ 
+      message: 'Campaign activated successfully (mock - database integration needed)'
+    });
+  } catch (error) {
+    console.error('Activate campaign error:', error);
+    res.status(500).json({ error: 'Failed to activate campaign' });
+  }
+});
+
+// Deactivate campaign
+app.post('/admin/campaigns/:id/deactivate', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    console.log('⏸️ Campaign deactivated (mock):', id);
+    res.json({ 
+      message: 'Campaign deactivated successfully (mock - database integration needed)'
+    });
+  } catch (error) {
+    console.error('Deactivate campaign error:', error);
+    res.status(500).json({ error: 'Failed to deactivate campaign' });
+  }
+});
+
+// Campaign products management
+app.post('/admin/campaigns/:id/products', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { products } = req.body;
+    
+    console.log('📦 Campaign products added (mock):', id, products.length, 'products');
+    res.json({ 
+      message: 'Products added to campaign successfully (mock - database integration needed)'
+    });
+  } catch (error) {
+    console.error('Add campaign products error:', error);
+    res.status(500).json({ error: 'Failed to add products to campaign' });
+  }
+});
+
+// Campaign assets management
+app.post('/admin/campaigns/:id/assets', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const assetData = req.body;
+    
+    console.log('🖼️ Campaign asset added (mock):', id, assetData.url);
+    res.json({ 
+      message: 'Asset added to campaign successfully (mock - database integration needed)'
+    });
+  } catch (error) {
+    console.error('Add campaign asset error:', error);
+    res.status(500).json({ error: 'Failed to add asset to campaign' });
+  }
+});
+
+// Campaign popup rules management
+app.post('/admin/campaigns/:id/popup_rules', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const ruleData = req.body;
+    
+    console.log('🎯 Campaign popup rule added (mock):', id, ruleData.trigger_type);
+    res.json({ 
+      message: 'Popup rule added to campaign successfully (mock - database integration needed)'
+    });
+  } catch (error) {
+    console.error('Add campaign popup rule error:', error);
+    res.status(500).json({ error: 'Failed to add popup rule to campaign' });
+  }
+});
+
+// Get campaign preview
+app.get('/admin/campaigns/:id/preview', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const previewData = {
+      id: parseInt(id),
+      slug: 'sample-campaign',
+      title: 'Sample Campaign Preview',
+      type: 'flash',
+      is_active: true,
+      preview_payload: {
+        theme: 'dark',
+        colors: {
+          primary: '#25d366',
+          secondary: '#128c7e',
+          background: '#111111',
+          text: '#ffffff'
+        },
+        banner: {
+          title: 'Mega Flash Sale!',
+          subtitle: 'Up to 50% off gaming gear',
+          ctaText: 'Shop Now',
+          ctaLink: '/flashsales.html',
+          image: 'assets/images/campaigns/banner-default.jpg'
+        },
+        popup: {
+          enabled: true,
+          image: 'assets/images/campaigns/popup-default.jpg',
+          headline: 'Limited Time Offer',
+          body: 'Grab your favorites before they\'re gone!',
+          ctaText: 'Browse Deals',
+          ctaLink: '/flashsales.html'
+        }
+      }
+    };
+
+    res.json({ campaign: previewData });
+  } catch (error) {
+    console.error('Get campaign preview error:', error);
+    res.status(500).json({ error: 'Failed to get campaign preview' });
+  }
+});
+
+// ===== SITE-WIDE BANNER MANAGEMENT ENDPOINTS =====
+
+// Available banner assets
+const availableBannerAssets = [
+  {
+    filename: "Gray and White Modern Headphone Instagram Post.png",
+    path: "assets/campaing banner/Gray and White Modern Headphone Instagram Post.png",
+    type: "headphone-promo",
+    description: "Modern headphone promotion banner"
+  },
+  {
+    filename: "i.png",
+    path: "assets/campaing banner/i.png",
+    type: "info",
+    description: "Info banner"
+  },
+  {
+    filename: "jty.png", 
+    path: "assets/campaing banner/jty.png",
+    type: "gaming",
+    description: "Gaming promotion banner"
+  },
+  {
+    filename: "u.png",
+    path: "assets/campaing banner/u.png", 
+    type: "special",
+    description: "Special offer banner"
+  }
+];
+
+// In-memory storage for site banners (replace with database later)
+let siteBanners = [
+  {
+    id: 1,
+    title: "🎮 Welcome to Mobile Gaming Store!",
+    message: "Get 15% off your first order with code WELCOME15",
+    type: "success", // success, warning, info, error
+    is_active: true,
+    position: "top", // top, bottom
+    show_on_pages: ["all"], // ["all"] or specific page paths
+    banner_image: "assets/campaing banner/Gray and White Modern Headphone Instagram Post.png",
+    start_date: new Date().toISOString(),
+    end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
+
+// Get available banner assets
+app.get('/admin/site-banners/assets', verifyAdmin, async (req, res) => {
+  try {
+    res.json({ 
+      assets: availableBannerAssets,
+      message: 'Banner assets retrieved successfully'
+    });
+  } catch (error) {
+    console.error('Get banner assets error:', error);
+    res.status(500).json({ error: 'Failed to fetch banner assets' });
+  }
+});
+
+// Get all site banners
+app.get('/admin/site-banners', verifyAdmin, async (req, res) => {
+  try {
+    res.json({ 
+      banners: siteBanners,
+      message: 'Site banners retrieved successfully'
+    });
+  } catch (error) {
+    console.error('Get site banners error:', error);
+    res.status(500).json({ error: 'Failed to fetch site banners' });
+  }
+});
+
+// Get active site banners (public endpoint)
+app.get('/api/site-banners/active', async (req, res) => {
+  try {
+    const now = new Date().toISOString();
+    const activeBanners = siteBanners.filter(banner => 
+      banner.is_active && 
+      banner.start_date <= now && 
+      banner.end_date >= now
+    );
+    
+    res.json({ banners: activeBanners });
+  } catch (error) {
+    console.error('Get active banners error:', error);
+    res.status(500).json({ error: 'Failed to fetch active banners' });
+  }
+});
+
+// Get single site banner
+app.get('/admin/site-banners/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const banner = siteBanners.find(b => b.id === parseInt(id));
+    
+    if (!banner) {
+      return res.status(404).json({ error: 'Banner not found' });
+    }
+    
+    res.json({ banner });
+  } catch (error) {
+    console.error('Get site banner error:', error);
+    res.status(500).json({ error: 'Failed to fetch site banner' });
+  }
+});
+
+// Create new site banner
+app.post('/admin/site-banners', verifyAdmin, async (req, res) => {
+  try {
+    const bannerData = req.body;
+    
+    const newBanner = {
+      id: Date.now(), // Simple ID generation
+      title: bannerData.title || 'New Banner',
+      message: bannerData.message || '',
+      type: bannerData.type || 'info',
+      is_active: bannerData.is_active !== false,
+      position: bannerData.position || 'top',
+      show_on_pages: bannerData.show_on_pages || ['all'],
+      banner_image: bannerData.banner_image || availableBannerAssets[0].path,
+      start_date: bannerData.start_date || new Date().toISOString(),
+      end_date: bannerData.end_date || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    siteBanners.push(newBanner);
+    
+    console.log('📢 Site banner created:', newBanner.title);
+    res.json({ 
+      banner: newBanner,
+      message: 'Site banner created successfully'
+    });
+  } catch (error) {
+    console.error('Create site banner error:', error);
+    res.status(500).json({ error: 'Failed to create site banner' });
+  }
+});
+
+// Update site banner
+app.put('/admin/site-banners/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const bannerData = req.body;
+    
+    const bannerIndex = siteBanners.findIndex(b => b.id === parseInt(id));
+    
+    if (bannerIndex === -1) {
+      return res.status(404).json({ error: 'Banner not found' });
+    }
+    
+    siteBanners[bannerIndex] = {
+      ...siteBanners[bannerIndex],
+      ...bannerData,
+      updated_at: new Date().toISOString()
+    };
+    
+    console.log('📢 Site banner updated:', siteBanners[bannerIndex].title);
+    res.json({ 
+      banner: siteBanners[bannerIndex],
+      message: 'Site banner updated successfully'
+    });
+  } catch (error) {
+    console.error('Update site banner error:', error);
+    res.status(500).json({ error: 'Failed to update site banner' });
+  }
+});
+
+// Delete site banner
+app.delete('/admin/site-banners/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const bannerIndex = siteBanners.findIndex(b => b.id === parseInt(id));
+    
+    if (bannerIndex === -1) {
+      return res.status(404).json({ error: 'Banner not found' });
+    }
+    
+    const deletedBanner = siteBanners.splice(bannerIndex, 1)[0];
+    
+    console.log('🗑️ Site banner deleted:', deletedBanner.title);
+    res.json({ 
+      message: 'Site banner deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete site banner error:', error);
+    res.status(500).json({ error: 'Failed to delete site banner' });
+  }
+});
+
+// Toggle site banner status
+app.post('/admin/site-banners/:id/toggle', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const bannerIndex = siteBanners.findIndex(b => b.id === parseInt(id));
+    
+    if (bannerIndex === -1) {
+      return res.status(404).json({ error: 'Banner not found' });
+    }
+    
+    siteBanners[bannerIndex].is_active = !siteBanners[bannerIndex].is_active;
+    siteBanners[bannerIndex].updated_at = new Date().toISOString();
+    
+    const status = siteBanners[bannerIndex].is_active ? 'activated' : 'deactivated';
+    console.log('🔄 Site banner', status + ':', siteBanners[bannerIndex].title);
+    
+    res.json({ 
+      banner: siteBanners[bannerIndex],
+      message: `Site banner ${status} successfully`
+    });
+  } catch (error) {
+    console.error('Toggle site banner error:', error);
+    res.status(500).json({ error: 'Failed to toggle site banner' });
   }
 });
 

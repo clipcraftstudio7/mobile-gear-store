@@ -1187,6 +1187,279 @@
         }
       }
 
+      /* Gamification Styles */
+      .gamification-card {
+        background: linear-gradient(135deg, #2a1a3a 0%, #3a2a4a 100%);
+        border: 1px solid #4a3a5a;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .gamification-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+      }
+
+      .points-display {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .points-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: conic-gradient(#25d366 0deg, #25d366 252deg, #333 252deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .points-circle::before {
+        content: '';
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #1a1a1a;
+      }
+
+      .points-text {
+        position: relative;
+        z-index: 1;
+        font-weight: bold;
+        color: #25d366;
+        font-size: 0.9rem;
+      }
+
+      .level-badge {
+        background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: bold;
+        font-size: 0.8rem;
+      }
+
+      .progress-bar {
+        background: #333;
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+        margin: 10px 0;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #25d366, #00d4aa);
+        width: 70%;
+        transition: width 0.3s ease;
+      }
+
+      .achievements {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 12px;
+        margin-top: 15px;
+      }
+
+      .achievement {
+        background: rgba(37, 211, 102, 0.1);
+        border: 1px solid rgba(37, 211, 102, 0.3);
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .achievement:hover {
+        transform: translateY(-3px);
+      }
+
+      .achievement.unlocked {
+        background: rgba(37, 211, 102, 0.2);
+        border-color: #25d366;
+      }
+
+      .achievement.unlocked .achievement-icon {
+        color: #25d366;
+      }
+
+      .achievement.locked .achievement-icon {
+        color: #666;
+      }
+
+      .achievement-icon {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .behavioral-section {
+        background: linear-gradient(135deg, #1a2a3a 0%, #2a3a4a 100%);
+        border: 1px solid #3a4a5a;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .user-type-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+      }
+
+      .user-type-new {
+        background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        color: white;
+      }
+
+      .user-type-returning {
+        background: linear-gradient(45deg, #45b7d1, #96c93d);
+        color: white;
+      }
+
+      .user-type-vip {
+        background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+        color: white;
+      }
+
+      .recommendations {
+        margin-top: 15px;
+      }
+
+      .recommendation-item {
+        background: rgba(69, 183, 209, 0.1);
+        border: 1px solid rgba(69, 183, 209, 0.3);
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .recommendation-icon {
+        color: #45b7d1;
+        font-size: 1.2rem;
+      }
+
+      /* Exit Intent Popup Styles */
+      .exit-intent-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .popup-content {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 500px;
+        width: 90%;
+        border: 1px solid #333;
+        position: relative;
+        text-align: center;
+        animation: popupSlideIn 0.3s ease-out;
+      }
+      
+      @keyframes popupSlideIn {
+        from {
+          opacity: 0;
+          transform: scale(0.8) translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      
+      .close-popup {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 2rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+      
+      .close-popup:hover {
+        color: #ff4757;
+      }
+      
+      .popup-header h2 {
+        color: #25d366;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+      }
+      
+      .popup-header p {
+        color: #ccc;
+        margin-bottom: 20px;
+      }
+      
+      .discount-code {
+        background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+      
+      .popup-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      
+      .popup-actions .btn {
+        flex: 1;
+        max-width: 150px;
+        background: linear-gradient(45deg, #25d366, #00d4aa);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      
+      .popup-actions .btn:hover {
+        transform: translateY(-2px);
+      }
+      
+      .popup-actions .btn-secondary {
+        background: linear-gradient(45deg, #666, #888);
+      }
+
       @media (max-width: 480px) {
         .footer {
           padding: 20px 0 10px;
@@ -1358,6 +1631,31 @@
             <p class="profile-subtitle" id="profile-email">Loading...</p>
           </div>
 
+          <!-- Gamification Section -->
+          <div class="gamification-card">
+            <h3 style="color: #25d366; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-trophy"></i> Gaming Profile
+            </h3>
+            
+            <div class="points-display">
+              <div class="points-circle">
+                <span class="points-text" id="user-points">2,450</span>
+              </div>
+              <div>
+                <div class="level-badge" id="user-level">Pro Gamer</div>
+                <p style="color: #ccc; margin-top: 5px; font-size: 0.9rem;">Level 7</p>
+              </div>
+            </div>
+            
+            <div class="progress-section">
+              <p style="color: #ccc; margin-bottom: 10px; font-size: 0.9rem;">Progress to next level</p>
+              <div class="progress-bar">
+                <div class="progress-fill" id="level-progress" style="width: 70%;"></div>
+              </div>
+              <p style="color: #25d366; font-size: 0.8rem; margin-top: 5px;">550 points to Level 8</p>
+            </div>
+          </div>
+
           <!-- Quick Stats -->
           <div class="stats-grid">
             <div class="stat-card clickable" onclick="showTab('orders')">
@@ -1423,6 +1721,12 @@
             </button>
             <button class="profile-tab" onclick="showTab('reviews')">
               <i class="fas fa-star"></i> Reviews
+            </button>
+            <button class="profile-tab" onclick="showTab('achievements')">
+              <i class="fas fa-trophy"></i> Achievements
+            </button>
+            <button class="profile-tab" onclick="showTab('loyalty')">
+              <i class="fas fa-medal"></i> Loyalty
             </button>
           </div>
 
@@ -1572,6 +1876,131 @@
             <div id="reviews-list" style="color: #ccc">
               No reviews yet. Start reviewing products you've purchased!
             </div>
+          </div>
+
+          <div id="achievements-tab" class="tab-content">
+            <h2 style="color: #25d366; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-trophy"></i> Achievements
+            </h2>
+            
+            <!-- Behavioral Targeting Section -->
+            <div class="behavioral-section">
+              <div class="user-type-badge user-type-returning" id="behavioral-badge">
+                Returning Gamer
+              </div>
+              
+              <div class="recommendations">
+                <h3 style="color: #45b7d1; margin-bottom: 15px;">Recommended for You</h3>
+                
+                <div class="recommendation-item">
+                  <i class="fas fa-mobile-alt recommendation-icon"></i>
+                  <div>
+                    <strong>Mobile Gaming Setup</strong>
+                    <p style="color: #ccc; font-size: 0.9rem;">Based on your controller purchases</p>
+                  </div>
+                </div>
+                
+                <div class="recommendation-item">
+                  <i class="fas fa-snowflake recommendation-icon"></i>
+                  <div>
+                    <strong>Cooling Accessories</strong>
+                    <p style="color: #ccc; font-size: 0.9rem;">Perfect for long gaming sessions</p>
+                  </div>
+                </div>
+                
+                <div class="recommendation-item">
+                  <i class="fas fa-headset recommendation-icon"></i>
+                  <div>
+                    <strong>Audio Gear</strong>
+                    <p style="color: #ccc; font-size: 0.9rem;">Complete your gaming setup</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Achievements Grid -->
+            <div class="achievements">
+              <div class="achievement unlocked">
+                <i class="fas fa-shopping-cart achievement-icon"></i>
+                <div>First Purchase</div>
+              </div>
+              <div class="achievement unlocked">
+                <i class="fas fa-star achievement-icon"></i>
+                <div>5-Star Review</div>
+              </div>
+              <div class="achievement unlocked">
+                <i class="fas fa-fire achievement-icon"></i>
+                <div>Hot Streak</div>
+              </div>
+              <div class="achievement locked">
+                <i class="fas fa-crown achievement-icon"></i>
+                <div>VIP Status</div>
+              </div>
+              <div class="achievement locked">
+                <i class="fas fa-gem achievement-icon"></i>
+                <div>Big Spender</div>
+              </div>
+              <div class="achievement locked">
+                <i class="fas fa-shield-alt achievement-icon"></i>
+                <div>Loyalty Master</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="loyalty-tab" class="tab-content">
+            <h2 style="color: #25d366; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-medal"></i> Loyalty Program
+            </h2>
+            
+            <div class="gamification-card">
+              <h3 style="color: #ff6b6b; margin-bottom: 15px;">VIP Status Progress</h3>
+              <div class="progress-section">
+                <p style="color: #ccc; margin-bottom: 10px;">$153 to VIP Status</p>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 85%; background: linear-gradient(90deg, #ff6b6b, #ff8e53);"></div>
+                </div>
+                <p style="color: #ff6b6b; font-size: 0.9rem; margin-top: 5px;">VIP Benefits: Free shipping, exclusive deals, early access</p>
+              </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+              <h3 style="color: #25d366; margin-bottom: 15px;">Loyalty Rewards</h3>
+              <div class="achievements">
+                <div class="achievement unlocked">
+                  <i class="fas fa-shipping-fast achievement-icon"></i>
+                  <div>Free Shipping</div>
+                </div>
+                <div class="achievement unlocked">
+                  <i class="fas fa-percentage achievement-icon"></i>
+                  <div>5% Cashback</div>
+                </div>
+                <div class="achievement locked">
+                  <i class="fas fa-gift achievement-icon"></i>
+                  <div>Birthday Gift</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exit Intent Popup -->
+    <div id="exit-intent-popup" class="exit-intent-popup" style="display: none;">
+      <div class="popup-content">
+        <button class="close-popup" onclick="closeExitIntent()">&times;</button>
+        <div class="popup-header">
+          <h2>🎮 Wait! Don't Leave Empty Handed!</h2>
+          <p>Get 15% off your next gaming setup!</p>
+        </div>
+        <div class="popup-body">
+          <div class="discount-code">
+            <span>Use code: <strong>GAMER15</strong></span>
+          </div>
+          <p>Join thousands of pro gamers who trust our gear!</p>
+          <div class="popup-actions">
+            <button class="btn" onclick="applyDiscount()">Claim Discount</button>
+            <button class="btn btn-secondary" onclick="closeExitIntent()">Maybe Later</button>
           </div>
         </div>
       </div>
@@ -2223,6 +2652,10 @@
         // Update stats
         await updateStats();
 
+        // Initialize gamification and behavioral targeting
+        updateGamification();
+        updateBehavioralTargeting();
+
         // Also update mobile side panel
         updateMobileProfileDisplay(user, profile);
         await updateMobileStats();
@@ -2499,6 +2932,212 @@
         window.addEventListener("resize", updateSidebarToggle);
         updateSidebarToggle();
       });
+
+      // Gamification System
+      function updateGamification() {
+        const points = 2450;
+        const level = Math.floor(points / 500) + 1;
+        const progress = (points % 500) / 500 * 100;
+        
+        const pointsElement = document.getElementById('user-points');
+        const levelElement = document.getElementById('user-level');
+        const progressElement = document.getElementById('level-progress');
+        
+        if (pointsElement) pointsElement.textContent = points.toLocaleString();
+        if (levelElement) levelElement.textContent = getLevelName(level);
+        if (progressElement) progressElement.style.width = `${progress}%`;
+        
+        // Update achievements based on user data
+        updateAchievements();
+      }
+
+      function getLevelName(level) {
+        const levelNames = {
+          1: 'Rookie',
+          2: 'Novice', 
+          3: 'Gamer',
+          4: 'Pro Gamer',
+          5: 'Expert',
+          6: 'Master',
+          7: 'Pro Gamer',
+          8: 'Elite',
+          9: 'Legend',
+          10: 'Champion'
+        };
+        return levelNames[level] || 'Pro Gamer';
+      }
+
+      function updateAchievements() {
+        const orders = parseInt(document.getElementById('orders-count')?.textContent || '0');
+        const spent = 847; // Simulated total spent
+        
+        // Unlock achievements based on user data
+        if (orders >= 1) unlockAchievement('first-purchase');
+        if (orders >= 5) unlockAchievement('hot-streak');
+        if (spent >= 1000) unlockAchievement('big-spender');
+      }
+
+      function unlockAchievement(achievementId) {
+        const achievement = document.querySelector(`[data-achievement="${achievementId}"]`);
+        if (achievement) {
+          achievement.classList.remove('locked');
+          achievement.classList.add('unlocked');
+        }
+      }
+
+      // Behavioral Targeting
+      function updateBehavioralTargeting() {
+        const userType = getUserType();
+        const badge = document.getElementById('behavioral-badge');
+        const recommendations = document.querySelector('.recommendations');
+        
+        if (badge) {
+          badge.className = `user-type-badge user-type-${userType}`;
+          badge.textContent = getUserTypeLabel(userType);
+        }
+        
+        updateRecommendations(userType);
+      }
+
+      function getUserType() {
+        // Simulate user behavior analysis
+        const orders = parseInt(document.getElementById('orders-count')?.textContent || '0');
+        const spent = 847; // Simulated total spent
+        
+        if (orders === 0) return 'new';
+        if (spent > 1000) return 'vip';
+        return 'returning';
+      }
+
+      function getUserTypeLabel(type) {
+        const labels = {
+          'new': 'New Gamer',
+          'returning': 'Returning Gamer', 
+          'vip': 'VIP Gamer'
+        };
+        return labels[type];
+      }
+
+      function updateRecommendations(userType) {
+        const recommendations = document.querySelectorAll('.recommendation-item');
+        
+        // Clear existing recommendations
+        recommendations.forEach(rec => rec.remove());
+        
+        const recContainer = document.querySelector('.recommendations');
+        if (!recContainer) return;
+        
+        const newRecommendations = getRecommendationsForUserType(userType);
+        
+        newRecommendations.forEach(rec => {
+          const recElement = document.createElement('div');
+          recElement.className = 'recommendation-item';
+          recElement.innerHTML = `
+            <i class="${rec.icon} recommendation-icon"></i>
+            <div>
+              <strong>${rec.title}</strong>
+              <p style="color: #ccc; font-size: 0.9rem;">${rec.description}</p>
+            </div>
+          `;
+          recContainer.appendChild(recElement);
+        });
+      }
+
+      function getRecommendationsForUserType(userType) {
+        const recommendations = {
+          'new': [
+            { icon: 'fas fa-gamepad', title: 'Starter Gaming Kit', description: 'Perfect for new gamers' },
+            { icon: 'fas fa-mobile-alt', title: 'Mobile Gaming Essentials', description: 'Everything you need to start' },
+            { icon: 'fas fa-gift', title: 'Welcome Bundle', description: 'Special offer for new members' }
+          ],
+          'returning': [
+            { icon: 'fas fa-mobile-alt', title: 'Mobile Gaming Setup', description: 'Based on your controller purchases' },
+            { icon: 'fas fa-snowflake', title: 'Cooling Accessories', description: 'Perfect for long gaming sessions' },
+            { icon: 'fas fa-headset', title: 'Audio Gear', description: 'Complete your gaming setup' }
+          ],
+          'vip': [
+            { icon: 'fas fa-crown', title: 'VIP Exclusive Gear', description: 'Limited edition items' },
+            { icon: 'fas fa-gem', title: 'Premium Accessories', description: 'High-end gaming equipment' },
+            { icon: 'fas fa-star', title: 'Early Access', description: 'Be the first to get new products' }
+          ]
+        };
+        
+        return recommendations[userType] || recommendations['returning'];
+      }
+
+      // Notification System
+      function showNotification(message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+          position: fixed;
+          top: 100px;
+          right: 20px;
+          background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+          color: white;
+          padding: 15px 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+          z-index: 10001;
+          transform: translateX(400px);
+          transition: transform 0.3s ease;
+          max-width: 300px;
+        `;
+        notification.innerHTML = `<i class="fas fa-trophy"></i> ${message}`;
+        
+        document.body.appendChild(notification);
+        
+        // Show notification
+        setTimeout(() => {
+          notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Hide notification
+        setTimeout(() => {
+          notification.style.transform = 'translateX(400px)';
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 300);
+        }, 3000);
+      }
+
+      // Simulate achievement unlock after 3 seconds
+      setTimeout(() => {
+        showNotification('Achievement Unlocked: Loyalty Master! 🏆');
+      }, 3000);
+
+      // Exit Intent Detection
+      let exitIntentShown = false;
+      
+      document.addEventListener('mouseleave', function(e) {
+        if (e.clientY <= 0 && !exitIntentShown) {
+          showExitIntent();
+        }
+      });
+
+      function showExitIntent() {
+        exitIntentShown = true;
+        document.getElementById('exit-intent-popup').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeExitIntent() {
+        document.getElementById('exit-intent-popup').style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+
+      function applyDiscount() {
+        // Simulate applying discount
+        showNotification('Discount code GAMER15 applied! 🎉');
+        closeExitIntent();
+        
+        // Redirect to shop with discount
+        setTimeout(() => {
+          window.location.href = 'index.html?discount=GAMER15';
+        }, 2000);
+      }
     </script>
 
     <!-- Footer -->
@@ -2579,5 +3218,8 @@
         </div>
       </div>
     </footer>
+
+    <!-- Site Banner System -->
+    <script src="components/site-banner.js"></script>
   </body>
 </html>
