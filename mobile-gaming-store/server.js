@@ -49,20 +49,32 @@ app.get('/', (req, res) => {
 // Lightweight banners endpoint (for site banner carousel)
 app.get('/banners', async (req, res) => {
   try {
-    // If files exist under assets/images/banners, surface them as banners first
-    const bannersDir = path.join(__dirname, 'assets', 'images', 'banners');
-    let files = [];
-    try {
-      files = await fs.readdir(bannersDir);
-    } catch {}
-    const imageFiles = (files || []).filter(f => /\.(png|jpe?g|webp|avif|svg)$/i.test(f));
-    if (imageFiles.length) {
-      const banners = imageFiles.slice(0, 12).map((f) => {
+    // Scan candidate directories for banner images (supports your campaign banner folder)
+    const candidateDirs = [
+      path.join(__dirname, 'assets', 'images', 'banners'),
+      path.join(__dirname, 'assets', 'campaing banner'), // note: current folder name
+      path.join(__dirname, 'assets', 'images', 'campaigns'),
+      path.join(__dirname, 'assets', 'campaigns')
+    ];
+
+    let foundDir = '';
+    let imageFiles = [];
+    for (const dir of candidateDirs) {
+      try {
+        const files = await fs.readdir(dir);
+        const imgs = files.filter(f => /\.(png|jpe?g|webp|avif|svg)$/i.test(f));
+        if (imgs.length) { foundDir = dir; imageFiles = imgs; break; }
+      } catch {}
+    }
+
+    if (foundDir && imageFiles.length) {
+      const publicPrefix = foundDir.replace(__dirname + path.sep, '').replace(/\\/g, '/');
+      const banners = imageFiles.slice(0, 20).map((f) => {
         const base = f.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
         return {
           title: base.charAt(0).toUpperCase() + base.slice(1),
           subtitle: 'Featured banner',
-          image: `assets/images/banners/${f}`,
+          image: `${publicPrefix}/${f}`,
           badges: ['Featured'],
           ctaText: 'Explore',
           ctaLink: '/flashsales.html',
@@ -350,7 +362,7 @@ app.get('/products', async (req, res) => {
     }
 
     console.log('📦 Fetching products from Supabase...');
-
+    
     // Fetch products from Supabase
     const { data: products, error } = await supabase
       .from('products')
