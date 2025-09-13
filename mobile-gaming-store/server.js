@@ -106,6 +106,20 @@ let siteBanners = [
     end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
+  },
+  {
+    id: 3,
+    title: "🎮 Gaming Gear Sale!",
+    message: "Get 20% off all gaming accessories - Limited time offer!",
+    type: "success",
+    is_active: true,
+    position: "top",
+    show_on_pages: ["all"],
+    banner_image: "assets/campaing banner/jty.png",
+    start_date: new Date().toISOString(),
+    end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days from now
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   }
 ];
 
