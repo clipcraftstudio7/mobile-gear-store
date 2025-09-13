@@ -30,10 +30,11 @@
   function ensureContainer() {
     let existing = document.getElementById('site-banner');
     if (existing) return existing;
-    const section = document.createElement('section');
-    section.className = 'site-banner-section';
+    const mount = document.getElementById('site-banner-mount');
+    const section = mount || document.createElement('section');
+    if (!mount) section.className = 'site-banner-section';
     section.innerHTML = `
-      <div id="site-banner" class="site-banner">
+      <div id="site-banner" class="site-banner" style="max-width:1200px;margin:0 auto;">
         <div class="glide" id="site-banner-glide">
           <div class="glide__track" data-glide-el="track">
             <ul class="glide__slides" id="site-banner-slides"></ul>
@@ -45,9 +46,11 @@
           </div>
         </div>
       </div>`;
-    const header = document.querySelector('.header') || document.querySelector('nav.navbar');
-    if (header && header.parentNode) header.parentNode.insertBefore(section, header.nextSibling);
-    else document.body.insertBefore(section, document.body.firstChild);
+    if (!mount) {
+      const header = document.querySelector('.header') || document.querySelector('nav.navbar');
+      if (header && header.parentNode) header.parentNode.insertBefore(section, header.nextSibling);
+      else document.body.insertBefore(section, document.body.firstChild);
+    }
     return document.getElementById('site-banner');
   }
 

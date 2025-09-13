@@ -49,9 +49,31 @@ app.get('/', (req, res) => {
 // Lightweight banners endpoint (for site banner carousel)
 app.get('/banners', async (req, res) => {
   try {
-    // If campaigns table exists and user is admin, we could fetch active banners here.
-    // For now, return a simple default set; you can enhance to read from DB later.
-    res.json([
+    // If files exist under assets/images/banners, surface them as banners first
+    const bannersDir = path.join(__dirname, 'assets', 'images', 'banners');
+    let files = [];
+    try {
+      files = await fs.readdir(bannersDir);
+    } catch {}
+    const imageFiles = (files || []).filter(f => /\.(png|jpe?g|webp|avif|svg)$/i.test(f));
+    if (imageFiles.length) {
+      const banners = imageFiles.slice(0, 12).map((f) => {
+        const base = f.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+        return {
+          title: base.charAt(0).toUpperCase() + base.slice(1),
+          subtitle: 'Featured banner',
+          image: `assets/images/banners/${f}`,
+          badges: ['Featured'],
+          ctaText: 'Explore',
+          ctaLink: '/flashsales.html',
+          meta: ['Limited time']
+        };
+      });
+      return res.json(banners);
+    }
+
+    // Default set if no banner assets present
+    return res.json([
       { title: 'Mega Flash Sale', subtitle: 'Up to 50% OFF on hot gaming gear', image: 'assets/images/products-organized/1-gaming-controller/1-main.jpg', badges: ['Flash','Limited'], ctaText: 'Shop Now', ctaLink: '/flashsales.html', meta: ['Free returns','24h dispatch'] },
       { title: 'Cooling Essentials', subtitle: 'Keep FPS high with pro coolers', image: 'assets/images/products-organized/3-mobile-cooling-fan-dual/1-main.jpg', badges: ['Trending'], ctaText: 'Explore', ctaLink: '/category.html?cat=Cooling', meta: ['Top rated','Best value'] }
     ]);
