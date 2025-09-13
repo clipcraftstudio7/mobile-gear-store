@@ -46,6 +46,20 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Lightweight banners endpoint (for site banner carousel)
+app.get('/banners', async (req, res) => {
+  try {
+    // If campaigns table exists and user is admin, we could fetch active banners here.
+    // For now, return a simple default set; you can enhance to read from DB later.
+    res.json([
+      { title: 'Mega Flash Sale', subtitle: 'Up to 50% OFF on hot gaming gear', image: 'assets/images/products-organized/1-gaming-controller/1-main.jpg', badges: ['Flash','Limited'], ctaText: 'Shop Now', ctaLink: '/flashsales.html', meta: ['Free returns','24h dispatch'] },
+      { title: 'Cooling Essentials', subtitle: 'Keep FPS high with pro coolers', image: 'assets/images/products-organized/3-mobile-cooling-fan-dual/1-main.jpg', badges: ['Trending'], ctaText: 'Explore', ctaLink: '/category.html?cat=Cooling', meta: ['Top rated','Best value'] }
+    ]);
+  } catch (e) {
+    res.json([]);
+  }
+});
+
 // ===== SITE-WIDE BANNER MANAGEMENT ENDPOINTS =====
 console.log('🎯 Loading site banner endpoints...');
 

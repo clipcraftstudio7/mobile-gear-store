@@ -1,3 +1,141 @@
+// Simple Kilmall-style banner carousel using Glide.js
+(function () {
+  function injectStyles() {
+    if (document.getElementById('site-banner-styles')) return;
+    const css = `
+      .site-banner-section{width:100%;background:#0f1113;}
+      .site-banner{max-width:1200px;margin:0 auto;padding:12px 16px;}
+      .site-banner .glide__slides{align-items:stretch}
+      .banner-card{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;background:linear-gradient(145deg,#15181b,#0f1113);border:1px solid #222;border-radius:16px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.35);min-height:240px}
+      .banner-media{position:relative;background:#0b0d0f}
+      .banner-media img{width:100%;height:100%;object-fit:cover}
+      .banner-badges{position:absolute;top:10px;left:10px;display:flex;gap:8px}
+      .banner-badge{background:#25d366;color:#111;font-weight:800;border-radius:999px;padding:6px 10px;font-size:.78rem;box-shadow:0 2px 10px rgba(37,211,102,.35)}
+      .banner-content{display:flex;flex-direction:column;justify-content:center;padding:18px}
+      .banner-title{color:#fff;font-weight:800;font-size:1.6rem;line-height:1.2;margin-bottom:6px}
+      .banner-sub{color:#cbd5e1;font-size:.98rem;margin-bottom:12px}
+      .banner-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#25d366,#128c7e);color:#111;font-weight:800;border:none;border-radius:10px;padding:10px 14px;text-decoration:none;box-shadow:0 6px 18px rgba(37,211,102,.25)}
+      .banner-meta{display:flex;gap:10px;margin-top:10px;color:#94a3b8;font-size:.85rem}
+      @media(max-width:900px){.banner-card{grid-template-columns:1fr;min-height:auto}.banner-content{padding:14px}.banner-title{font-size:1.3rem}}
+      .glide__bullet{background:#334155}
+      .glide__bullet--active{background:#25d366}
+      .glide__arrow{background:#111;color:#25d366;border:1px solid #334155}
+    `;
+    const style = document.createElement('style');
+    style.id = 'site-banner-styles';
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  function ensureContainer() {
+    let existing = document.getElementById('site-banner');
+    if (existing) return existing;
+    const section = document.createElement('section');
+    section.className = 'site-banner-section';
+    section.innerHTML = `
+      <div id="site-banner" class="site-banner">
+        <div class="glide" id="site-banner-glide">
+          <div class="glide__track" data-glide-el="track">
+            <ul class="glide__slides" id="site-banner-slides"></ul>
+          </div>
+          <div class="glide__bullets" data-glide-el="controls[nav]" id="site-banner-bullets"></div>
+          <div class="glide__arrows" data-glide-el="controls">
+            <button class="glide__arrow glide__arrow--left" data-glide-dir="<">◀</button>
+            <button class="glide__arrow glide__arrow--right" data-glide-dir=">">▶</button>
+          </div>
+        </div>
+      </div>`;
+    const header = document.querySelector('.header') || document.querySelector('nav.navbar');
+    if (header && header.parentNode) header.parentNode.insertBefore(section, header.nextSibling);
+    else document.body.insertBefore(section, document.body.firstChild);
+    return document.getElementById('site-banner');
+  }
+
+  function renderBanners(banners) {
+    injectStyles();
+    ensureContainer();
+    const slides = document.getElementById('site-banner-slides');
+    const bullets = document.getElementById('site-banner-bullets');
+    if (!slides) return;
+    slides.innerHTML = '';
+    bullets.innerHTML = '';
+    banners.forEach((b, i) => {
+      const li = document.createElement('li');
+      li.className = 'glide__slide';
+      li.innerHTML = `
+        <div class="banner-card">
+          <div class="banner-media">
+            <div class="banner-badges">${(b.badges||[]).map(x=>`<span class=\"banner-badge\">${x}</span>`).join('')}</div>
+            <img src="${b.image}" alt="${b.title||'Banner'}" onerror="this.onerror=null;this.src='assets/images/default-product.svg'" />
+          </div>
+          <div class="banner-content">
+            <div class="banner-title">${b.title||''}</div>
+            <div class="banner-sub">${b.subtitle||''}</div>
+            <div class="banner-meta">${b.meta?b.meta.map(m=>`<span>${m}</span>`).join(''):''}</div>
+            ${b.ctaText?`<a class="banner-cta" href="${b.ctaLink||'#'}">${b.ctaText}</a>`:''}
+          </div>
+        </div>`;
+      slides.appendChild(li);
+      const bullet = document.createElement('button');
+      bullet.className = 'glide__bullet';
+      bullet.setAttribute('data-glide-dir', `=${i}`);
+      bullets.appendChild(bullet);
+    });
+    if (typeof Glide !== 'undefined') {
+      try {
+        if (window.__siteBannerGlide) window.__siteBannerGlide.destroy();
+        window.__siteBannerGlide = new Glide('#site-banner-glide', {
+          type: 'carousel',
+          perView: 1,
+          autoplay: 4000,
+          hoverpause: true,
+          animationDuration: 600,
+        });
+        window.__siteBannerGlide.mount();
+      } catch (e) { console.warn('Glide init failed', e); }
+    }
+  }
+
+  async function loadBanners() {
+    try {
+      const res = await fetch('/banners');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length) { renderBanners(data); return; }
+        if (Array.isArray(data.banners)) { renderBanners(data.banners); return; }
+      }
+    } catch {}
+    // Fallback defaults
+    renderBanners([
+      {
+        title: 'Mega Flash Sale',
+        subtitle: 'Up to 50% OFF on hot gaming gear',
+        image: 'assets/images/products-organized/1-gaming-controller/1-main.jpg',
+        badges: ['Flash', 'Limited'],
+        ctaText: 'Shop Now',
+        ctaLink: '/flashsales.html',
+        meta: ['Free returns', '24h dispatch']
+      },
+      {
+        title: 'Cooling Essentials',
+        subtitle: 'Keep FPS high with pro coolers',
+        image: 'assets/images/products-organized/3-mobile-cooling-fan-dual/1-main.jpg',
+        badges: ['Trending'],
+        ctaText: 'Explore',
+        ctaLink: '/category.html?cat=Cooling',
+        meta: ['Top rated', 'Best value']
+      }
+    ]);
+  }
+
+  window.setSiteBanners = renderBanners;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadBanners);
+  } else {
+    loadBanners();
+  }
+})();
+
 /**
  * Site-Wide Banner System
  * Displays notifications, promotions, and announcements across all pages
@@ -94,21 +232,39 @@ class SiteBanner {
   }
 
   renderBannerGroup(banners, position) {
+    // Create overlay for popup effect
+    const overlay = document.createElement('div');
+    overlay.className = 'site-banner-overlay';
+    overlay.id = `site-banner-overlay-${position}`;
+    
+    // Create container for banners
     const container = document.createElement('div');
     container.className = `site-banner-container site-banner-${position}`;
     container.id = `site-banner-${position}`;
     
+    // Add banners to container
     banners.forEach((banner, index) => {
       const bannerElement = this.createBannerElement(banner, index);
       container.appendChild(bannerElement);
     });
     
-    // Insert into page
-    if (position === 'top') {
-      document.body.insertBefore(container, document.body.firstChild);
-    } else {
-      document.body.appendChild(container);
-    }
+    // Add container to overlay
+    overlay.appendChild(container);
+    
+    // Add click-to-close functionality for overlay background
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        this.closeBannerOverlay(position);
+      }
+    });
+    
+    // Add overlay to page
+    document.body.appendChild(overlay);
+    
+    // Auto-close overlay after 8 seconds for better UX
+    setTimeout(() => {
+      this.closeBannerOverlay(position);
+    }, 8000);
   }
 
   createBannerElement(banner, index) {
@@ -154,11 +310,10 @@ class SiteBanner {
   closeBanner(bannerId) {
     const banner = document.querySelector(`[data-banner-id="${bannerId}"]`);
     if (banner) {
-      banner.style.animation = 'slideOut 0.3s ease-out forwards';
-      setTimeout(() => {
-        banner.remove();
-        this.adjustPageLayout();
-      }, 300);
+      const overlay = banner.closest('.site-banner-overlay');
+      if (overlay) {
+        this.closeBannerOverlay(overlay.id.replace('site-banner-overlay-', ''));
+      }
     }
     
     // Store dismissal in localStorage
@@ -166,6 +321,17 @@ class SiteBanner {
     if (!dismissed.includes(bannerId)) {
       dismissed.push(bannerId);
       localStorage.setItem('dismissedBanners', JSON.stringify(dismissed));
+    }
+  }
+
+  closeBannerOverlay(position) {
+    const overlay = document.getElementById(`site-banner-overlay-${position}`);
+    if (overlay) {
+      overlay.style.animation = 'fadeOut 0.3s ease-out forwards';
+      setTimeout(() => {
+        overlay.remove();
+        this.adjustPageLayout();
+      }, 300);
     }
   }
 
@@ -178,64 +344,57 @@ class SiteBanner {
   }
 
   removeExistingBanners() {
-    const existingBanners = document.querySelectorAll('.site-banner-container');
-    existingBanners.forEach(banner => banner.remove());
+    const existingOverlays = document.querySelectorAll('.site-banner-overlay');
+    existingOverlays.forEach(overlay => overlay.remove());
   }
 
   adjustPageLayout() {
-    const topBanners = document.querySelector('.site-banner-top');
-    const bottomBanners = document.querySelector('.site-banner-bottom');
-    
-    // Adjust body padding for top banners
-    if (topBanners) {
-      const bannerHeight = topBanners.offsetHeight;
-      document.body.style.paddingTop = `${bannerHeight}px`;
-    } else {
-      document.body.style.paddingTop = '0';
-    }
-    
-    // Adjust body padding for bottom banners
-    if (bottomBanners) {
-      const bannerHeight = bottomBanners.offsetHeight;
-      document.body.style.paddingBottom = `${bannerHeight}px`;
-    } else {
-      document.body.style.paddingBottom = '0';
-    }
+    // For popup banners, we don't need to adjust page layout
+    // since they appear as overlays and don't affect the page flow
+    console.log('Page layout adjusted for popup banners');
   }
 }
 
-// CSS Styles for site banners
+// CSS Styles for site banners - POPUP STYLE
 const bannerStyles = `
-  .site-banner-container {
+  /* Overlay background for popup effect */
+  .site-banner-overlay {
     position: fixed;
-    left: 0;
-    right: 0;
-    z-index: 10000;
-    animation: slideIn 0.3s ease-out;
-  }
-  
-  .site-banner-top {
     top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
   }
   
-  .site-banner-bottom {
-    bottom: 0;
+  .site-banner-container {
+    position: relative;
+    z-index: 10000;
+    max-width: 90vw;
+    max-height: 80vh;
+    width: 800px;
+    animation: popupIn 0.4s ease-out;
   }
   
   .site-banner {
-    padding: 12px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: all 0.3s ease;
-  }
-  
-  .site-banner:last-child {
-    border-bottom: none;
+    overflow: hidden;
+    position: relative;
   }
   
   .site-banner:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.02);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
   }
   
   .site-banner-success {
@@ -261,101 +420,176 @@ const bannerStyles = `
   .site-banner-content {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    max-width: 1200px;
-    margin: 0 auto;
+    padding: 40px;
+    gap: 30px;
+    position: relative;
   }
   
   .site-banner-image {
-    margin-right: 12px;
     flex-shrink: 0;
+    position: relative;
   }
   
   .site-banner-image img {
-    width: 40px;
-    height: 40px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 6px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   }
   
   .site-banner-text {
     flex: 1;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 15px;
   }
   
   .site-banner-title {
-    font-weight: 700;
-    font-size: 1rem;
+    font-weight: 800;
+    font-size: 2.2rem;
+    line-height: 1.2;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   }
   
   .site-banner-message {
-    font-size: 0.9rem;
-    opacity: 0.9;
+    font-size: 1.3rem;
+    opacity: 0.95;
+    line-height: 1.4;
+    font-weight: 500;
   }
   
   .site-banner-close {
-    background: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
     border: none;
-    color: inherit;
-    font-size: 1.2rem;
+    color: white;
+    font-size: 1.8rem;
     cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background 0.2s ease;
-    margin-left: 12px;
+    padding: 10px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
   }
   
   .site-banner-close:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
   }
   
-  @keyframes slideIn {
+  /* Decorative elements */
+  .site-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 3s infinite;
+    pointer-events: none;
+  }
+  
+  @keyframes fadeIn {
     from {
-      transform: translateY(-100%);
       opacity: 0;
     }
     to {
-      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  @keyframes popupIn {
+    from {
+      transform: scale(0.8) translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1) translateY(0);
       opacity: 1;
     }
   }
   
   @keyframes slideOut {
     from {
-      transform: translateY(0);
+      transform: scale(1) translateY(0);
       opacity: 1;
     }
     to {
-      transform: translateY(-100%);
+      transform: scale(0.8) translateY(-50px);
       opacity: 0;
     }
   }
   
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+  }
+  
+  /* Mobile responsive */
   @media (max-width: 768px) {
-    .site-banner {
-      padding: 10px 15px;
+    .site-banner-container {
+      width: 95vw;
+      max-height: 85vh;
     }
     
     .site-banner-content {
+      padding: 25px;
+      gap: 20px;
       flex-direction: column;
-      gap: 8px;
       text-align: center;
     }
     
-    .site-banner-text {
-      flex-direction: column;
-      gap: 4px;
+    .site-banner-image img {
+      width: 80px;
+      height: 80px;
     }
     
     .site-banner-title {
-      font-size: 0.9rem;
+      font-size: 1.6rem;
     }
     
     .site-banner-message {
-      font-size: 0.8rem;
+      font-size: 1.1rem;
+    }
+    
+    .site-banner-close {
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.4rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .site-banner-title {
+      font-size: 1.4rem;
+    }
+    
+    .site-banner-message {
+      font-size: 1rem;
     }
   }
 `;
