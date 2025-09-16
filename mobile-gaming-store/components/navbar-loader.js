@@ -24,6 +24,21 @@ document.addEventListener("DOMContentLoaded", function () {
         // Initialize navbar functionality after loading
         initializeNavbar();
         
+        // Ensure site-wide banner popup is loaded once per page
+        try {
+          const bannerScriptId = 'site-banner-script';
+          if (!document.getElementById(bannerScriptId)) {
+            const bannerScript = document.createElement('script');
+            bannerScript.id = bannerScriptId;
+            const bannerPath = isInProductsFolder ? '../components/site-banner.js' : 'components/site-banner.js';
+            bannerScript.src = bannerPath;
+            bannerScript.defer = true;
+            document.body.appendChild(bannerScript);
+          }
+        } catch (e) {
+          console.warn('Failed to load site banner script', e);
+        }
+        
         // Make navbar loader available globally for external calls
         window.navbarLoader = {
           initializeUserAuth,
