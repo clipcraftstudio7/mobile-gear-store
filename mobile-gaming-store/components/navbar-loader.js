@@ -4,6 +4,23 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Navbar loader initialized
 
+  // Always load top announcement bar even if a page doesn't use navbar-container
+  try {
+    const annIdEarly = 'top-announcement-bar-script';
+    if (!document.getElementById(annIdEarly)) {
+      const sEarly = document.createElement('script');
+      sEarly.id = annIdEarly;
+      const currentPath = window.location.pathname;
+      const isInProductsFolderEarly = currentPath.includes('/products/');
+      const pEarly = isInProductsFolderEarly ? '../components/top-announcement-bar.js' : 'components/top-announcement-bar.js';
+      sEarly.src = pEarly;
+      sEarly.defer = true;
+      document.body.appendChild(sEarly);
+    }
+  } catch (e) {
+    console.warn('Failed to early-load top announcement bar', e);
+  }
+
   if (navbarContainer) {
     // Load navbar HTML with better path resolution
     const currentPath = window.location.pathname;
@@ -37,6 +54,21 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         } catch (e) {
           console.warn('Failed to load site banner script', e);
+        }
+
+        // Load top announcement bar above navbar
+        try {
+          const annId = 'top-announcement-bar-script';
+          if (!document.getElementById(annId)) {
+            const s = document.createElement('script');
+            s.id = annId;
+            const p = isInProductsFolder ? '../components/top-announcement-bar.js' : 'components/top-announcement-bar.js';
+            s.src = p;
+            s.defer = true;
+            document.body.appendChild(s);
+          }
+        } catch (e) {
+          console.warn('Failed to load top announcement bar', e);
         }
         
         // Make navbar loader available globally for external calls

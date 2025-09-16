@@ -3024,6 +3024,44 @@
             >
           </div>
           <div class="price-note">Free shipping on orders over $50</div>
+
+          <!-- Temu-style info box -->
+          <div class="temu-info-box" style="margin: 14px 0 12px 0; border: 1px solid #333; border-radius: 12px; background: #121417; color: #e5e7eb;">
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; padding: 14px 14px 4px 14px;">
+              <div style="display:flex; align-items:flex-start; gap:8px;">
+                <i class="fas fa-shipping-fast" style="color:#25d366; margin-top:2px;"></i>
+                <div>
+                  <div style="font-weight:700;">Fastest delivery in 5 business days</div>
+                  <div style="font-size:0.85rem; color:#9ca3af;">Min. order value: $10.00</div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:8px;">
+                <i class="fas fa-lock" style="color:#25d366; margin-top:2px;"></i>
+                <div>
+                  <div style="font-weight:700;">Safe payments</div>
+                  <div style="font-size:0.85rem; color:#9ca3af;">Secure privacy</div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:8px; cursor:pointer;" onclick="openOrderGuaranteeModal()">
+                <i class="fas fa-shield-alt" style="color:#25d366; margin-top:2px;"></i>
+                <div>
+                  <div style="font-weight:700; color:#25d366;">Order guarantee</div>
+                  <div style="font-size:0.85rem; color:#9ca3af;">Click to view details</div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:8px;">
+                <i class="fas fa-box-open" style="color:#25d366; margin-top:2px;"></i>
+                <div>
+                  <div style="font-weight:700;">What's included</div>
+                  <div style="font-size:0.85rem; color:#9ca3af;">See product details below</div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; padding: 6px 14px 12px 14px; color:#9ca3af; font-size:0.85rem; border-top: 1px dashed #2a2f36; margin-top: 8px;">
+              <i class="fas fa-globe" style="color:#25d366;"></i>
+              <span>Sourced from trusted partners, procured by Mobile Gear Hub</span>
+            </div>
+          </div>
         </div>
 
         <!-- Quantity Section -->
@@ -5997,5 +6035,92 @@
     })();
     </script>
     
+    <!-- Order Guarantee Modal -->
+    <div id="orderGuaranteeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+      <div style="background: #1a1a1a; border: 1px solid #333; border-radius: 16px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
+        <button onclick="closeOrderGuaranteeModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #999; font-size: 24px; cursor: pointer; z-index: 1;">×</button>
+        <div style="padding: 24px;">
+          <h2 style="color: #25d366; margin: 0 0 20px 0; font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-shield-alt"></i>
+            Order Guarantee
+          </h2>
+          
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: rgba(37, 211, 102, 0.1); border-radius: 8px; border-left: 3px solid #25d366;">
+              <i class="fas fa-undo" style="color: #25d366; margin-top: 2px;"></i>
+              <div>
+                <h3 style="color: #fff; margin: 0 0 4px 0; font-size: 1rem;">30-Day Return Policy</h3>
+                <p style="color: #ccc; margin: 0; font-size: 0.9rem;">Return any item within 30 days for a full refund. No questions asked.</p>
+              </div>
+            </div>
+            
+            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: rgba(37, 211, 102, 0.1); border-radius: 8px; border-left: 3px solid #25d366;">
+              <i class="fas fa-truck" style="color: #25d366; margin-top: 2px;"></i>
+              <div>
+                <h3 style="color: #fff; margin: 0 0 4px 0; font-size: 1rem;">Free Shipping Protection</h3>
+                <p style="color: #ccc; margin: 0; font-size: 0.9rem;">If your order is lost or damaged during shipping, we'll replace it at no cost.</p>
+              </div>
+            </div>
+            
+            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: rgba(37, 211, 102, 0.1); border-radius: 8px; border-left: 3px solid #25d366;">
+              <i class="fas fa-award" style="color: #25d366; margin-top: 2px;"></i>
+              <div>
+                <h3 style="color: #fff; margin: 0 0 4px 0; font-size: 1rem;">Quality Assurance</h3>
+                <p style="color: #ccc; margin: 0; font-size: 0.9rem;">All products are tested and verified before shipping. Defective items replaced immediately.</p>
+              </div>
+            </div>
+            
+            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: rgba(37, 211, 102, 0.1); border-radius: 8px; border-left: 3px solid #25d366;">
+              <i class="fas fa-headset" style="color: #25d366; margin-top: 2px;"></i>
+              <div>
+                <h3 style="color: #fff; margin: 0 0 4px 0; font-size: 1rem;">24/7 Customer Support</h3>
+                <p style="color: #ccc; margin: 0; font-size: 0.9rem;">Our support team is available around the clock to help with any issues.</p>
+              </div>
+            </div>
+            
+            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: rgba(37, 211, 102, 0.1); border-radius: 8px; border-left: 3px solid #25d366;">
+              <i class="fas fa-lock" style="color: #25d366; margin-top: 2px;"></i>
+              <div>
+                <h3 style="color: #fff; margin: 0 0 4px 0; font-size: 1rem;">Secure Payment Protection</h3>
+                <p style="color: #ccc; margin: 0; font-size: 0.9rem;">Your payment information is encrypted and protected. We never store your card details.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 20px; padding: 16px; background: rgba(0,0,0,0.3); border-radius: 8px; text-align: center;">
+            <p style="color: #25d366; margin: 0; font-weight: 600; font-size: 0.9rem;">
+              <i class="fas fa-check-circle" style="margin-right: 6px;"></i>
+              Shop with confidence - Your satisfaction is our priority!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openOrderGuaranteeModal() {
+        document.getElementById('orderGuaranteeModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+      
+      function closeOrderGuaranteeModal() {
+        document.getElementById('orderGuaranteeModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+      
+      // Close modal when clicking outside
+      document.getElementById('orderGuaranteeModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeOrderGuaranteeModal();
+        }
+      });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeOrderGuaranteeModal();
+        }
+      });
+    </script>
   </body>
 </html>
