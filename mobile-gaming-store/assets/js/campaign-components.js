@@ -18,6 +18,7 @@ class CampaignComponents {
       this.renderCampaignHero();
       this.renderBannerStrip();
       this.renderFlashSales();
+      this.renderFlashTeaser();
       this.renderBannerGrid();
       this.initPopupSystem();
       this.startCountdownTimers();
@@ -170,6 +171,61 @@ class CampaignComponents {
 
     flashHTML += '</div></div>';
     flashContainer.innerHTML = flashHTML;
+  }
+
+  // Render compact flash sale teaser (first active sale, countdown + a few products)
+  renderFlashTeaser() {
+    const teaser = document.getElementById('flash-sales-teaser');
+    if (!teaser) return;
+
+    const flashCampaigns = this.flashCampaigns.filter(c => c.type === 'flash' && c.is_active && c.status === 'active');
+    if (!flashCampaigns.length) { teaser.innerHTML = ''; return; }
+
+    const campaign = flashCampaigns[0];
+    const products = (campaign.campaign_products || []).slice(0, 3);
+
+    teaser.innerHTML = `
+      <div class="flash-teaser" data-campaign-id="${campaign.id}" style="
+        background: rgba(255,255,255,0.03); border: 1px solid #333; border-radius: 16px; padding: 14px; 
+        margin: 16px auto; max-width: 1200px;">
+        <div class="flash-teaser-header" style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-weight:800; color:#25d366;">🔥 Flash Sale</span>
+            <span style="color:#aaa; font-size:0.9rem;">${campaign.title || ''}</span>
+          </div>
+          <div class="flash-countdown" data-end-time="${campaign.end_at}" style="color:#ffa502; font-weight:700;">
+            Ends in <span class="countdown-time" id="countdown-${campaign.id}">${this.formatCountdown(campaign.time_left_seconds)}</span>
+          </div>
+        </div>
+        <div class="flash-teaser-products" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+          ${products.map(p => {
+            const originalPrice = p.original_price || p.product?.price || 0;
+            const salePrice = p.sale_price || 0;
+            const discount = originalPrice > 0 ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0;
+            const remainingStock = p.remaining_reserved_stock || 0;
+            return `
+              <div class="flash-teaser-card" style="
+                background: rgba(255,255,255,0.03); border:1px solid #333; border-radius:12px; padding:10px;">
+                <div style="position:relative;">
+                  <img src="${p.product?.image || 'assets/images/default-product.jpg'}" alt="${p.product?.name || 'Product'}" style="width:100%; height:120px; object-fit:cover; border-radius:8px;"/>
+                  ${discount > 0 ? `<div style=\"position:absolute; top:6px; right:6px; background:#ff4757; color:#fff; font-size:.7rem; border-radius:999px; padding:2px 6px;\">-${discount}%</div>` : ''}
+                </div>
+                <div style="margin-top:8px;">
+                  <div style="font-size:.95rem; color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.product?.name || 'Product'}</div>
+                  <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+                    <span style="text-decoration:line-through; color:#777; font-size:.9rem;">$${(originalPrice/100).toFixed(2)}</span>
+                    <span style="color:#25d366; font-size:1rem; font-weight:800;">$${(salePrice/100).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+          <button onclick="campaignComponents.viewAllFlash('${campaign.slug}')" style="
+            background: linear-gradient(45deg, #25d366, #128c7e); color:#111; border:none; padding:8px 12px; border-radius:8px; font-weight:800;">View All</button>
+        </div>
+      </div>
+    `;
   }
 
   // Render individual flash sale card
