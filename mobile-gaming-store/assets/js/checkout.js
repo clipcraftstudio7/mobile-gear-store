@@ -504,6 +504,10 @@ async function placeOrderAfterPayment(paypalDetails) {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  // Read affiliate attribution captured globally
+  const aff = typeof window.__getAffiliateAttribution === 'function' 
+    ? window.__getAffiliateAttribution() 
+    : { affiliate_id: '', utm_source: '', utm_campaign: '', utm_medium: '' };
   const order = {
     user_id: currentUser.id,
     items: cart,
@@ -518,6 +522,12 @@ async function placeOrderAfterPayment(paypalDetails) {
       paypal_id: paypalDetails.id,
       payer_email: paypalDetails.payer.email_address,
       status: paypalDetails.status,
+    },
+    attribution: {
+      affiliate_id: aff.affiliate_id || null,
+      utm_source: aff.utm_source || null,
+      utm_campaign: aff.utm_campaign || null,
+      utm_medium: aff.utm_medium || null
     },
     status: "paid",
     created_at: new Date().toISOString(),

@@ -2521,3 +2521,149 @@ const startServer = async () => {
 };
 
 startServer().catch(console.error);
+
+// ============================================================================
+// AFFILIATE PROGRAM ENDPOINTS
+// ============================================================================
+
+// Public: submit affiliate application
+app.post('/affiliates/apply', async (req, res) => {
+  try {
+    const { full_name, email, social_handle, audience_size, website, promo_plan, preferred_code } = req.body || {};
+    if(!full_name || !email || !social_handle || !promo_plan){
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Try Supabase first
+    let inserted = null;
+    try {
+      const { data, error } = await supabase
+        .from('affiliates_applications')
+        .insert({
+          full_name,
+          email,
+          social_handle,
+          audience_size,
+          website,
+          promo_plan,
+          preferred_code,
+          status: 'pending',
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      inserted = data;
+    } catch (e) {
+      // Local fallback
+      const file = path.join(__dirname, 'data', 'affiliates_applications.json');
+      let arr = [];
+      try { const raw = await fs.readFile(file, 'utf8'); arr = JSON.parse(raw); } catch {}
+      const appRec = {
+        id: Date.now(), full_name, email, social_handle, audience_size, website, promo_plan, preferred_code,
+        status: 'pending', created_at: new Date().toISOString()
+      };
+      arr.unshift(appRec);
+      try { await fs.mkdir(path.dirname(file), { recursive: true }); } catch {}
+      await fs.writeFile(file, JSON.stringify(arr, null, 2));
+      inserted = appRec;
+    }
+
+    return res.status(201).json({ message: 'Application received', application: inserted });
+  } catch (error) {
+    console.error('Affiliate apply error:', error);
+    res.status(500).json({ error: 'Failed to submit application' });
+  }
+});
+
+// Admin: list applications
+app.get('/admin/affiliates/applications', verifyAdminToken, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('affiliates_applications')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error && data) return res.json({ applications: data });
+
+    // Fallback
+    try {
+      const file = path.join(__dirname, 'data', 'affiliates_applications.json');
+      const raw = await fs.readFile(file, 'utf8');
+      const arr = JSON.parse(raw);
+      return res.json({ applications: arr });
+    } catch {
+      return res.json({ applications: [] });
+    }
+  } catch (error) {
+    console.error('List affiliate applications error:', error);
+    res.status(500).json({ error: 'Failed to fetch applications' });
+  }
+});
+
+// Admin: approve application -> create affiliate profile with code
+app.post('/admin/affiliates/applications/:id/approve', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Mark application approved
+    try {
+      await supabase
+        .from('affiliates_applications')
+        .update({ status: 'approved', reviewed_at: new Date().toISOString() })
+        .eq('id', id);
+    } catch {}
+
+    // Create affiliate record
+    const { preferred_code } = req.body || {};
+    const { data: app } = await supabase
+      .from('affiliates_applications')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    const code = (preferred_code || app?.preferred_code || (app?.full_name||'AFF').replace(/[^A-Za-z0-9]/g,'').slice(0,8) || 'AFF')
+      .toUpperCase();
+
+    let affiliateRow = null;
+    try {
+      const { data, error } = await supabase
+        .from('affiliates')
+        .insert({
+          code,
+          full_name: app?.full_name || null,
+          email: app?.email || null,
+          status: 'active',
+          default_rate: 0.1,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      affiliateRow = data;
+    } catch (e) {
+      // best-effort only
+    }
+
+    return res.json({ message: 'Approved', code: code, affiliate: affiliateRow });
+  } catch (error) {
+    console.error('Approve affiliate error:', error);
+    res.status(500).json({ error: 'Failed to approve application' });
+  }
+});
+
+// Admin: reject application
+app.post('/admin/affiliates/applications/:id/reject', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body || {};
+    try {
+      await supabase
+        .from('affiliates_applications')
+        .update({ status: 'rejected', reviewed_at: new Date().toISOString(), reject_reason: reason || null })
+        .eq('id', id);
+    } catch {}
+    return res.json({ message: 'Rejected' });
+  } catch (error) {
+    console.error('Reject affiliate error:', error);
+    res.status(500).json({ error: 'Failed to reject application' });
+  }
+});

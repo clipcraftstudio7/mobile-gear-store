@@ -609,9 +609,11 @@
           >
           <a href="#products"><i class="fas fa-box"></i> Products</a>
           <a href="#campaigns"><i class="fas fa-bullhorn"></i> Campaigns</a>
+          <a href="#flashsale"><i class="fas fa-bolt"></i> Flash Sale</a>
           <a href="#site-banners"><i class="fas fa-bullhorn"></i> Site Banners</a>
           <a href="#orders"><i class="fas fa-shopping-cart"></i> Orders</a>
           <a href="#messages"><i class="fas fa-comments"></i> Messages</a>
+          <a href="#affiliates"><i class="fas fa-handshake"></i> Affiliates</a>
         </nav>
       </div>
       <div class="main-content">
@@ -662,6 +664,78 @@
             </div>
           </div>
           <div id="campaigns-container" style="margin-bottom:12px"></div>
+        </div>
+
+        <!-- Affiliates Section -->
+        <div id="affiliates-section" style="display:none">
+          <h2 class="section-title" id="affiliates">Affiliates</h2>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:8px 0 12px 0;">
+            <input id="aff-admin-id" placeholder="Admin ID (dev)" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px" />
+            <input id="aff-admin-secret" placeholder="Admin Secret (dev)" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px" />
+            <select id="aff-status-filter" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px">
+              <option value="">All</option>
+              <option>pending</option>
+              <option>approved</option>
+              <option>rejected</option>
+            </select>
+            <button class="btn" onclick="window._aff && window._aff.load()">Refresh</button>
+          </div>
+          <div style="overflow:auto;">
+            <table style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:1px solid #333;">
+                  <th style="text-align:left;color:#25d366;padding:10px;">When</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Name</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Email</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Channel</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Pref Code</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Status</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="aff-rows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Flash Sale Section -->
+        <div id="flashsale-section" style="display:none">
+          <h2 class="section-title" id="flashsale">Flash Sale</h2>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:8px 0 12px 0;">
+            <div>
+              <label style="display:block;color:#aaa;font-size:.9rem">Title</label>
+              <input id="fs-title" placeholder="Weekend Mega Flash" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:260px"/>
+            </div>
+            <div>
+              <label style="display:block;color:#aaa;font-size:.9rem">Slug</label>
+              <input id="fs-slug" placeholder="weekend-mega-flash" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:220px"/>
+            </div>
+            <div>
+              <label style="display:block;color:#aaa;font-size:.9rem">Start (ISO)</label>
+              <input id="fs-start" placeholder="2025-09-20T10:00:00Z" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:220px"/>
+            </div>
+            <div>
+              <label style="display:block;color:#aaa;font-size:.9rem">End (ISO)</label>
+              <input id="fs-end" placeholder="2025-09-20T16:00:00Z" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:220px"/>
+            </div>
+            <button class="btn" style="background:#25d366;color:#111" onclick="window._flashAdmin && window._flashAdmin.createOrUpdate()"><i class="fas fa-save"></i> Save Flash Sale</button>
+          </div>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:6px 0 10px 0;">
+            <button class="btn" onclick="window._flashAdmin && window._flashAdmin.loadExisting()">Load Existing Flash Sales</button>
+            <select id="fs-existing" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px;min-width:260px"></select>
+            <button class="btn" onclick="window._flashAdmin && window._flashAdmin.loadSelected()">Load Selected</button>
+          </div>
+          <div class="uploader" style="margin-top:8px">
+            <div class="form-group" style="margin-bottom:8px"><label style="color:#aaa">Search Products</label><input id="fs-search" placeholder="name/category" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:260px"></div>
+            <div id="fs-products" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px"></div>
+          </div>
+          <div style="margin-top:12px">
+            <h3 style="color:#25d366;margin:8px 0">Selected Items</h3>
+            <table class="list-table"><thead><tr><th>Product</th><th>Original</th><th>Discount %</th><th>Sale Price</th><th></th></tr></thead><tbody id="fs-selected"></tbody></table>
+          </div>
+          <div class="actions-row" style="margin-top:12px">
+            <button class="btn primary" onclick="window._flashAdmin && window._flashAdmin.pushProducts()"><i class="fas fa-upload"></i> Save Products to Flash Sale</button>
+          </div>
         </div>
 
         <!-- Site Banners Section -->
@@ -2821,6 +2895,214 @@
         }
 
         window._siteBannerAdmin = new SiteBannerAdmin();
+
+        // --- Affiliates: simple navigation hookup ---
+        (function setupAffiliatesNav(){
+          function showAff(){
+            // hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(s=>s.style.display='none');
+            const sec = document.getElementById('affiliates-section');
+            if (sec) { sec.style.display='block'; }
+            if (window._aff && sec) window._aff.load();
+          }
+          document.querySelectorAll('.sidebar-nav a').forEach(a=>{
+            a.addEventListener('click',(e)=>{
+              const href = a.getAttribute('href');
+              if (href === '#affiliates') { e.preventDefault(); showAff(); }
+            });
+          });
+          if (location.hash === '#affiliates') { showAff(); }
+        })();
+
+        // --- Flash Sale Admin ---
+        window._flashAdmin = {
+          currentId: null,
+          products: [],
+          selected: new Map(),
+          async headers(){ return await getAuthHeaders(); },
+          async loadExisting(){
+            try{
+              const res = await fetch('/flashsales');
+              const d = await res.json();
+              const sel = document.getElementById('fs-existing');
+              sel.innerHTML = (d.campaigns||[]).map(c=>`<option value="${c.id}">${c.title} (${c.slug})</option>`).join('');
+            }catch(e){ alert('Failed to load'); }
+          },
+          async loadSelected(){
+            const sel = document.getElementById('fs-existing');
+            const id = sel && sel.value;
+            if (!id) return;
+            try{
+              const res = await fetch(`/admin/campaigns/${id}`, { headers: await this.headers() });
+              const d = await res.json();
+              if(!res.ok) throw new Error(d.error||'Failed');
+              const c = d.campaign;
+              this.currentId = c.id;
+              document.getElementById('fs-title').value = c.title||'';
+              document.getElementById('fs-slug').value = c.slug||'';
+              document.getElementById('fs-start').value = c.start_at||'';
+              document.getElementById('fs-end').value = c.end_at||'';
+              this.selected = new Map();
+              (c.campaign_products||[]).forEach(p=>{
+                const original = p.original_price || (p.product?.price||0);
+                const sale = p.sale_price || 0;
+                const discount = original>0 ? Math.round((original - sale)/original*100) : 0;
+                this.selected.set(String(p.product_id), { product_id:p.product_id, original_price:original, sale_price:sale, discount });
+              });
+              this.renderSelected();
+            }catch(e){ alert(e.message); }
+          },
+          async createOrUpdate(){
+            const payload = {
+              slug: document.getElementById('fs-slug').value.trim(),
+              title: document.getElementById('fs-title').value.trim(),
+              type: 'flash',
+              is_active: true,
+              start_at: document.getElementById('fs-start').value.trim()||null,
+              end_at: document.getElementById('fs-end').value.trim()||null
+            };
+            if (!payload.slug || !payload.title){ alert('Title and Slug are required'); return; }
+            try{
+              let res, d;
+              if (this.currentId){
+                res = await fetch(`/admin/campaigns/${this.currentId}`, { method:'PUT', headers: await this.headers(), body: JSON.stringify(payload) });
+                d = await res.json();
+                if(!res.ok) throw new Error(d.error||'Update failed');
+              } else {
+                res = await fetch('/admin/campaigns', { method:'POST', headers: await this.headers(), body: JSON.stringify(payload) });
+                d = await res.json();
+                if(!res.ok) throw new Error(d.error||'Create failed');
+                this.currentId = d.campaign.id;
+              }
+              alert('Flash sale saved');
+            }catch(e){ alert(e.message); }
+          },
+          async fetchAllProducts(){
+            try{
+              const res = await fetch('/products');
+              const data = await res.json();
+              this.products = Array.isArray(data) ? data : (data.products||[]);
+            }catch{ this.products = []; }
+          },
+          filterProducts(q){
+            const query = (q||'').toLowerCase();
+            return this.products.filter(p=>
+              p.name?.toLowerCase().includes(query) ||
+              p.category?.toLowerCase().includes(query) ||
+              p.description?.toLowerCase().includes(query)
+            ).slice(0, 40);
+          },
+          renderProductList(list){
+            const host = document.getElementById('fs-products');
+            if (!host) return;
+            host.innerHTML = list.map(p=>{
+              const sel = this.selected.get(String(p.id));
+              const original = Math.round((p.originalPrice && p.originalPrice>p.price) ? p.originalPrice*100 : p.price*100);
+              const discount = sel?.discount ?? 20;
+              const sale = Math.max(0, Math.round(original * (1 - (discount/100))));
+              return `
+                <div style="background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;">
+                  <div style="display:flex;gap:10px;align-items:center;">
+                    <img src="${p.image||'assets/images/default-product.jpg'}" alt="${p.name}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;"/>
+                    <div style="flex:1;min-width:0;">
+                      <div style="color:#fff;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
+                      <div style="color:#aaa;font-size:.9rem">$${(original/100).toFixed(2)} • ${p.category||''}</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+                    <label style="color:#aaa;font-size:.9rem">Discount %</label>
+                    <input data-id="${p.id}" class="fs-discount" type="number" min="0" max="95" value="${discount}" style="width:80px;background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px"/>
+                    <span style="color:#25d366;font-weight:800">$${(sale/100).toFixed(2)}</span>
+                    <button class="btn" data-add="${p.id}"><i class="fas fa-plus"></i> Add</button>
+                  </div>
+                </div>`;
+            }).join('');
+            // bind events
+            host.querySelectorAll('button[data-add]').forEach(btn=>{
+              btn.onclick = ()=>{
+                const id = btn.getAttribute('data-add');
+                const input = host.querySelector(`input.fs-discount[data-id='${id}']`);
+                const discount = Math.min(95, Math.max(0, parseInt(input?.value||'0',10)));
+                const p = this.products.find(x=>String(x.id)===String(id));
+                if (!p) return;
+                const original = Math.round((p.originalPrice && p.originalPrice>p.price) ? p.originalPrice*100 : p.price*100);
+                const sale = Math.max(0, Math.round(original * (1 - (discount/100))));
+                this.selected.set(String(id), { product_id: p.id, original_price: original, sale_price: sale, discount });
+                this.renderSelected();
+              };
+            });
+          },
+          renderSelected(){
+            const tbody = document.getElementById('fs-selected');
+            if (!tbody) return;
+            const rows = Array.from(this.selected.values()).map(s=>{
+              return `<tr>
+                <td>${s.product_id}</td>
+                <td>$${(s.original_price/100).toFixed(2)}</td>
+                <td><input data-pid="${s.product_id}" class="sel-discount" type="number" min="0" max="95" value="${s.discount}" style="width:80px;background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px"/></td>
+                <td>$${(s.sale_price/100).toFixed(2)}</td>
+                <td><button class="btn danger" data-remove="${s.product_id}"><i class="fas fa-trash"></i></button></td>
+              </tr>`;
+            }).join('');
+            tbody.innerHTML = rows || '<tr><td colspan="5" style="color:#aaa">No items selected</td></tr>';
+            // bind remove and discount edits
+            tbody.querySelectorAll('button[data-remove]').forEach(b=> b.onclick = ()=>{ this.selected.delete(String(b.getAttribute('data-remove'))); this.renderSelected(); });
+            tbody.querySelectorAll('input.sel-discount').forEach(inp=>{
+              inp.oninput = ()=>{
+                const pid = inp.getAttribute('data-pid');
+                const s = this.selected.get(String(pid));
+                if (!s) return;
+                const discount = Math.min(95, Math.max(0, parseInt(inp.value||'0',10)));
+                s.discount = discount;
+                s.sale_price = Math.max(0, Math.round(s.original_price * (1 - (discount/100))));
+                this.selected.set(String(pid), s);
+                this.renderSelected();
+              };
+            });
+          },
+          async pushProducts(){
+            if (!this.currentId){ alert('Save Flash Sale first'); return; }
+            const products = Array.from(this.selected.values()).map(s=>({
+              product_id: s.product_id,
+              original_price: s.original_price,
+              sale_price: s.sale_price,
+              reserved_stock: 0,
+              max_per_customer: 2,
+              display_order: 0,
+              metadata: { discount: s.discount }
+            }));
+            try{
+              const res = await fetch(`/admin/campaigns/${this.currentId}/products`, { method:'POST', headers: await this.headers(), body: JSON.stringify({ products })});
+              const d = await res.json();
+              if(!res.ok) throw new Error(d.error||'Save failed');
+              alert('Flash sale products saved');
+            }catch(e){ alert(e.message); }
+          }
+        };
+
+        // Bind flash sale search and initial loads
+        (function initFlash(){
+          const link = document.querySelector('.sidebar-nav a[href="#flashsale"]');
+          if (link) link.addEventListener('click', (e)=>{
+            e.preventDefault();
+            document.querySelectorAll('[id$="-section"]').forEach(s=>s.style.display='none');
+            const sec = document.getElementById('flashsale-section');
+            if (sec){ sec.style.display='block'; }
+            (async ()=>{
+              await window._flashAdmin.fetchAllProducts();
+              window._flashAdmin.renderProductList(window._flashAdmin.filterProducts(''));
+              window._flashAdmin.loadExisting();
+            })();
+          });
+          const inp = document.getElementById('fs-search');
+          if (inp) inp.addEventListener('input', ()=>{
+            const list = window._flashAdmin.filterProducts(inp.value);
+            window._flashAdmin.renderProductList(list);
+          });
+          if (location.hash === '#flashsale') {
+            if (link) link.click();
+          }
+        })();
       }
     </script>
     <!-- Image Fallback -->

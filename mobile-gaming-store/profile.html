@@ -1798,6 +1798,18 @@
                   <i class="fas fa-undo"></i> Reset
                 </button>
               </div>
+              <div id="affiliate-panel" style="margin-top:16px;background:#222;border:1px solid #333;border-radius:12px;padding:14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                  <div>
+                    <div style="color:#25d366;font-weight:700;">Affiliate Program</div>
+                    <div id="affiliate-status" style="color:#ccc;font-size:0.95rem;">Loading...</div>
+                  </div>
+                  <div>
+                    <a href="affiliate.html" id="affiliate-apply-btn" class="btn btn-secondary">Apply to Become Affiliate</a>
+                    <button id="copy-aff-link" class="btn btn-primary" style="display:none;">Copy Referral Link</button>
+                  </div>
+                </div>
+              </div>
             </form>
           </div>
 
@@ -2090,6 +2102,37 @@
 
           // Update profile display
           await updateProfileDisplay(user, profile);
+
+          // Load affiliate status (by email)
+          try {
+            let affCode = null;
+            try {
+              const { data: aff } = await supabase
+                .from('affiliates')
+                .select('code,email')
+                .eq('email', user.email)
+                .maybeSingle();
+              affCode = aff?.code || null;
+            } catch {}
+            const statusEl = document.getElementById('affiliate-status');
+            const applyBtn = document.getElementById('affiliate-apply-btn');
+            const copyBtn = document.getElementById('copy-aff-link');
+            if (affCode){
+              statusEl.textContent = `You are an active affiliate. Code: ${affCode}`;
+              applyBtn.style.display = 'none';
+              copyBtn.style.display = '';
+              copyBtn.onclick = ()=>{
+                const link = window.location.origin + '/index.html?ref=' + encodeURIComponent(affCode);
+                navigator.clipboard.writeText(link).then(()=>{
+                  alert('Referral link copied!');
+                });
+              };
+            } else {
+              statusEl.textContent = 'Not an affiliate yet. Apply below.';
+              applyBtn.style.display = '';
+              copyBtn.style.display = 'none';
+            }
+          } catch {}
         } catch (error) {
           console.error("Error loading profile:", error);
           showMessage("Error loading profile data.", "error");

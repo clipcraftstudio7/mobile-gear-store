@@ -3,6 +3,60 @@ const SUPABASE_URL = "https://kokntkhxkymllafuubun.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc";
 
+// Lightweight affiliate tracking
+(function affiliateAttributionInit(){
+  function setCookie(name, value, days){
+    try {
+      const d = new Date();
+      d.setTime(d.getTime() + (days*24*60*60*1000));
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
+    } catch (e) {}
+  }
+  function getCookie(name){
+    try {
+      const cname = name + "=";
+      const ca = document.cookie.split(';');
+      for(let c of ca){
+        while(c.charAt(0) === ' ') c = c.substring(1);
+        if(c.indexOf(cname) === 0) return decodeURIComponent(c.substring(cname.length, c.length));
+      }
+    } catch(e) {}
+    return null;
+  }
+  function storeAttribution(key, value){
+    try { localStorage.setItem(key, value); } catch(e) {}
+    setCookie(key, value, 30);
+  }
+  function readAttribution(key){
+    try { const v = localStorage.getItem(key); if(v) return v; } catch(e) {}
+    return getCookie(key);
+  }
+  function captureFromUrl(){
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const affiliateId = params.get('ref') || params.get('affiliate') || params.get('utm_affiliate');
+      const source = params.get('utm_source');
+      const campaign = params.get('utm_campaign');
+      const medium = params.get('utm_medium');
+      if(affiliateId){ storeAttribution('affiliate_id', affiliateId); }
+      if(source){ storeAttribution('utm_source', source); }
+      if(campaign){ storeAttribution('utm_campaign', campaign); }
+      if(medium){ storeAttribution('utm_medium', medium); }
+    } catch(e) {}
+  }
+  // Expose helpers globally for other scripts (e.g., checkout)
+  window.__getAffiliateAttribution = function(){
+    return {
+      affiliate_id: readAttribution('affiliate_id') || '',
+      utm_source: readAttribution('utm_source') || '',
+      utm_campaign: readAttribution('utm_campaign') || '',
+      utm_medium: readAttribution('utm_medium') || ''
+    };
+  };
+  document.addEventListener('DOMContentLoaded', captureFromUrl);
+})();
+
 // Check if Supabase is available
 if (typeof window.supabase !== "undefined") {
   supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -797,4 +851,40 @@ window.addEventListener("DOMContentLoaded", function () {
   console.log("- window.addToCart:", typeof window.addToCart);
   console.log("- window.addToCartFromCard:", typeof window.addToCartFromCard);
   console.log("- window.loadCart:", typeof window.loadCart);
+
+  // --- Guest Login Prompt (with Continue Browsing) ---
+  (function showGuestPromptOnce(){
+    try {
+      const key = 'guest_prompt_snooze_until';
+      const snoozeUntil = parseInt(localStorage.getItem(key)||'0',10);
+      const now = Date.now();
+      const shouldSkip = snoozeUntil && now < snoozeUntil;
+      if (shouldSkip) return;
+      // Check auth state asynchronously
+      (async () => {
+        if (!supabase) return;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) return;
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:50000;';
+        const modal = document.createElement('div');
+        modal.style.cssText = 'width:92%;max-width:520px;background:#181818;border:1px solid #333;border-radius:14px;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,0.5);';
+        modal.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-weight:800;color:#25d366;font-size:1.1rem;display:flex;align-items:center;gap:8px;"><i class="fas fa-user-shield"></i> Welcome!</div>
+            <button id="gp-close" style="background:transparent;border:none;color:#aaa;font-size:20px;cursor:pointer">&times;</button>
+          </div>
+          <div style="color:#ccc;margin-top:8px;">Log in to sync your cart, track orders, and get personalized deals.</div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap;">
+            <a href="login.html" style="background:linear-gradient(135deg,#25d366,#128c7e);color:#111;border:none;padding:10px 14px;border-radius:10px;font-weight:800;text-decoration:none;">Log in / Sign up</a>
+            <button id="gp-continue" style="background:#222;border:1px solid #333;color:#e5e5e5;padding:10px 14px;border-radius:10px;font-weight:700;">Continue browsing</button>
+          </div>`;
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        const closeAll = ()=>{ try{ overlay.remove(); }catch{} };
+        modal.querySelector('#gp-close').onclick = closeAll;
+        modal.querySelector('#gp-continue').onclick = ()=>{ try{ localStorage.setItem(key, String(Date.now() + 3*24*60*60*1000)); }catch{} closeAll(); };
+      })();
+    } catch(e) { console.warn('Guest prompt error', e); }
+  })();
 });
