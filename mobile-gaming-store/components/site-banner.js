@@ -1,5 +1,9 @@
 // Simple Kilmall-style banner carousel using Glide.js
 (function () {
+  // Disable the legacy top-of-page banner carousel by default
+  if (!window || !window.ENABLE_SITE_TOP_BANNERS) {
+    return;
+  }
   function injectStyles() {
     if (document.getElementById('site-banner-styles')) return;
     const css = `
