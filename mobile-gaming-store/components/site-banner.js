@@ -216,45 +216,53 @@ class SiteBanner {
       return;
     }
     
-    // Group banners by position
-    const topBanners = this.banners.filter(b => b.position === 'top');
-    const bottomBanners = this.banners.filter(b => b.position === 'bottom');
+    // Show ONE popup at a time, cycling through all available banners
+    const allBanners = [...this.banners];
+    this.renderBannerGroup(allBanners, 'popup');
     
-    // Render top banners
-    if (topBanners.length > 0) {
-      this.renderBannerGroup(topBanners, 'top');
-    }
-    
-    // Render bottom banners
-    if (bottomBanners.length > 0) {
-      this.renderBannerGroup(bottomBanners, 'bottom');
-    }
-    
-    // Adjust page layout for banners
+    // No layout adjustments needed for popup overlays
     this.adjustPageLayout();
   }
 
   renderBannerGroup(banners, position) {
+    // Ensure only a single overlay exists
+    this.removeExistingBanners();
+    
     // Create overlay for popup effect
     const overlay = document.createElement('div');
     overlay.className = 'site-banner-overlay';
     overlay.id = `site-banner-overlay-${position}`;
     
-    // Create container for banners
+    // Create container for the single visible banner
     const container = document.createElement('div');
     container.className = `site-banner-container site-banner-${position}`;
     container.id = `site-banner-${position}`;
     
-    // Add banners to container
-    banners.forEach((banner, index) => {
-      const bannerElement = this.createBannerElement(banner, index);
+    let currentIndex = 0;
+    const renderAtIndex = (idx) => {
+      container.innerHTML = '';
+      const bannerElement = this.createBannerElement(banners[idx], idx);
       container.appendChild(bannerElement);
-    });
+    };
+    
+    renderAtIndex(currentIndex);
+    
+    // Cycle through banners one at a time if more than one
+    if (banners.length > 1) {
+      // Clear any previous timer
+      if (window.__siteBannerCycleTimer) {
+        clearInterval(window.__siteBannerCycleTimer);
+      }
+      window.__siteBannerCycleTimer = setInterval(() => {
+        currentIndex = (currentIndex + 1) % banners.length;
+        renderAtIndex(currentIndex);
+      }, 5000);
+    }
     
     // Add container to overlay
     overlay.appendChild(container);
     
-    // Add click-to-close functionality for overlay background
+    // Click overlay background to close immediately
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
         this.closeBannerOverlay(position);
@@ -263,11 +271,6 @@ class SiteBanner {
     
     // Add overlay to page
     document.body.appendChild(overlay);
-    
-    // Auto-close overlay after 8 seconds for better UX
-    setTimeout(() => {
-      this.closeBannerOverlay(position);
-    }, 8000);
   }
 
   createBannerElement(banner, index) {
@@ -275,37 +278,12 @@ class SiteBanner {
     bannerEl.className = `site-banner site-banner-${banner.type}`;
     bannerEl.dataset.bannerId = banner.id;
     
-    // Banner content with image support
+    const imgSrc = banner.banner_image || banner.image || '';
     bannerEl.innerHTML = `
-      <div class="site-banner-content">
-        ${banner.banner_image ? `
-          <div class="site-banner-image">
-            <img src="${banner.banner_image}" alt="${banner.title}" loading="lazy">
-          </div>
-        ` : ''}
-        <div class="site-banner-text">
-          <strong class="site-banner-title">${banner.title}</strong>
-          ${banner.message ? `<span class="site-banner-message">${banner.message}</span>` : ''}
-        </div>
-        <button class="site-banner-close" onclick="window.siteBanner.closeBanner(${banner.id})" aria-label="Close banner">
-          <i class="fas fa-times"></i>
-        </button>
+      <div class="site-banner-content image-only">
+        <img class="site-banner-photo" src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none'">
       </div>
     `;
-    
-    // Add click handler for banner interaction
-    bannerEl.addEventListener('click', (e) => {
-      if (!e.target.closest('.site-banner-close')) {
-        this.onBannerClick(banner);
-      }
-    });
-    
-    // Auto-hide after 10 seconds for info banners
-    if (banner.type === 'info') {
-      setTimeout(() => {
-        this.closeBanner(banner.id);
-      }, 10000);
-    }
     
     return bannerEl;
   }
@@ -335,6 +313,10 @@ class SiteBanner {
         overlay.remove();
         this.adjustPageLayout();
       }, 300);
+    }
+    if (window.__siteBannerCycleTimer) {
+      clearInterval(window.__siteBannerCycleTimer);
+      window.__siteBannerCycleTimer = null;
     }
   }
 
@@ -426,6 +408,20 @@ const bannerStyles = `
     padding: 40px;
     gap: 30px;
     position: relative;
+  }
+  
+  /* Image-only popup variant */
+  .site-banner-content.image-only {
+    padding: 0;
+    display: block;
+  }
+  .site-banner-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 16px;
   }
   
   .site-banner-image {

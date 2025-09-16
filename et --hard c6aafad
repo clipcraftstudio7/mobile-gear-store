@@ -1,0 +1,10 @@
+[33m4508831[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m feat(banners): replace old banner system with advanced admin-controlled banners\n\n- Add new /api/banners endpoints\n- New frontend components (hero/top/bottom/floating)\n- Admin banner management page\n- Integrate into homepage\n- Remove legacy site-banner.js and test-banners.html
+[33mc6aafad[m Fix site banner system - move endpoints to proper location
+[33mfab8545[m Add site-wide banner system with admin management
+[33meaa575b[m feat(admin): improved campaign editor (slugify, presets), multi-file asset upload with positions, better UX
+[33m0870631[m feat(frontend): split campaign loading (non-flash vs flash); render hero/banners/popups from /campaigns/active and flash from /flashsales
+[33mcecf4bc[m feat(campaigns): activation/deactivation fallbacks to local campaigns.json when Supabase update fails
+[33m645a45e[m feat(campaigns): add local JSON fallbacks for list/get/create; prevent admin editor failures when Supabase is not writable
+[33mff60fbd[m auth(admin): relax verifyAdminToken to allow ADMIN_ID/ADMIN_SECRET with ALLOW_ADMIN_BYPASS; admin sends optional x-admin-secret
+[33mdc2df40[m fix(upload): accept legacy imageFile1-5 fields and map to numbered filenames; robust meta selection and movement; prevent Unexpected field 500
+[33mb1fec09[m chore: support HOST env for binding (default 0.0.0.0)
