@@ -376,17 +376,17 @@ const bannerStyles = `
   .site-banner-container {
     position: relative;
     z-index: 10000;
-    max-width: 90vw;
-    max-height: 80vh;
-    width: 800px;
-    animation: popupIn 0.4s ease-out;
+    max-width: none;
+    max-height: none;
+    width: auto;
+    animation: none;
   }
   
   .site-banner {
-    background: transparent;
-    border-radius: 0;
-    box-shadow: none;
-    border: none;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
     cursor: default;
     transition: none;
     overflow: visible;
@@ -395,29 +395,19 @@ const bannerStyles = `
   
   .site-banner:hover { }
   
-  .site-banner-success {
-    background: linear-gradient(135deg, #25d366, #128c7e);
-    color: white;
-  }
-  
-  .site-banner-warning {
-    background: linear-gradient(135deg, #ffa502, #ff6348);
-    color: white;
-  }
-  
-  .site-banner-info {
-    background: linear-gradient(135deg, #45b7d1, #96c93d);
-    color: white;
-  }
-  
+  .site-banner-success,
+  .site-banner-warning,
+  .site-banner-info,
   .site-banner-error {
-    background: linear-gradient(135deg, #ff4757, #c44569);
-    color: white;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    color: inherit;
   }
   
   .site-banner-content {
     display: block;
-    padding: 0;
+    padding: 0 !important;
     gap: 0;
     position: relative;
   }
@@ -429,10 +419,11 @@ const bannerStyles = `
   }
   .site-banner-photo {
     display: block;
-    width: 100%;
+    width: 90vw;
     height: auto;
-    max-height: 80vh;
+    max-height: 85vh;
     object-fit: contain;
+    margin: 0;
   }
   
   .site-banner-image {
