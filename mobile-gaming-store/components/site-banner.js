@@ -253,10 +253,11 @@ class SiteBanner {
       if (window.__siteBannerCycleTimer) {
         clearInterval(window.__siteBannerCycleTimer);
       }
+      // Rotate every 5 minutes
       window.__siteBannerCycleTimer = setInterval(() => {
         currentIndex = (currentIndex + 1) % banners.length;
         renderAtIndex(currentIndex);
-      }, 5000);
+      }, 300000);
     }
     
     // Add container to overlay
@@ -280,10 +281,25 @@ class SiteBanner {
     
     const imgSrc = banner.banner_image || banner.image || '';
     bannerEl.innerHTML = `
+      <button class="site-banner-close site-banner-close--small" aria-label="Close">×</button>
       <div class="site-banner-content image-only">
         <img class="site-banner-photo" src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none'">
       </div>
     `;
+    
+    const closeBtn = bannerEl.querySelector('.site-banner-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const overlay = bannerEl.closest('.site-banner-overlay');
+        if (overlay) overlay.remove();
+        if (window.__siteBannerCycleTimer) {
+          clearInterval(window.__siteBannerCycleTimer);
+          window.__siteBannerCycleTimer = null;
+        }
+        this.adjustPageLayout();
+      });
+    }
     
     return bannerEl;
   }
@@ -367,20 +383,17 @@ const bannerStyles = `
   }
   
   .site-banner {
-    background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    overflow: hidden;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    cursor: default;
+    transition: none;
+    overflow: visible;
     position: relative;
   }
   
-  .site-banner:hover {
-    transform: scale(1.02);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
-  }
+  .site-banner:hover { }
   
   .site-banner-success {
     background: linear-gradient(135deg, #25d366, #128c7e);
@@ -403,10 +416,9 @@ const bannerStyles = `
   }
   
   .site-banner-content {
-    display: flex;
-    align-items: center;
-    padding: 40px;
-    gap: 30px;
+    display: block;
+    padding: 0;
+    gap: 0;
     position: relative;
   }
   
@@ -421,7 +433,6 @@ const bannerStyles = `
     height: auto;
     max-height: 80vh;
     object-fit: contain;
-    border-radius: 16px;
   }
   
   .site-banner-image {
@@ -461,28 +472,23 @@ const bannerStyles = `
   
   .site-banner-close {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.2);
+    top: -10px;
+    right: -10px;
+    background: rgba(0,0,0,0.7);
     border: none;
-    color: white;
-    font-size: 1.8rem;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1;
     cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(10px);
+    padding: 6px 8px;
+    border-radius: 12px;
+  }
+  .site-banner-close--small {
+    font-size: 14px;
+    padding: 6px 8px;
   }
   
-  .site-banner-close:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-  }
+  .site-banner-close:hover { opacity: 0.9; }
   
   /* Decorative elements */
   .site-banner::before {
