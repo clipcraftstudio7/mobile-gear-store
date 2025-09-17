@@ -12,15 +12,19 @@
     if (document.getElementById('announcement-bar-styles')) return;
     const css = `
       .announcement-bar{position:fixed;top:0;left:0;width:100%;z-index:1002;background:#0f1113;color:#e5e7eb;border-bottom:1px solid #1f2937}
-      .announcement-bar__inner{max-width:1400px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;overflow:hidden}
+      .announcement-bar__inner{max-width:1400px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;overflow:hidden;position:relative}
       .announcement-bar__track{display:flex;gap:28px;white-space:nowrap;animation:ab-scroll 30s linear infinite}
       .announcement-bar__item{display:inline-flex;align-items:center;gap:8px;color:#cbd5e1;font-weight:600;font-size:.9rem}
       .announcement-bar__item i{color:#25d366}
       .announcement-bar__close{margin-left:auto;background:transparent;border:none;color:#94a3b8;cursor:pointer;font-size:14px}
       .announcement-bar__close:hover{color:#e5e7eb}
+      .announcement-affiliate-cta{position:absolute;right:44px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;text-decoration:none;font-weight:800;font-size:.85rem;background:linear-gradient(135deg,#25d366,#128c7e);color:#0b0f0c;border:1px solid rgba(37,211,102,.35);box-shadow:0 6px 18px rgba(37,211,102,.25);transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease}
+      .announcement-affiliate-cta:hover{transform:translateY(-50%) translateY(-1px);box-shadow:0 10px 24px rgba(37,211,102,.35);opacity:.95}
+      .announcement-affiliate-cta i{color:#0b0f0c}
       @media (max-width:768px){
         .announcement-bar__inner{padding:6px 12px}
         .announcement-bar__item{font-size:.8rem}
+        .announcement-affiliate-cta{right:38px;padding:5px 10px;font-size:.8rem}
       }
       @keyframes ab-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
     `;
@@ -62,7 +66,14 @@
       removeBar();
     });
 
+    // Affiliate CTA (top-right, before the close button)
+    const affiliateCta = document.createElement('a');
+    affiliateCta.href = 'affiliate.html';
+    affiliateCta.className = 'announcement-affiliate-cta';
+    affiliateCta.innerHTML = '<i class="fas fa-handshake"></i><span>Become an Affiliate</span>';
+
     inner.appendChild(track);
+    inner.appendChild(affiliateCta);
     inner.appendChild(closeBtn);
     bar.appendChild(inner);
     return bar;
