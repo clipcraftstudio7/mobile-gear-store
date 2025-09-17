@@ -1070,47 +1070,21 @@ window.setupMobileNavbar = function () {
     });
   }
 
-  // Messages dropdown
-  if (messagesBtn && messagesMenu) {
-    let messagesOpen = false;
-
+  // Messages: navigate directly to message center
+  if (messagesBtn) {
     messagesBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      e.stopPropagation();
-
-      if (messagesOpen) {
-        messagesMenu.style.opacity = "0";
-        messagesMenu.style.visibility = "hidden";
-        messagesMenu.style.transform = "translateX(-50%) translateY(10px)";
-        messagesOpen = false;
-      } else {
-        // Close other dropdowns first
-        if (categoriesMenu) {
-          categoriesMenu.style.opacity = "0";
-          categoriesMenu.style.visibility = "hidden";
-          categoriesMenu.style.transform = "translateX(-50%) translateY(10px)";
-        }
-
-        messagesMenu.style.opacity = "1";
-        messagesMenu.style.visibility = "visible";
-        messagesMenu.style.transform = "translateX(-50%) translateY(0)";
-        messagesOpen = true;
-      }
+      window.location.href = "message-center.html";
     });
   }
 
-  // Close dropdowns when clicking outside
+  // Close dropdowns when clicking outside (only categories uses dropup now)
   document.addEventListener("click", (e) => {
     if (!mobileNavbar.contains(e.target)) {
       if (categoriesMenu) {
         categoriesMenu.style.opacity = "0";
         categoriesMenu.style.visibility = "hidden";
         categoriesMenu.style.transform = "translateX(-50%) translateY(10px)";
-      }
-      if (messagesMenu) {
-        messagesMenu.style.opacity = "0";
-        messagesMenu.style.visibility = "hidden";
-        messagesMenu.style.transform = "translateX(-50%) translateY(10px)";
       }
     }
   });
