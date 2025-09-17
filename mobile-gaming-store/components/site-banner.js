@@ -220,9 +220,17 @@ class SiteBanner {
       return;
     }
     
-    // Show ONE popup at a time, cycling through all available banners
-    const allBanners = [...this.banners];
-    this.renderBannerGroup(allBanners, 'popup');
+    // Filter out dismissed banners (once per visit)
+    const dismissed = JSON.parse(sessionStorage.getItem('dismissedBanners') || '[]');
+    const availableBanners = this.banners.filter(banner => !dismissed.includes(banner.id));
+    
+    if (availableBanners.length === 0) {
+      console.log('ℹ️ All banners have been dismissed in this session');
+      return;
+    }
+    
+    // Show ONE popup at a time, cycling through available banners
+    this.renderBannerGroup(availableBanners, 'popup');
     
     // No layout adjustments needed for popup overlays
     this.adjustPageLayout();
@@ -317,11 +325,11 @@ class SiteBanner {
       }
     }
     
-    // Store dismissal in localStorage
-    const dismissed = JSON.parse(localStorage.getItem('dismissedBanners') || '[]');
+    // Store dismissal in sessionStorage (once per visit)
+    const dismissed = JSON.parse(sessionStorage.getItem('dismissedBanners') || '[]');
     if (!dismissed.includes(bannerId)) {
       dismissed.push(bannerId);
-      localStorage.setItem('dismissedBanners', JSON.stringify(dismissed));
+      sessionStorage.setItem('dismissedBanners', JSON.stringify(dismissed));
     }
   }
 

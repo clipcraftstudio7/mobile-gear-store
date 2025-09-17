@@ -313,12 +313,13 @@ class CampaignComponents {
     if (rules.length === 0) return;
 
     const rule = rules[0];
-    const lastKey = `popup_last_${campaign.id}`;
-    const freqDays = rule.frequency_days || 7;
-    const last = parseInt(localStorage.getItem(lastKey) || '0', 10);
-    const canShow = Date.now() - last > freqDays * 86400000;
-    if (canShow) {
-      this.setupPopupTriggers(campaign, rule, () => localStorage.setItem(lastKey, Date.now().toString()));
+    
+    // Check if popup was already shown in this session (once per visit)
+    const sessionKey = `popup_shown_${campaign.id}`;
+    const alreadyShown = sessionStorage.getItem(sessionKey);
+    
+    if (!alreadyShown) {
+      this.setupPopupTriggers(campaign, rule, () => sessionStorage.setItem(sessionKey, 'true'));
     }
   }
 
