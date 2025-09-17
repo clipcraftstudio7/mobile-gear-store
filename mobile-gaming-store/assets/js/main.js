@@ -159,22 +159,11 @@ function createProductCard(product) {
     return `
     <div class="product-card enhanced" data-product-id="${product.id}">
       <div class="product-image-container" style="position: relative; overflow: hidden; border-radius: 12px;">
-        <div class="product-image-slider" style="display: flex; transition: transform 0.3s ease; width: 200%;">
-          <img src="${
-            product.image || "assets/images/products/default.jpg"
-          }" alt="${
+        <img src="${
+          product.image || "assets/images/products/default.jpg"
+        }" alt="${
       product.name
-    }" class="product-image" style="width: 50%; height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';" />
-          <div class="product-image-secondary" style="width: 50%; height: 200px; background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; padding: 20px; text-align: center;">
-            <div style="font-size: 2rem; margin-bottom: 10px;">${product.category === 'Controllers' ? '🎮' : product.category === 'Cooling Fans' ? '❄️' : product.category === 'Accessories' ? '🎧' : '📱'}</div>
-            <h4 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #25d366;">${product.name}</h4>
-            <p style="margin: 0 0 12px 0; font-size: 0.9rem; color: #ccc;">${product.description.substring(0, 60)}...</p>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-              <span style="background: rgba(37, 211, 102, 0.2); color: #25d366; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">${product.category}</span>
-              <span style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">Stock: ${product.stock}</span>
-            </div>
-          </div>
-        </div>
+    }" class="product-image" style="width: 100%; height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';" />
         <div class="product-overlay">
           <button class="quick-view-btn">👁️ Quick View</button>
           <button class="wishlist-btn">❤️</button>
@@ -267,22 +256,11 @@ function createFreshProductCard(product) {
     return `
     <div class="product-card enhanced" data-product-id="${product.id}">
       <div class="product-image-container" style="position: relative; overflow: hidden; border-radius: 12px;">
-        <div class="product-image-slider" style="display: flex; transition: transform 0.3s ease; width: 200%;">
-          <img src="${
-            product.image || "assets/images/products/default.jpg"
-          }" alt="${
+        <img src="${
+          product.image || "assets/images/products/default.jpg"
+        }" alt="${
       product.name
-    }" class="product-image" style="width: 50%; height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';" />
-          <div class="product-image-secondary" style="width: 50%; height: 200px; background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; padding: 20px; text-align: center;">
-            <div style="font-size: 2rem; margin-bottom: 10px;">✨</div>
-            <h4 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #25d366;">${product.name}</h4>
-            <p style="margin: 0 0 12px 0; font-size: 0.9rem; color: #ccc;">Added ${timeSinceAdded}</p>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-              <span style="background: rgba(37, 211, 102, 0.2); color: #25d366; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">NEW</span>
-              <span style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">${product.category}</span>
-            </div>
-          </div>
-        </div>
+    }" class="product-image" style="width: 100%; height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='assets/images/products/default.jpg';" />
         <div class="product-overlay">
           <button class="quick-view-btn">👁️ Quick View</button>
           <button class="wishlist-btn">❤️</button>

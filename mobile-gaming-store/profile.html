@@ -3230,15 +3230,26 @@
       }
     }
 
-    function generateProfileQRCode() {
+    function generateProfileQRCode(retry = 0) {
       const canvas = document.getElementById('qr-code');
       const linkInput = document.getElementById('profile-link');
-      if (!canvas || !window.QRCode) return;
       const url = getProfileShareUrl();
       if (linkInput) linkInput.value = url;
-      QRCode.toCanvas(canvas, url, { width: 200, margin: 1 }, function (error) {
-        if (error) console.error(error);
-      });
+      if (!canvas || typeof QRCode === 'undefined' || !QRCode?.toCanvas) {
+        if (retry < 10) {
+          return setTimeout(() => generateProfileQRCode(retry + 1), 300);
+        } else {
+          console.warn('QR code library not ready, showing link only');
+          return;
+        }
+      }
+      try {
+        QRCode.toCanvas(canvas, url, { width: 200, margin: 1 }, function (error) {
+          if (error) console.error(error);
+        });
+      } catch (e) {
+        if (retry < 10) setTimeout(() => generateProfileQRCode(retry + 1), 300);
+      }
     }
 
     function downloadQRCode() {
@@ -3278,7 +3289,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       generateProfileQRCode();
       // If navbar/Supabase later sets window.currentUserId, regen QR shortly after
-      setTimeout(generateProfileQRCode, 1200);
+      setTimeout(() => generateProfileQRCode(), 1200);
     });
   </script>
 
