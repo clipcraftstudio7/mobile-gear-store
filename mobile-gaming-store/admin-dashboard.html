@@ -1057,6 +1057,7 @@
                 <input type="url" id="product-video" placeholder="Video URL (YouTube, etc.)" />
                 <input type="text" id="product-tags" placeholder="Tags (comma-separated)" style="grid-column: 1 / -1;" />
                 <input type="text" id="product-shipping" placeholder="Shipping info (e.g., Free shipping over $50)" style="grid-column: 1 / -1;" />
+                <input type="number" id="product-sold-count" placeholder="Sold count (e.g., 1500 for 1.5k+)" min="0" style="grid-column: 1 / -1;" />
                 <input type="text" id="product-seo-title" placeholder="SEO Title" style="grid-column: 1 / -1;" />
                 <textarea id="product-seo-description" placeholder="SEO Description" style="grid-column: 1 / -1; min-height: 60px; resize: vertical;"></textarea>
               </div>
@@ -1539,6 +1540,9 @@
 
           const seoDesc = (document.getElementById("product-seo-description")?.value || '').trim();
           if (seoDesc) formData.append("seoDescription", seoDesc);
+
+          const soldCount = (document.getElementById("product-sold-count")?.value || '').trim();
+          if (soldCount) formData.append("soldCount", parseInt(soldCount));
           
           // Collect image files using server-expected field names
           const fieldNames = ['mainImage','angleImage','detailImage','featureImage','packageImage'];
