@@ -12,7 +12,7 @@
     if (document.getElementById('announcement-bar-styles')) return;
     const css = `
       .announcement-bar{position:fixed;top:0;left:0;width:100%;z-index:1002;background:#0f1113;color:#e5e7eb;border-bottom:1px solid #1f2937}
-      .announcement-bar__inner{max-width:1400px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;overflow:hidden;position:relative}
+      .announcement-bar__inner{max-width:1400px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;overflow:hidden;position:relative;padding-right:120px}
       .announcement-bar__track{display:flex;gap:28px;white-space:nowrap;animation:ab-scroll 30s linear infinite}
       .announcement-bar__item{display:inline-flex;align-items:center;gap:8px;color:#cbd5e1;font-weight:600;font-size:.9rem}
       .announcement-bar__item i{color:#25d366}
@@ -24,7 +24,14 @@
       @media (max-width:768px){
         .announcement-bar__inner{padding:6px 12px}
         .announcement-bar__item{font-size:.8rem}
-        .announcement-affiliate-cta{right:38px;padding:5px 10px;font-size:.8rem}
+        .announcement-affiliate-cta{right:36px;padding:5px 10px;font-size:.8rem}
+        .announcement-bar__inner{padding-right:100px}
+      }
+      @media (max-width:480px){
+        .announcement-affiliate-cta{right:34px;padding:4px 8px;font-size:.0.8rem}
+        .announcement-affiliate-cta span{display:none}
+        .announcement-affiliate-cta i{margin:0}
+        .announcement-bar__inner{padding-right:80px}
       }
       @keyframes ab-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
     `;
@@ -70,7 +77,9 @@
     const affiliateCta = document.createElement('a');
     affiliateCta.href = 'affiliate.html';
     affiliateCta.className = 'announcement-affiliate-cta';
-    affiliateCta.innerHTML = '<i class="fas fa-handshake"></i><span>Become an Affiliate</span>';
+    affiliateCta.innerHTML = '<i class="fas fa-handshake"></i><span style="margin-left:6px;">Affiliate</span>';
+    affiliateCta.setAttribute('target', '_blank');
+    affiliateCta.setAttribute('rel', 'noopener');
 
     inner.appendChild(track);
     inner.appendChild(affiliateCta);
