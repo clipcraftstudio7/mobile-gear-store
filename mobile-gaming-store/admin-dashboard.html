@@ -1043,6 +1043,25 @@
               style="min-height: 60px; resize: vertical;"
             ></textarea>
 
+            <!-- Optional Details -->
+            <details style="background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 10px;">
+              <summary style="cursor: pointer; color: #25d366; font-weight: 600;">Optional product details</summary>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+                <input type="text" id="product-brand" placeholder="Brand" />
+                <input type="text" id="product-sku" placeholder="SKU / Model" />
+                <input type="text" id="product-badge" placeholder="Badge (e.g., New, Best Seller)" />
+                <input type="text" id="product-color" placeholder="Color / Variant" />
+                <input type="number" step="0.01" min="0" id="product-weight" placeholder="Weight (kg)" />
+                <input type="text" id="product-dimensions" placeholder="Dimensions (e.g., 10 x 5 x 2 cm)" />
+                <input type="text" id="product-warranty" placeholder="Warranty (e.g., 12 months)" />
+                <input type="url" id="product-video" placeholder="Video URL (YouTube, etc.)" />
+                <input type="text" id="product-tags" placeholder="Tags (comma-separated)" style="grid-column: 1 / -1;" />
+                <input type="text" id="product-shipping" placeholder="Shipping info (e.g., Free shipping over $50)" style="grid-column: 1 / -1;" />
+                <input type="text" id="product-seo-title" placeholder="SEO Title" style="grid-column: 1 / -1;" />
+                <textarea id="product-seo-description" placeholder="SEO Description" style="grid-column: 1 / -1; min-height: 60px; resize: vertical;"></textarea>
+              </div>
+            </details>
+
             <!-- Submit Button -->
             <button type="submit" style="margin-top: 8px; padding: 12px; font-size: 1.1rem;">
               <i class="fas fa-plus"></i> Add Product
@@ -1480,6 +1499,46 @@
             const featuresArray = features.split('\n').filter(f => f.trim()).map(f => f.trim());
             formData.append("features", JSON.stringify(featuresArray));
           }
+
+          // Optional fields (only append if provided)
+          const brand = (document.getElementById("product-brand")?.value || '').trim();
+          if (brand) formData.append("brand", brand);
+
+          const sku = (document.getElementById("product-sku")?.value || '').trim();
+          if (sku) formData.append("sku", sku);
+
+          const badge = (document.getElementById("product-badge")?.value || '').trim();
+          if (badge) formData.append("badge", badge);
+
+          const color = (document.getElementById("product-color")?.value || '').trim();
+          if (color) formData.append("color", color);
+
+          const weightVal = (document.getElementById("product-weight")?.value || '').trim();
+          if (weightVal) formData.append("weightKg", parseFloat(weightVal));
+
+          const dimensions = (document.getElementById("product-dimensions")?.value || '').trim();
+          if (dimensions) formData.append("dimensions", dimensions);
+
+          const warranty = (document.getElementById("product-warranty")?.value || '').trim();
+          if (warranty) formData.append("warranty", warranty);
+
+          const video = (document.getElementById("product-video")?.value || '').trim();
+          if (video) formData.append("videoUrl", video);
+
+          const tagsRaw = (document.getElementById("product-tags")?.value || '').trim();
+          if (tagsRaw) {
+            const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+            if (tags.length) formData.append("tags", JSON.stringify(tags));
+          }
+
+          const shipping = (document.getElementById("product-shipping")?.value || '').trim();
+          if (shipping) formData.append("shippingInfo", shipping);
+
+          const seoTitle = (document.getElementById("product-seo-title")?.value || '').trim();
+          if (seoTitle) formData.append("seoTitle", seoTitle);
+
+          const seoDesc = (document.getElementById("product-seo-description")?.value || '').trim();
+          if (seoDesc) formData.append("seoDescription", seoDesc);
           
           // Collect image files using server-expected field names
           const fieldNames = ['mainImage','angleImage','detailImage','featureImage','packageImage'];
