@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mouse Gamepad 31.5 x 11.8 Large Mouse Pad - MobileGaming</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #0f0f0f;
+        color: #fff;
+        line-height: 1.6;
+      }
+      .navbar {
+        background: #1a1a1a;
+        padding: 15px 40px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        border-bottom: 1px solid #333;
+      }
+      .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .nav-logo a {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #25d366;
+        text-decoration: none;
+      }
+      .nav-logo a:hover {
+        color: #128c7e;
+      }
+      .breadcrumb {
+        padding: 100px 40px 20px;
+        background: #1a1a1a;
+        border-bottom: 1px solid #333;
+      }
+      .breadcrumb a {
+        color: #25d366;
+        text-decoration: none;
+      }
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+      .product-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: start;
+      }
+      .product-images {
+        position: sticky;
+        top: 120px;
+      }
+      .main-image {
+        width: 100%;
+        height: 400px;
+        object-fit: contain;
+        background: #1a1a1a;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        border: 2px solid #333;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      .main-image:hover {
+        transform: scale(1.02);
+      }
+      .thumbnail-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .thumbnail {
+        width: 100%;
+        height: 120px;
+        object-fit: contain;
+        background: #1a1a1a;
+        border-radius: 10px;
+        border: 2px solid #333;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .thumbnail:hover {
+        border-color: #25d366;
+        transform: scale(1.05);
+      }
+      .thumbnail.active {
+        border-color: #25d366;
+        box-shadow: 0 0 15px rgba(37, 211, 102, 0.3);
+      }
+      .product-info {
+        background: #1c1c1c;
+        padding: 40px;
+        border-radius: 20px;
+        border: 1px solid #333;
+        position: relative;
+      }
+      .product-category {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+      .product-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+      .product-rating {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .stars {
+        color: #fbbf24;
+        font-size: 18px;
+      }
+      .rating-count {
+        color: #888;
+      }
+      .product-price {
+        margin-bottom: 30px;
+      }
+      .original-price {
+        text-decoration: line-through;
+        color: #888;
+        font-size: 1.2rem;
+        margin-right: 15px;
+        opacity: 0.8;
+      }
+      .current-price {
+        color: #25d366;
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-shadow: 0 0 10px rgba(37, 211, 102, 0.3);
+      }
+      .savings {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-left: 10px;
+        background: linear-gradient(135deg, #059669, #047857);
+        padding: 8px 15px;
+        border-radius: 20px;
+        border: 2px solid #059669;
+        animation: flash 1.5s infinite;
+        text-shadow: 0 0 10px rgba(5, 150, 105, 0.5);
+        box-shadow: 0 0 20px rgba(5, 150, 105, 0.3);
+      }
+      .discount-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: linear-gradient(135deg, #059669, #047857);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 0.9rem;
+        animation: bounce 2s infinite;
+        box-shadow: 0 0 15px rgba(5, 150, 105, 0.5);
+      }
+      .countdown-timer {
+        background: linear-gradient(135deg, #059669, #047857);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+        animation: glow 2s ease-in-out infinite alternate;
+      }
+      @keyframes flash {
+        0%,
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        25%,
+        75% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        60% {
+          transform: translateY(-5px);
+        }
+      }
+      @keyframes glow {
+        from {
+          box-shadow: 0 0 20px rgba(5, 150, 105, 0.5);
+        }
+        to {
+          box-shadow: 0 0 30px rgba(5, 150, 105, 0.8);
+        }
+      }
+      .product-description {
+        color: #ccc;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 30px;
+      }
+      .product-features {
+        margin-bottom: 30px;
+      }
+      .features-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+      .feature-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .feature-tag {
+        background: #333;
+        color: #ccc;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .product-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .add-to-cart-btn {
+        flex: 1;
+        background: linear-gradient(135deg, #059669, #047857);
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .add-to-cart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);
+      }
+      .buy-now-btn {
+        flex: 1;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .buy-now-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+      }
+      .product-meta {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+        border-top: 1px solid #333;
+        border-bottom: 1px solid #333;
+        margin-bottom: 30px;
+      }
+      .meta-item {
+        text-align: center;
+      }
+      .meta-icon {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        color: #25d366;
+      }
+      .meta-text {
+        font-size: 0.9rem;
+        color: #ccc;
+      }
+      .product-details {
+        background: #1a1a1a;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+      }
+      .details-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #fff;
+      }
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #333;
+      }
+      .detail-item:last-child {
+        border-bottom: none;
+      }
+      .detail-label {
+        color: #888;
+        font-weight: 500;
+      }
+      .detail-value {
+        color: #fff;
+        font-weight: 600;
+      }
+      .success-message {
+        background: rgba(37, 211, 102, 0.1);
+        border: 1px solid #25d366;
+        color: #25d366;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        display: none;
+      }
+      .footer {
+        background: #1a1a1a;
+        color: #ccc;
+        padding: 40px 0 20px;
+        margin-top: 60px;
+        border-top: 1px solid #333;
+      }
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+      }
+      .footer-section h3 {
+        color: #25d366;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+      .footer-section p {
+        line-height: 1.6;
+        margin-bottom: 15px;
+      }
+      .footer-section ul {
+        list-style: none;
+      }
+      .footer-section ul li {
+        margin-bottom: 8px;
+      }
+      .footer-section ul li a {
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      .footer-section ul li a:hover {
+        color: #25d366;
+      }
+      .social-links {
+        display: flex;
+        gap: 15px;
+      }
+      .social-links a {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background: #333;
+        color: #ccc;
+        text-align: center;
+        line-height: 40px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+      }
+      .social-links a:hover {
+        background: #25d366;
+        color: white;
+        transform: translateY(-2px);
+      }
+      .footer-bottom {
+        text-align: center;
+        padding-top: 20px;
+        margin-top: 30px;
+        border-top: 1px solid #333;
+      }
+      @media (max-width: 768px) {
+        .product-container {
+          grid-template-columns: 1fr;
+          gap: 30px;
+          padding: 20px;
+        }
+        .product-images {
+          position: static;
+        }
+        .thumbnail-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .product-title {
+          font-size: 2rem;
+        }
+        .current-price {
+          font-size: 2rem;
+        }
+        .product-actions {
+          flex-direction: column;
+        }
+        .product-meta {
+          flex-direction: column;
+          gap: 20px;
+        }
+      }
+      .related-products {
+        max-width: 1200px;
+        margin: 60px auto;
+        padding: 0 40px;
+      }
+      .related-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #fff;
+        text-align: center;
+      }
+      .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .related-card {
+        background: #1c1c1c;
+        border-radius: 12px;
+        border: 1px solid #333;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .related-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.2);
+        border-color: #25d366;
+      }
+      .related-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+      }
+      .related-info {
+        padding: 15px;
+      }
+      .related-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 8px;
+        line-height: 1.3;
+      }
+      .related-price {
+        color: #25d366;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .related-rating {
+        color: #fbbf24;
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
+      .related-btn {
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+      .related-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+      }
+      @media (max-width: 768px) {
+        .related-products {
+          padding: 0 20px;
+          margin: 40px auto;
+        }
+        .related-grid {
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-content">
+        <div class="nav-logo">
+          <a href="../index.html">🎮 MobileGaming</a>
+        </div>
+      </div>
+    </nav>
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> >
+      <a href="../category.html">Categories</a> >
+      <a href="../category.html">Accessories</a> >
+      <span>Mouse Gamepad 31.5 x 11.8 Large Mouse Pad</span>
+    </div>
+    <div class="product-container">
+      <div class="product-images">
+        <img
+          class="main-image"
+          id="main-image"
+          src="../assets/mousepadlarge/S3965acf5609e49c8ae70a1844379ac523.jpg_220x220q75.jpg_.avif"
+          alt="Mouse Gamepad 31.5 x 11.8 Large Mouse Pad - Main View"
+        />
+        <div class="thumbnail-grid">
+          <img
+            class="thumbnail active"
+            src="../assets/mousepadlarge/S3965acf5609e49c8ae70a1844379ac523.jpg_220x220q75.jpg_.avif"
+            alt="Mouse Pad View 1"
+            onclick="changeImage(this, '../assets/mousepadlarge/S3965acf5609e49c8ae70a1844379ac523.jpg_220x220q75.jpg_.avif')"
+          />
+          <img
+            class="thumbnail"
+            src="../assets/mousepadlarge/S4212ef8657a247b7a129065d74c658dcf.jpg_220x220q75.jpg_.avif"
+            alt="Mouse Pad View 2"
+            onclick="changeImage(this, '../assets/mousepadlarge/S4212ef8657a247b7a129065d74c658dcf.jpg_220x220q75.jpg_.avif')"
+          />
+          <img
+            class="thumbnail"
+            src="../assets/mousepadlarge/S783048b671664d68a407d265fee6921az.jpg_220x220q75.jpg_.avif"
+            alt="Mouse Pad View 3"
+            onclick="changeImage(this, '../assets/mousepadlarge/S783048b671664d68a407d265fee6921az.jpg_220x220q75.jpg_.avif')"
+          />
+          <img
+            class="thumbnail"
+            src="../assets/mousepadlarge/Sd469895c0bff425196b70a09b5149339z.jpg_220x220q75.jpg_.avif"
+            alt="Mouse Pad View 4"
+            onclick="changeImage(this, '../assets/mousepadlarge/Sd469895c0bff425196b70a09b5149339z.jpg_220x220q75.jpg_.avif')"
+          />
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="discount-badge">NEW</div>
+        <div class="product-category">Accessories</div>
+        <h1 class="product-title">Mouse Gamepad 31.5 x 11.8 Large Mouse Pad</h1>
+        <div class="product-rating">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <span class="rating-count">(0 reviews)</span>
+        </div>
+        <div class="product-price">
+          <span class="current-price">$24.00</span>
+        </div>
+        <p class="product-description">
+          Elevate your gaming and work setup with this extra-large mouse pad
+          (31.5 x 11.8 inches). Provides smooth, precise mouse control and a
+          comfortable surface for your keyboard and mouse. Perfect for gamers
+          and professionals alike.
+        </p>
+        <div class="product-features">
+          <h3 class="features-title">Features</h3>
+          <div class="feature-tags">
+            <span class="feature-tag">Large Surface</span>
+            <span class="feature-tag">Non-Slip Base</span>
+            <span class="feature-tag">Smooth Texture</span>
+            <span class="feature-tag">Durable Stitching</span>
+            <span class="feature-tag">Water Resistant</span>
+          </div>
+        </div>
+        <div class="product-actions">
+          <button class="add-to-cart-btn" onclick="addToCart()">
+            <i class="fas fa-shopping-cart"></i> Add to Cart
+          </button>
+          <button class="buy-now-btn" onclick="buyNow()">
+            <i class="fas fa-bolt"></i> Buy Now
+          </button>
+        </div>
+        <div class="product-meta">
+          <div class="meta-item">
+            <div class="meta-icon">🚚</div>
+            <div class="meta-text">Free Shipping</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">🔄</div>
+            <div class="meta-text">30-Day Returns</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">🛡️</div>
+            <div class="meta-text">Secure Payment</div>
+          </div>
+        </div>
+        <div class="product-details">
+          <h3 class="details-title">Product Details</h3>
+          <div class="detail-item">
+            <span class="detail-label">Category:</span
+            ><span class="detail-value">Accessories</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Stock:</span
+            ><span class="detail-value">100 in stock</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Price:</span
+            ><span class="detail-value">$24.00</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Reviews:</span
+            ><span class="detail-value">0 reviews</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Rating:</span
+            ><span class="detail-value">5/5</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Material:</span
+            ><span class="detail-value">Premium Fabric + Rubber</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Dimensions:</span
+            ><span class="detail-value">31.5 x 11.8 inches</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Warranty:</span
+            ><span class="detail-value">1 Year</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="related-products">
+      <h2 class="related-title">Related Products</h2>
+      <div class="related-grid" id="related-products-grid"></div>
+    </div>
+    <script>
+      function changeImage(thumbnail, newSrc) {
+        document.getElementById("main-image").src = newSrc;
+        document
+          .querySelectorAll(".thumbnail")
+          .forEach((img) => img.classList.remove("active"));
+        thumbnail.classList.add("active");
+      }
+      function addToCart() {
+        alert("Added to cart!");
+      }
+      function buyNow() {
+        alert("Proceed to checkout!");
+      }
+      // Utility to get product ID from URL (e.g., product53.html or ?id=53)
+      function getProductId() {
+        // Try to extract from filename
+        const match = window.location.pathname.match(/product(\d+)\.html/);
+        if (match) return parseInt(match[1], 10);
+        // Fallback: try query string
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("id")) return parseInt(params.get("id"), 10);
+        return null;
+      }
+              fetch("/products")
+        .then((res) => res.json())
+        .then((products) => {
+          const currentProductId = getProductId();
+          const currentProduct = products.find(
+            (p) => p.id === currentProductId
+          );
+          if (!currentProduct || !currentProduct.related) return;
+          const relatedProducts = currentProduct.related
+            .map((id) => products.find((p) => p.id === id))
+            .filter(Boolean);
+          const grid = document.getElementById("related-products-grid");
+          grid.innerHTML = relatedProducts
+            .map(
+              (product) => `
+          <div class="related-card">
+            <div class="product-image-container">
+              <img class="related-image product-image" src="../${
+                product.image
+              }" alt="${product.name}" />
+            </div>
+            <div class="related-info">
+              <div class="related-name product-title">${product.name}</div>
+              <div class="related-price product-price">$${product.price.toFixed(
+                2
+              )}</div>
+              <div class="related-rating">⭐⭐⭐⭐⭐ (${
+                product.reviews
+              } reviews)</div>
+              <button class="related-btn add-to-cart-btn">View Product</button>
+            </div>
+          </div>
+        `
+            )
+            .join("");
+        });
+    </script>
+      
+    
+      
+    
+      <script src="../assets/js/cart.js"></script>
+        <script src="../components/navbar.js"></script>
+<script src="../assets/js/product-page.js"></script>
+  </body>
+</html>

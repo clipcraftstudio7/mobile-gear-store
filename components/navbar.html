@@ -1,0 +1,354 @@
+<!-- Navbar Component -->
+<nav class="navbar" id="navbar">
+  <div
+    class="nav-container"
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    "
+  >
+    <!-- Logo and Search (left) -->
+    <div style="display: flex; align-items: center; gap: 24px; min-width: 0">
+      <div class="nav-logo">
+        <a href="/">
+          <i class="fas fa-gamepad"></i>
+          Mobile Gear Hub
+        </a>
+      </div>
+      <div
+        class="search-container"
+        style="min-width: 200px; max-width: 300px; flex: 1; flex-shrink: 1"
+      >
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search gaming gear, accessories..."
+          id="search-input"
+        />
+        <button class="search-btn" id="search-btn">
+          <i class="fas fa-search"></i>
+        </button>
+        <div class="search-suggestions" id="search-suggestions"></div>
+      </div>
+    </div>
+    <!-- Nav Menu (centered) -->
+    <ul
+      class="nav-menu"
+      style="
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        min-width: 0;
+      "
+    >
+      <li class="dropdown" style="position: relative">
+        <a
+          href="#categories"
+          id="categories-dropdown-btn"
+          style="
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+          "
+        >
+          Categories
+          <i
+            class="fas fa-chevron-down"
+            id="categories-arrow"
+            style="font-size: 0.8em; transition: transform 0.25s"
+          ></i>
+        </a>
+        <div class="dropdown-content" id="categories-dropdown-content">
+          <a href="category.html?cat=Controllers"
+            ><i class="fas fa-gamepad"></i> Controllers</a
+          >
+          <a href="category.html?cat=Triggers"
+            ><i class="fas fa-bullseye"></i> Triggers</a
+          >
+          <a href="category.html?cat=Holders"
+            ><i class="fas fa-mobile-alt"></i> Holders</a
+          >
+          <a href="category.html?cat=Cooling Fans"
+            ><i class="fas fa-fan"></i> Cooling Fans</a
+          >
+          <a href="category.html?cat=Joystick"
+            ><i class="fas fa-dot-circle"></i> Joystick</a
+          >
+          <a href="category.html?cat=Accessories"
+            ><i class="fas fa-headphones"></i> Accessories</a
+          >
+        </div>
+      </li>
+
+      <li>
+        <a href="help-center.html"
+          ><i class="fas fa-question-circle" style="margin-right: 6px"></i>Help
+          Center</a
+        >
+      </li>
+      <li><a href="about.html">About</a></li>
+      <!-- Admin Dashboard Link (only visible to admin) -->
+      <li id="admin-nav-item" style="display: none;">
+        <a 
+          href="admin-dashboard.html"
+          style="
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border: 1px solid #ff6b6b;
+            color: white !important;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+          "
+          onmouseover="
+            this.style.background='linear-gradient(135deg, #ee5a24, #ff6b6b)';
+            this.style.transform='translateY(-2px)';
+            this.style.boxShadow='0 4px 16px rgba(255, 107, 107, 0.5)';
+          "
+          onmouseout="
+            this.style.background='linear-gradient(135deg, #ff6b6b, #ee5a24)';
+            this.style.transform='translateY(-1px)';
+            this.style.boxShadow='0 2px 8px rgba(255, 107, 107, 0.3)';
+          "
+        >
+          <i class="fas fa-cogs" style="margin-right: 6px;"></i>Admin Dashboard
+        </a>
+      </li>
+    </ul>
+    <!-- Navigation Actions (right) -->
+    <div
+      class="nav-actions"
+      style="
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-width: 140px;
+        margin-left: 20px;
+        flex-shrink: 0;
+      "
+    >
+      <!-- Cart Button -->
+      <a
+        href="cart.html"
+        class="nav-btn cart-btn"
+        id="cart-btn"
+        title="Shopping Cart"
+        style="
+          position: relative;
+          display: flex;
+          align-items: center;
+          background: rgba(37, 211, 102, 0.1);
+          border: 1px solid rgba(37, 211, 102, 0.3);
+          border-radius: 12px;
+          padding: 10px 16px;
+          color: #25d366;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 14px;
+          transition: all 0.3s ease;
+          min-width: 50px;
+          justify-content: center;
+        "
+        onmouseover="this.style.background='rgba(37, 211, 102, 0.2)'; this.style.borderColor='#25d366';"
+        onmouseout="this.style.background='rgba(37, 211, 102, 0.1)'; this.style.borderColor='rgba(37, 211, 102, 0.3)';"
+      >
+        <i
+          class="fas fa-shopping-cart"
+          style="font-size: 16px; margin-right: 6px"
+        ></i>
+        <span
+          class="cart-count"
+          id="cart-count"
+          style="
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            border: 2px solid #1a1a1a;
+          "
+        ></span>
+      </a>
+
+      
+      <!-- User Authentication Area -->
+      <div
+        id="user-area"
+        style="
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 50px;
+          min-height: 40px;
+          flex-shrink: 0;
+        "
+      >
+        <div class="user-skeleton">
+          <span class="user-spinner"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Classy dropdown styles */
+  .nav-menu .dropdown {
+    position: relative;
+  }
+  .nav-menu .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    min-width: 220px;
+    background: #23272b;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(37, 211, 102, 0.13),
+      0 1.5px 8px rgba(0, 0, 0, 0.12);
+    border: 1.5px solid #333;
+    z-index: 1002;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.22s, transform 0.22s;
+    padding: 10px 0;
+  }
+  .nav-menu .dropdown:hover .dropdown-content,
+  .nav-menu .dropdown:focus-within .dropdown-content {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .nav-menu .dropdown > a:hover #categories-arrow,
+  .nav-menu .dropdown:focus-within > a #categories-arrow {
+    transform: rotate(180deg);
+  }
+  .nav-menu .dropdown-content a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    padding: 12px 22px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.18s, color 0.18s;
+    border: none;
+    background: none;
+  }
+  .nav-menu .dropdown-content a:hover {
+    background: #25d36622;
+    color: #25d366;
+  }
+
+  /* Enhanced nav-menu link styles */
+  .nav-menu li a {
+    color: #ccc;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+  }
+
+  .nav-menu li a:hover {
+    color: #25d366;
+    background: rgba(37, 211, 102, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .nav-menu li a::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #25d366, #128c7e);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  .nav-menu li a:hover::before {
+    width: 80%;
+  }
+
+  /* Special styling for Help Center link */
+  .nav-menu li a[href="help-center.html"] {
+    background: rgba(37, 211, 102, 0.05);
+    border: 1px solid rgba(37, 211, 102, 0.2);
+  }
+
+  .nav-menu li a[href="help-center.html"]:hover {
+    background: rgba(37, 211, 102, 0.15);
+    border-color: #25d366;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+  }
+
+  /* Responsive styling for mobile */
+  @media (max-width: 768px) {
+    .nav-menu li a {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+
+    .nav-menu li a[href="help-center.html"] {
+      background: rgba(37, 211, 102, 0.1);
+      border: 1px solid rgba(37, 211, 102, 0.3);
+    }
+  }
+  @keyframes pulse {
+    0% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.6;
+    }
+  }
+  .user-skeleton {
+    background: #222;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1.2s infinite;
+    position: relative;
+  }
+  .user-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #25d366;
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>

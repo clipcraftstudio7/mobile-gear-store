@@ -1,0 +1,51 @@
+# Product Folders Created
+
+Total products: 42
+
+## Folder Structure:
+- 1-gaming-controller/ → "Gaming Controller"
+- 2-sy830-gaming-headset/ → "SY830 Gaming Headset"
+- 10-gaming-trigger-controller/ → "Gaming Trigger Controller"
+- 11-twolf-one-handed-keyboard/ → "Twolf One Handed Keyboard"
+- 12-s03-semiconductor/ → "S03 Semiconductor"
+- 13-portable-round-joystick/ → "Portable Round Joystick"
+- 14-d19-triggers/ → "D19 Triggers"
+- 15-finger-sleeve/ → "Finger Sleeve"
+- 16-rgb-joystick-trigger/ → "RGB Joystick Trigger"
+- 17-desktop-arm-controller-holder/ → "Desktop Arm Controller Holder"
+- 18-analogue-rubber-joystick/ → "Analogue Rubber Joystick"
+- 19-semiconductor-magnetic-cooler/ → "Semiconductor Magnetic Cooler"
+- 3-mobile-cooling-fan-dual/ → "Mobile Cooling Fan Dual"
+- 20-fso1-dual-fan-plug-in/ → "FSO1 Dual Fan Plug In"
+- 21-4-in-1-half-canded-combo/ → "4 in 1 Half Canded Combo"
+- 22-elo-vagabond-mobile-controller/ → "Elo Vagabond Mobile Controller"
+- 23-razer-mouse-pad/ → "Razer Mouse Pad"
+- 24-acedays-phone-controller/ → "Acedays Phone Controller"
+- 25-oivo-ps5-phone-mount/ → "OIVO PS5 Phone Mount"
+- 26-casque-deep-base-sterio-headset/ → "Casque Deep Base Sterio Headset"
+- 27-executive-venom-controller---phone-holder/ → "Executive Venom Controller - Phone Holder"
+- 28-jako-underdesk-holder/ → "JAKO Underdesk Holder"
+- 29-red-magic-10-pro-smartphone-5g-16512/ → "Red Magic 10 Pro Smartphone 5G 16/512"
+- 4-sl17-magnetic-semiconductor-cooler/ → "SL17 Magnetic Semiconductor Cooler"
+- 30-vakilli-gaming-joystick/ → "Vakilli Gaming Joystick"
+- 36-paladon-xbox-icon-lights/ → "Paladon Xbox Icon Lights"
+- 39-sundisk-128gb-gameplay-190ms/ → "Sundisk 128GB Gameplay 190ms"
+- 5-logitech-g933s-lightsync-wireless-gaming-headset/ → "Logitech G933s Lightsync Wireless Gaming Headset"
+- 40-avengers-executive-phone-holder/ → "Avengers Executive Phone Holder"
+- 41-asus-rt-ax82u-dual-band-wifi-6-gaming-router/ → "ASUS RT-AX82U Dual Band WiFi 6 Gaming Router"
+- 45-paladon-33cm-playstation-glitter-glow/ → "Paladon 33cm PlayStation Glitter Glow"
+- 49-playstation-5-alarm-clock/ → "PlayStation 5 Alarm Clock"
+- 52-mobile-gaming-trigger-joystick-gamepad/ → "Mobile Gaming Trigger Joystick Gamepad"
+- 50-paladone-playstation-logo-light-up/ → "Paladone PlayStation Logo Light Up"
+- 51-paladone-xbox-logo-light-up/ → "Paladone Xbox Logo Light Up"
+- 6-universal-360-degree-abs-gaming-accessories/ → "Universal 360 Degree ABS Gaming Accessories"
+- 7-anti-sweat-finger-sleeve/ → "Anti Sweat Finger Sleeve"
+- 8-k21-gaming-handle-and-trigger/ → "K21 Gaming Handle and Trigger"
+- 53-mouse-gamepad-315-x-118-large-mouse-pad/ → "Mouse Gamepad 31.5 x 11.8 Large Mouse Pad"
+- 54-premium-gaming-controller-pro/ → "Premium Gaming Controller Pro"
+- 55-rgb-gaming-keyboard-mechanical/ → "RGB Gaming Keyboard Mechanical"
+- 56-wireless-gaming-mouse-pro/ → "Wireless Gaming Mouse Pro"
+
+## Instructions:
+1. Add 5 images per folder following the naming convention
+2. Run update script to modify products.json with new paths

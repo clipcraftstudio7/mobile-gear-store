@@ -1,0 +1,267 @@
+{
+  "info": {
+    "name": "Campaign API",
+    "description": "Collection for testing Flash Sales, Banners, and Popups API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "your-admin-jwt-token-here",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "guest-123456",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Admin Endpoints",
+      "item": [
+        {
+          "name": "Create Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"test-flash-sale\",\n  \"title\": \"Test Flash Sale\",\n  \"description\": \"A test flash sale campaign\",\n  \"type\": \"flash\",\n  \"start_at\": \"2025-01-28T10:00:00+03:00\",\n  \"end_at\": \"2025-01-28T13:00:00+03:00\",\n  \"preview_payload\": {\n    \"hero_image\": \"https://cdn.example.com/test-hero.jpg\",\n    \"theme\": \"dark\",\n    \"cta_text\": \"Shop Now\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/campaigns",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "campaigns"]
+            }
+          }
+        },
+        {
+          "name": "Update Campaign",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Test Flash Sale\",\n  \"description\": \"An updated test flash sale campaign\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/campaigns/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "campaigns", "1"]
+            }
+          }
+        },
+        {
+          "name": "Add Products to Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"products\": [\n    {\n      \"product_id\": 1,\n      \"original_price\": 2999.00,\n      \"sale_price\": 899.00,\n      \"reserved_stock\": 50,\n      \"max_per_customer\": 2,\n      \"display_order\": 1\n    },\n    {\n      \"product_id\": 2,\n      \"original_price\": 1999.00,\n      \"sale_price\": 599.00,\n      \"reserved_stock\": 75,\n      \"max_per_customer\": 3,\n      \"display_order\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/campaigns/1/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "campaigns", "1", "products"]
+            }
+          }
+        },
+        {
+          "name": "Activate Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/campaigns/1/activate",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "campaigns", "1", "activate"]
+            }
+          }
+        },
+        {
+          "name": "Deactivate Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/campaigns/1/deactivate",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "campaigns", "1", "deactivate"]
+            }
+          }
+        },
+        {
+          "name": "Get Campaign Preview",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/campaigns/1/preview",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "campaigns", "1", "preview"]
+            }
+          }
+        },
+        {
+          "name": "Get Campaign Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/campaigns/1/metrics?start_date=2025-01-01&end_date=2025-01-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["campaigns", "1", "metrics"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "2025-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2025-01-31"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public Endpoints",
+      "item": [
+        {
+          "name": "Get Flash Sales",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/flashsales",
+              "host": ["{{baseUrl}}"],
+              "path": ["flashsales"]
+            }
+          }
+        },
+        {
+          "name": "Get Campaign by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/flashsales/test-flash-sale",
+              "host": ["{{baseUrl}}"],
+              "path": ["flashsales", "test-flash-sale"]
+            }
+          }
+        },
+        {
+          "name": "Reserve Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaign_product_id\": 1,\n  \"quantity\": 1,\n  \"session_id\": \"{{sessionId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/reserve",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "reserve"]
+            }
+          }
+        },
+        {
+          "name": "Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_id\": \"{{sessionId}}\",\n  \"reservation_ids\": [\"reservation-uuid-here\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cart/checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["cart", "checkout"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

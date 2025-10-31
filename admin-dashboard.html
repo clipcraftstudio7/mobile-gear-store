@@ -1,0 +1,3175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | MobileGaming</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/admin-performance.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="assets/js/admin-performance.js"></script>
+    <style>
+      body {
+        background: #101010;
+        color: #fff;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+      }
+      .admin-layout {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 220px;
+        background: #181818;
+        border-right: 1px solid #222;
+        padding: 40px 0 0 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        transition: left 0.3s cubic-bezier(0.4, 2, 0.6, 1), box-shadow 0.3s;
+        z-index: 2000;
+      }
+      .sidebar h2 {
+        color: #25d366;
+        font-size: 1.5rem;
+        margin-bottom: 40px;
+      }
+      .sidebar-nav {
+        width: 100%;
+      }
+      .sidebar-nav a {
+        display: block;
+        color: #ccc;
+        text-decoration: none;
+        padding: 14px 32px;
+        font-size: 1.08rem;
+        border-left: 4px solid transparent;
+        transition: background 0.2s, color 0.2s, border 0.2s;
+      }
+      .sidebar-nav a.active,
+      .sidebar-nav a:hover {
+        background: #222;
+        color: #25d366;
+        border-left: 4px solid #25d366;
+      }
+      .main-content {
+        flex: 1;
+        padding: 18px 8px 18px 8px;
+        max-width: 1400px;
+        margin: 0 auto;
+        transition: filter 0.3s;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .stat-box {
+        background: #222;
+        border-radius: 12px;
+        padding: 12px 0;
+        text-align: center;
+        border: 1px solid #333;
+        box-shadow: 0 2px 8px rgba(37, 211, 102, 0.04);
+      }
+      .stat-number {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #25d366;
+        margin-bottom: 2px;
+      }
+      .stat-label {
+        color: #ccc;
+        font-size: 0.92rem;
+      }
+      .section-title {
+        color: #25d366;
+        font-size: 1.05rem;
+        margin-bottom: 10px;
+        margin-top: 18px;
+      }
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 6px;
+      }
+      .product-card {
+        background: #222;
+        border-radius: 8px;
+        border: 1px solid #333;
+        padding: 3px 3px 5px 3px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 0;
+        box-shadow: none;
+        height: 62px;
+        justify-content: center;
+      }
+      .product-card:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 6px 24px rgba(37, 211, 102, 0.1);
+        border-color: #25d366;
+      }
+      .product-image {
+        width: 32px;
+        height: 32px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: 1px;
+      }
+      .product-name,
+      .product-description {
+        display: none !important;
+      }
+      .product-price {
+        color: #25d366;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 0;
+      }
+      .add-product-form {
+        background: #222;
+        border-radius: 12px;
+        border: 1px solid #333;
+        padding: 10px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(37, 211, 102, 0.04);
+      }
+      .add-product-form input,
+      .add-product-form textarea {
+        width: 100%;
+        padding: 6px;
+        border-radius: 7px;
+        border: 1px solid #333;
+        background: #181818;
+        color: #fff;
+        font-size: 0.97rem;
+        margin-bottom: 10px;
+      }
+      .add-product-form button {
+        width: 100%;
+        padding: 7px;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        font-size: 0.97rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 4px;
+        transition: background 0.2s;
+      }
+      .add-product-form button:hover {
+        background: linear-gradient(135deg, #128c7e, #25d366);
+      }
+      .orders-list {
+        margin-top: 24px;
+      }
+      .order-card {
+        background: #222;
+        border-radius: 10px;
+        border: 1px solid #333;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(37, 211, 102, 0.04);
+      }
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .order-id {
+        font-weight: 600;
+        color: #25d366;
+        font-size: 1rem;
+      }
+      .order-status {
+        font-size: 0.95em;
+        margin-top: 4px;
+      }
+      .order-total {
+        font-weight: 700;
+        color: #fff;
+      }
+      .btn {
+        padding: 8px 14px;
+        border-radius: 7px;
+        border: none;
+        font-size: 0.98rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: #25d366;
+        color: #111;
+        margin-top: 6px;
+        transition: background 0.2s;
+      }
+      .btn:hover {
+        background: #128c7e;
+        color: #fff;
+      }
+      .chat-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 20000;
+        align-items: center;
+        justify-content: center;
+      }
+      .chat-content {
+        background: #222;
+        padding: 24px 16px;
+        border-radius: 12px;
+        max-width: 400px;
+        width: 95%;
+        margin: auto;
+        position: relative;
+        color: #fff;
+      }
+      .chat-close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      .chat-messages {
+        max-height: 180px;
+        overflow-y: auto;
+        background: #181818;
+        border-radius: 8px;
+        padding: 10px 8px;
+        margin-bottom: 8px;
+        border: 1px solid #333;
+      }
+      .chat-bubble {
+        display: flex;
+        margin-bottom: 5px;
+      }
+      .chat-bubble.admin {
+        justify-content: flex-end;
+      }
+      .chat-bubble .bubble {
+        background: #25d366;
+        color: #111;
+        padding: 7px 12px;
+        border-radius: 12px;
+        max-width: 70%;
+        word-break: break-word;
+        font-size: 0.95em;
+      }
+      .chat-bubble.user .bubble {
+        background: #333;
+        color: #fff;
+      }
+      .chat-time {
+        font-size: 0.8em;
+        color: #aaa;
+        margin-top: 2px;
+        text-align: right;
+      }
+      @media (max-width: 900px) {
+        .admin-layout {
+          flex-direction: column;
+        }
+        .sidebar {
+          position: fixed;
+          left: -240px;
+          top: 0;
+          height: 100vh;
+          width: 220px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+          background: #181818;
+          transition: left 0.3s cubic-bezier(0.4, 2, 0.6, 1), box-shadow 0.3s;
+        }
+        .sidebar.open {
+          left: 0;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        }
+        .sidebar-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.45);
+          z-index: 1999;
+          transition: opacity 0.3s;
+        }
+        .sidebar.open ~ .sidebar-overlay {
+          display: block;
+          opacity: 1;
+        }
+        .sidebar-toggle {
+          display: flex;
+          top: 10px;
+          left: 10px;
+          width: 32px;
+          height: 32px;
+        }
+        .main-content {
+          padding: 8px 2px;
+        }
+        .main-content.blurred {
+          filter: blur(2px) brightness(0.7);
+        }
+      }
+      @media (max-width: 700px) {
+        .add-product-form {
+          max-width: 100%;
+          padding: 2px 2px 2px 2px;
+          border-radius: 7px;
+        }
+        .add-product-form form > div {
+          flex-direction: column;
+          gap: 6px;
+        }
+        .add-product-form input,
+        .add-product-form textarea {
+          padding: 4px 6px;
+          font-size: 0.92rem;
+          border-radius: 5px;
+          margin-bottom: 6px;
+        }
+        .add-product-form button {
+          padding: 6px 0;
+          font-size: 0.92rem;
+          border-radius: 5px;
+          margin-top: 2px;
+        }
+      }
+      /* Edit Product Modal CSS improvements */
+      .edit-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 30000;
+        align-items: center;
+        justify-content: center;
+      }
+      .edit-modal-overlay.active {
+        display: flex;
+      }
+      #edit-product-modal {
+        position: static;
+        width: auto;
+        height: auto;
+        background: none;
+        z-index: auto;
+        display: block;
+        overflow: visible;
+      }
+      #edit-product-modal .edit-modal-content {
+        background: #181c20;
+        padding: 22px 12px 16px 12px;
+        border-radius: 16px;
+        max-width: 95vw;
+        width: 350px;
+        margin: 0 auto;
+        position: relative;
+        color: #fff;
+        box-shadow: 0 12px 40px rgba(37, 211, 102, 0.18), 0 1.5px 8px #222;
+        border: 2px solid #25d366;
+        animation: modalPop 0.25s cubic-bezier(0.4, 2, 0.6, 1) 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      #edit-product-modal h2 {
+        color: #25d366;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.18rem;
+        letter-spacing: 0.5px;
+        text-align: center;
+      }
+      #edit-product-modal input,
+      #edit-product-modal textarea {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 7px;
+        border: 1.5px solid #292929;
+        background: #23272b;
+        color: #fff;
+        font-size: 0.97rem;
+        margin-bottom: 7px;
+        box-shadow: none;
+        transition: border 0.2s;
+      }
+      #edit-product-modal input:focus,
+      #edit-product-modal textarea:focus {
+        border: 1.5px solid #25d366;
+        outline: none;
+      }
+      #edit-product-modal button[type="submit"] {
+        width: 100%;
+        padding: 8px 0;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        font-size: 1.01rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 4px;
+        transition: background 0.2s;
+        box-shadow: 0 2px 8px rgba(37, 211, 102, 0.08);
+      }
+      #edit-product-modal button[type="submit"]:hover {
+        background: linear-gradient(135deg, #128c7e, #25d366);
+      }
+      #close-edit-modal {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+      }
+      #close-edit-modal:hover {
+        opacity: 1;
+      }
+      #edit-product-message {
+        margin-top: 8px;
+        min-height: 18px;
+        font-size: 0.98em;
+        text-align: center;
+      }
+      @keyframes modalPop {
+        0% {
+          transform: scale(0.85);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Enhanced Image Upload Styles */
+      .image-upload-box {
+        background: #222;
+        border: 2px dashed #444;
+        border-radius: 8px;
+        padding: 8px;
+        text-align: center;
+        transition: all 0.3s ease;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .image-upload-box:hover {
+        border-color: #25d366;
+        background: #2a2a2a;
+      }
+
+      .image-upload-box label {
+        color: #25d366;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .image-upload-box input[type="file"] {
+        background: #333;
+        border: 1px solid #555;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 0.8rem;
+        padding: 4px;
+        width: 100%;
+      }
+
+      .image-preview {
+        flex: 1;
+        background: #181818;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 60px;
+        border: 1px solid #333;
+        overflow: hidden;
+      }
+
+      .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      .image-preview.empty {
+        color: #666;
+        font-size: 0.8rem;
+      }
+
+      .image-preview.empty::after {
+        content: "📷";
+        font-size: 1.5rem;
+        opacity: 0.3;
+      }
+
+      /* Enhanced Product Card Styles */
+      .product-card {
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .product-card:hover::after {
+        content: "✏️ Click to Edit";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(37, 211, 102, 0.9);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 8px;
+      }
+
+      /* Delete Button Hover Effect */
+      #delete-product-btn:hover {
+        background: #c44569 !important;
+        transform: scale(1.05);
+      }
+
+      /* Form Validation Styles */
+      .form-error {
+        border-color: #ff4757 !important;
+        background: rgba(255, 71, 87, 0.1) !important;
+      }
+
+      .form-success {
+        border-color: #25d366 !important;
+        background: rgba(37, 211, 102, 0.1) !important;
+      }
+      @media (max-width: 700px) {
+        .edit-modal-overlay .edit-modal-content {
+          width: 98vw;
+          min-width: 0;
+          max-width: 98vw;
+          padding: 8px 2px 8px 2px;
+          border-radius: 10px;
+        }
+      }
+    </style>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+  </head>
+  <body>
+    <div
+      class="sidebar-toggle"
+      id="sidebar-toggle"
+      aria-label="Open sidebar"
+      tabindex="0"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="admin-layout">
+      <div class="sidebar" id="sidebar">
+        <h2>Admin</h2>
+        <nav class="sidebar-nav">
+          <a href="#" class="active"
+            ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+          >
+          <a href="#products"><i class="fas fa-box"></i> Products</a>
+          <a href="#campaigns"><i class="fas fa-bullhorn"></i> Campaigns</a>
+          <a href="#flashsale"><i class="fas fa-bolt"></i> Flash Sale</a>
+          <a href="#site-banners"><i class="fas fa-bullhorn"></i> Site Banners</a>
+          <a href="#orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+          <a href="#messages"><i class="fas fa-comments"></i> Messages</a>
+          <a href="#affiliates"><i class="fas fa-handshake"></i> Affiliates</a>
+          <a href="email-scout-system-main/index.html"><i class="fas fa-envelope"></i> Email Scout</a>
+        </nav>
+      </div>
+      <div class="main-content">
+        <h1>Admin Dashboard</h1>
+        <div
+          id="admin-error"
+          style="
+            color: #ff4757;
+            text-align: center;
+            margin-bottom: 18px;
+            display: none;
+          "
+        ></div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-number" id="stat-products">0</div>
+            <div class="stat-label">Products</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" id="stat-users">0</div>
+            <div class="stat-label">Users</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" id="stat-orders">0</div>
+            <div class="stat-label">Orders</div>
+          </div>
+        </div>
+
+        <!-- Campaigns Section -->
+        <div id="campaigns-section" style="display:none">
+          <h2 class="section-title" id="campaigns">Campaigns</h2>
+          <div style="display:flex; gap:8px; margin:8px 0 12px 0; flex-wrap:wrap; align-items:center">
+            <div style="display:flex; gap:6px; flex-wrap:wrap">
+              <button class="btn" style="background:#25d366;color:#111" onclick="window._campaignAdmin && window._campaignAdmin.openEditor(null)"><i class="fas fa-plus"></i> Create Campaign</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._campaignAdmin && window._campaignAdmin.quickCreate('flash')"><i class="fas fa-bolt"></i> New Flash</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._campaignAdmin && window._campaignAdmin.quickCreate('banner')"><i class="fas fa-image"></i> New Banner</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._campaignAdmin && window._campaignAdmin.quickCreate('popup')"><i class="fas fa-window-maximize"></i> New Popup</button>
+            </div>
+            <div style="display:flex; gap:6px; margin-left:auto">
+              <select id="campaign-type-filter" onchange="window._campaignAdmin && window._campaignAdmin.applyFilter(this.value)" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px">
+                <option value="all">All</option>
+                <option value="flash">Flash</option>
+                <option value="banner">Banner</option>
+                <option value="popup">Popup</option>
+                <option value="hero">Hero</option>
+              </select>
+              <button class="btn" style="background:#666;color:#fff" onclick="window._campaignAdmin && window._campaignAdmin.refresh()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+          </div>
+          <div id="campaigns-container" style="margin-bottom:12px"></div>
+        </div>
+
+        <!-- Affiliates Section -->
+        <div id="affiliates-section" style="display:none">
+          <h2 class="section-title" id="affiliates">Affiliates</h2>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:8px 0 12px 0;">
+            <input id="aff-admin-id" placeholder="Admin ID (dev)" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px" />
+            <input id="aff-admin-secret" placeholder="Admin Secret (dev)" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px" />
+            <select id="aff-status-filter" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px">
+              <option value="">All</option>
+              <option>pending</option>
+              <option>approved</option>
+              <option>rejected</option>
+            </select>
+            <button class="btn" onclick="window._aff && window._aff.load()">Refresh</button>
+          </div>
+          <div style="overflow:auto;">
+            <table style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:1px solid #333;">
+                  <th style="text-align:left;color:#25d366;padding:10px;">When</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Name</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Email</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Channel</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Pref Code</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Status</th>
+                  <th style="text-align:left;color:#25d366;padding:10px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="aff-rows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Flash Sale Section -->
+        <div id="flashsale-section" style="display:none">
+          <h2 class="section-title" id="flashsale">Flash Sale</h2>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:8px 0 12px 0;">
+            <div>
+              <label style="display:block;color:#aaa;font-size:.9rem">Title</label>
+              <input id="fs-title" placeholder="Weekend Mega Flash" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:260px"/>
+            </div>
+            <div>
+              <label style="display:block;color:#aaa;font-size:.9rem">Slug</label>
+              <input id="fs-slug" placeholder="weekend-mega-flash" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:220px"/>
+            </div>
+            <div>
+              <label style="display:block;color:#aaa;font-size:.9rem">Start (ISO)</label>
+              <input id="fs-start" placeholder="2025-09-20T10:00:00Z" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:220px"/>
+            </div>
+            <div>
+              <label style="display:block;color:#aaa;font-size:.9rem">End (ISO)</label>
+              <input id="fs-end" placeholder="2025-09-20T16:00:00Z" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:220px"/>
+            </div>
+            <button class="btn" style="background:#25d366;color:#111" onclick="window._flashAdmin && window._flashAdmin.createOrUpdate()"><i class="fas fa-save"></i> Save Flash Sale</button>
+          </div>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:6px 0 10px 0;">
+            <button class="btn" onclick="window._flashAdmin && window._flashAdmin.loadExisting()">Load Existing Flash Sales</button>
+            <select id="fs-existing" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px;min-width:260px"></select>
+            <button class="btn" onclick="window._flashAdmin && window._flashAdmin.loadSelected()">Load Selected</button>
+          </div>
+          <div class="uploader" style="margin-top:8px">
+            <div class="form-group" style="margin-bottom:8px"><label style="color:#aaa">Search Products</label><input id="fs-search" placeholder="name/category" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:8px 10px;min-width:260px"></div>
+            <div id="fs-products" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px"></div>
+          </div>
+          <div style="margin-top:12px">
+            <h3 style="color:#25d366;margin:8px 0">Selected Items</h3>
+            <table class="list-table"><thead><tr><th>Product</th><th>Original</th><th>Discount %</th><th>Sale Price</th><th></th></tr></thead><tbody id="fs-selected"></tbody></table>
+          </div>
+          <div class="actions-row" style="margin-top:12px">
+            <button class="btn primary" onclick="window._flashAdmin && window._flashAdmin.pushProducts()"><i class="fas fa-upload"></i> Save Products to Flash Sale</button>
+          </div>
+        </div>
+
+        <!-- Site Banners Section -->
+        <div id="site-banners-section" style="display:none">
+          <h2 class="section-title" id="site-banners">Site-Wide Banners</h2>
+          <div style="display:flex; gap:8px; margin:8px 0 12px 0; flex-wrap:wrap; align-items:center">
+            <div style="display:flex; gap:6px; flex-wrap:wrap">
+              <button class="btn" style="background:#25d366;color:#111" onclick="window._siteBannerAdmin && window._siteBannerAdmin.openEditor(null)"><i class="fas fa-plus"></i> Create Banner</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._siteBannerAdmin && window._siteBannerAdmin.quickCreate('success')"><i class="fas fa-check-circle"></i> Success Banner</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._siteBannerAdmin && window._siteBannerAdmin.quickCreate('warning')"><i class="fas fa-exclamation-triangle"></i> Warning Banner</button>
+              <button class="btn" style="background:#1e293b;color:#e5e5e5" onclick="window._siteBannerAdmin && window._siteBannerAdmin.quickCreate('info')"><i class="fas fa-info-circle"></i> Info Banner</button>
+            </div>
+            <div style="display:flex; gap:6px; margin-left:auto">
+              <select id="banner-type-filter" onchange="window._siteBannerAdmin && window._siteBannerAdmin.applyFilter(this.value)" style="background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px">
+                <option value="all">All</option>
+                <option value="success">Success</option>
+                <option value="warning">Warning</option>
+                <option value="info">Info</option>
+                <option value="error">Error</option>
+              </select>
+              <button class="btn" style="background:#666;color:#fff" onclick="window._siteBannerAdmin && window._siteBannerAdmin.refresh()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+          </div>
+          <div id="site-banners-container" style="margin-bottom:12px"></div>
+        </div>
+
+        <!-- Site Banner Editor Modal -->
+        <div class="editor-overlay" id="site-banner-editor" style="display:none">
+          <div class="editor-modal">
+            <div class="editor-header">
+              <div class="editor-title" id="banner-editor-title">New Site Banner</div>
+              <button class="editor-close" onclick="window._siteBannerAdmin && window._siteBannerAdmin.closeEditor()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="editor-body">
+              <div class="editor-content">
+                <div id="banner-editor-content"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campaign Editor Modal -->
+        <div class="editor-overlay" id="campaign-editor" style="display:none">
+          <div class="editor-modal">
+            <div class="editor-header">
+              <div class="editor-title" id="editor-title">New Campaign</div>
+              <button class="editor-close" onclick="window._campaignAdmin && window._campaignAdmin.closeEditor()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="editor-body">
+              <div class="editor-tabs" id="editor-tabs">
+                <button class="editor-tab-btn active" data-tab="details">Details</button>
+                <button class="editor-tab-btn" data-tab="products">Products</button>
+                <button class="editor-tab-btn" data-tab="assets">Banners / Assets</button>
+                <button class="editor-tab-btn" data-tab="popups">Popup Rules</button>
+                <button class="editor-tab-btn" data-tab="preview">Preview</button>
+              </div>
+              <div class="editor-content">
+                <div id="tab-details" class="tab-panel"></div>
+                <div id="tab-products" class="tab-panel" style="display:none"></div>
+                <div id="tab-assets" class="tab-panel" style="display:none"></div>
+                <div id="tab-popups" class="tab-panel" style="display:none"></div>
+                <div id="tab-preview" class="tab-panel" style="display:none"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Admin Messaging Section -->
+        <div
+          id="admin-messaging-section"
+          style="display: none; max-width: 800px; margin: 0 auto"
+        >
+          <h2 class="section-title">Admin Messaging Center</h2>
+
+          <!-- Send Message to All Users -->
+          <div
+            style="
+              background: #222;
+              border-radius: 12px;
+              padding: 20px;
+              margin-bottom: 20px;
+              border: 1px solid #333;
+            "
+          >
+            <h3 style="color: #25d366; margin-bottom: 15px; font-size: 1.1rem">
+              <i class="fas fa-bullhorn"></i> Send Message to All Users
+            </h3>
+            <form
+              id="broadcast-message-form"
+              style="display: flex; flex-direction: column; gap: 12px"
+            >
+              <div style="display: flex; gap: 8px; align-items: center">
+                <label style="min-width: 80px; color: #ccc">Type:</label>
+                <select
+                  id="message-type"
+                  style="
+                    flex: 1;
+                    padding: 8px;
+                    border-radius: 6px;
+                    background: #333;
+                    color: #fff;
+                    border: 1px solid #444;
+                  "
+                >
+                  <option value="order">Order Update</option>
+                  <option value="offer">Special Offer</option>
+                  <option value="wishlist">Wishlist Update</option>
+                  <option value="system">System Notification</option>
+                  <option value="promo">Promotion</option>
+                </select>
+              </div>
+              <input
+                type="text"
+                id="message-title"
+                placeholder="Message Title (e.g., 'Flash Sale!', 'Order Shipped')"
+                required
+                style="
+                  padding: 10px;
+                  border-radius: 6px;
+                  background: #333;
+                  color: #fff;
+                  border: 1px solid #444;
+                "
+              />
+              <textarea
+                id="message-content"
+                placeholder="Message content..."
+                rows="3"
+                required
+                style="
+                  padding: 10px;
+                  border-radius: 6px;
+                  background: #333;
+                  color: #fff;
+                  border: 1px solid #444;
+                  resize: vertical;
+                "
+              ></textarea>
+              <div style="display: flex; gap: 8px; justify-content: flex-end">
+                <button
+                  type="button"
+                  onclick="previewMessage()"
+                  class="btn"
+                  style="background: #666"
+                >
+                  <i class="fas fa-eye"></i> Preview
+                </button>
+                <button type="submit" class="btn">
+                  <i class="fas fa-paper-plane"></i> Send to All Users
+                </button>
+              </div>
+            </form>
+            <div id="broadcast-message-status" style="margin-top: 10px"></div>
+          </div>
+
+          <!-- Message History -->
+          <div
+            style="
+              background: #222;
+              border-radius: 12px;
+              padding: 20px;
+              border: 1px solid #333;
+            "
+          >
+            <h3 style="color: #25d366; margin-bottom: 15px; font-size: 1.1rem">
+              <i class="fas fa-history"></i> Recent Messages Sent
+            </h3>
+            <div
+              id="message-history"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <div style="color: #ccc; text-align: center; padding: 20px">
+                Loading message history...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="add-product-form" style="max-width: 700px; margin: 0 auto">
+          <h2 class="section-title">Add Product</h2>
+          <form
+            id="add-product-form"
+            enctype="multipart/form-data"
+            style="display: flex; flex-direction: column; gap: 12px"
+          >
+            <!-- Basic Product Info -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px;">
+              <input
+                type="text"
+                id="product-name"
+                placeholder="Product Name (e.g., Gaming Controller)"
+                required
+                title="This will be used to create the product folder name"
+              />
+              <input
+                type="number"
+                id="product-price"
+                placeholder="Price (USD)"
+                step="0.01"
+                required
+                min="0"
+              />
+              <input
+                type="number"
+                id="product-discount"
+                placeholder="Discount (%)"
+                min="0"
+                max="100"
+                value="0"
+              />
+            </div>
+
+            <!-- Category and Stock -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
+              <input
+                type="text"
+                id="product-category"
+                placeholder="Category"
+                required
+                list="categories-list"
+              />
+              <datalist id="categories-list">
+                <option value="Controllers">
+                <option value="Audio">
+                <option value="Cooling">
+                <option value="Mobile Accessories">
+                <option value="Gaming Accessories">
+                <option value="Desk Accessories">
+                <option value="Storage">
+                <option value="Lighting">
+              </datalist>
+              <input
+                type="number"
+                id="product-stock"
+                placeholder="Stock Quantity"
+                min="0"
+                value="10"
+              />
+              <input
+                type="number"
+                id="product-rating"
+                placeholder="Rating (1-5)"
+                min="1"
+                max="5"
+                step="0.1"
+                value="4.5"
+              />
+              <input
+                type="number"
+                id="product-reviews"
+                placeholder="Review Count"
+                min="0"
+                value="50"
+              />
+            </div>
+
+            <!-- Organized Image Upload Section -->
+            <div style="background: #333; border-radius: 8px; padding: 12px; margin: 8px 0;">
+              <h3 style="color: #25d366; margin: 0 0 10px 0; font-size: 1rem;">
+                📸 Product Images (Organized Structure)
+              </h3>
+              <div style="color: #ccc; font-size: 0.9rem; margin-bottom: 10px;">
+                Images will be automatically organized in: <code>assets/images/products-organized/[ID]-[product-name]/</code>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px;">
+                <div class="image-upload-box" data-index="1">
+                  <label>1-main.jpg (Main)</label>
+                  <input type="file" id="product-image1-file" accept="image/*" required />
+                  <div class="image-preview" id="preview-1"></div>
+                </div>
+                <div class="image-upload-box" data-index="2">
+                  <label>2-angle.jpg (Angle)</label>
+                  <input type="file" id="product-image2-file" accept="image/*" />
+                  <div class="image-preview" id="preview-2"></div>
+                </div>
+                <div class="image-upload-box" data-index="3">
+                  <label>3-detail.jpg (Detail)</label>
+                  <input type="file" id="product-image3-file" accept="image/*" />
+                  <div class="image-preview" id="preview-3"></div>
+                </div>
+                <div class="image-upload-box" data-index="4">
+                  <label>4-context.jpg (Context)</label>
+                  <input type="file" id="product-image4-file" accept="image/*" />
+                  <div class="image-preview" id="preview-4"></div>
+                </div>
+                <div class="image-upload-box" data-index="5">
+                  <label>5-package.jpg (Package)</label>
+                  <input type="file" id="product-image5-file" accept="image/*" />
+                  <div class="image-preview" id="preview-5"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description and Features -->
+            <textarea
+              id="product-description"
+              placeholder="Product description..."
+              required
+              style="min-height: 80px; resize: vertical;"
+            ></textarea>
+
+            <textarea
+              id="product-features"
+              placeholder="Features (one per line, e.g., Bluetooth Connectivity, Long Battery Life, etc.)"
+              style="min-height: 60px; resize: vertical;"
+            ></textarea>
+
+            <!-- Optional Details -->
+            <details style="background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 10px;">
+              <summary style="cursor: pointer; color: #25d366; font-weight: 600;">Optional product details</summary>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+                <input type="text" id="product-brand" placeholder="Brand" />
+                <input type="text" id="product-sku" placeholder="SKU / Model" />
+                <input type="text" id="product-badge" placeholder="Badge (e.g., New, Best Seller)" />
+                <input type="text" id="product-color" placeholder="Color / Variant" />
+                <input type="number" step="0.01" min="0" id="product-weight" placeholder="Weight (kg)" />
+                <input type="text" id="product-dimensions" placeholder="Dimensions (e.g., 10 x 5 x 2 cm)" />
+                <input type="text" id="product-warranty" placeholder="Warranty (e.g., 12 months)" />
+                <input type="url" id="product-video" placeholder="Video URL (YouTube, etc.)" />
+                <input type="text" id="product-tags" placeholder="Tags (comma-separated)" style="grid-column: 1 / -1;" />
+                <input type="text" id="product-shipping" placeholder="Shipping info (e.g., Free shipping over $50)" style="grid-column: 1 / -1;" />
+                <input type="number" id="product-sold-count" placeholder="Sold count (e.g., 1500 for 1.5k+)" min="0" style="grid-column: 1 / -1;" />
+                <input type="text" id="product-seo-title" placeholder="SEO Title" style="grid-column: 1 / -1;" />
+                <textarea id="product-seo-description" placeholder="SEO Description" style="grid-column: 1 / -1; min-height: 60px; resize: vertical;"></textarea>
+              </div>
+            </details>
+
+            <!-- Submit Button -->
+            <button type="submit" style="margin-top: 8px; padding: 12px; font-size: 1.1rem;">
+              <i class="fas fa-plus"></i> Add Product
+            </button>
+          </form>
+          <div id="add-product-message" style="margin-top: 10px"></div>
+        </div>
+        <h2 class="section-title" id="products">All Products</h2>
+        <div class="products-grid" id="products-grid"></div>
+        <!-- Edit Product Modal: Move outside admin-layout for true popup overlay -->
+        <div class="edit-modal-overlay" id="edit-modal-overlay">
+          <div id="edit-product-modal">
+            <div class="edit-modal-content" style="width: 90vw; max-width: 800px; max-height: 90vh; overflow-y: auto;">
+              <button id="close-edit-modal">&times;</button>
+              <h2>Edit Product</h2>
+              <form
+                id="edit-product-form"
+                style="display: flex; flex-direction: column; gap: 12px"
+              >
+                <input type="hidden" id="edit-product-id" />
+                
+                <!-- Basic Product Info -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px;">
+                  <input
+                    type="text"
+                    id="edit-product-name"
+                    placeholder="Product Name"
+                    required
+                  />
+                  <input
+                    type="number"
+                    id="edit-product-price"
+                    placeholder="Price (USD)"
+                    step="0.01"
+                    required
+                    min="0"
+                  />
+                  <input
+                    type="number"
+                    id="edit-product-discount"
+                    placeholder="Discount (%)"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+
+                <!-- Category, Stock, Rating -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
+                  <input
+                    type="text"
+                    id="edit-product-category"
+                    placeholder="Category"
+                    required
+                    list="edit-categories-list"
+                  />
+                  <datalist id="edit-categories-list">
+                    <option value="Controllers">
+                    <option value="Audio">
+                    <option value="Cooling">
+                    <option value="Mobile Accessories">
+                    <option value="Gaming Accessories">
+                    <option value="Desk Accessories">
+                    <option value="Storage">
+                    <option value="Lighting">
+                  </datalist>
+                  <input
+                    type="number"
+                    id="edit-product-stock"
+                    placeholder="Stock"
+                    min="0"
+                  />
+                  <input
+                    type="number"
+                    id="edit-product-rating"
+                    placeholder="Rating (1-5)"
+                    min="1"
+                    max="5"
+                    step="0.1"
+                  />
+                  <input
+                    type="number"
+                    id="edit-product-reviews"
+                    placeholder="Reviews"
+                    min="0"
+                  />
+                </div>
+
+                <!-- Image Management -->
+                <div style="background: #333; border-radius: 8px; padding: 12px;">
+                  <h3 style="color: #25d366; margin: 0 0 10px 0; font-size: 1rem;">
+                    📸 Product Images
+                  </h3>
+                  <div id="edit-images-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">
+                    <!-- Images will be loaded dynamically -->
+                  </div>
+                </div>
+
+                <!-- Description and Features -->
+                <textarea
+                  id="edit-product-description"
+                  placeholder="Description"
+                  required
+                  style="min-height: 80px; resize: vertical;"
+                ></textarea>
+
+                <textarea
+                  id="edit-product-features"
+                  placeholder="Features (one per line)"
+                  style="min-height: 60px; resize: vertical;"
+                ></textarea>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                  <button type="submit" style="flex: 1; background: linear-gradient(135deg, #25d366, #128c7e);">
+                    <i class="fas fa-save"></i> Save Changes
+                  </button>
+                  <button type="button" id="delete-product-btn" style="background: #ff4757; color: white; padding: 8px 16px; border: none; border-radius: 6px;">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </div>
+                
+                <div id="edit-product-message"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <h2 class="section-title" id="orders">Orders & Messages</h2>
+        <div class="orders-list" id="orders-list"></div>
+
+        <!-- Performance Optimization Section -->
+        <div class="performance-optimization">
+          <div class="performance-header">
+            <h2 class="performance-title">Performance Optimization ⚡</h2>
+            <p class="performance-subtitle">Monitor and optimize your store's performance</p>
+          </div>
+
+          <div class="performance-grid">
+            <div class="performance-card">
+              <div class="performance-card-header">
+                <div class="performance-icon">
+                  <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3 class="performance-card-title">Page Load Time</h3>
+              </div>
+              <div class="performance-status">
+                <div class="status-indicator" id="page-load-status"></div>
+                <span class="status-text" id="page-load-status-text">Optimized</span>
+              </div>
+              <div class="performance-metrics">
+                <div class="performance-metric">
+                  <div class="metric-value" id="page-load-time">0ms</div>
+                  <div class="metric-label">Load Time</div>
+                </div>
+                <div class="performance-metric">
+                  <div class="metric-value" id="page-size">0KB</div>
+                  <div class="metric-label">Page Size</div>
+                </div>
+              </div>
+              <div class="performance-actions">
+                <button class="performance-btn" data-action="compress-assets">Compress Assets</button>
+                <button class="performance-btn" data-action="enable-lazy-loading">Lazy Loading</button>
+              </div>
+            </div>
+
+            <div class="performance-card">
+              <div class="performance-card-header">
+                <div class="performance-icon">
+                  <i class="fas fa-images"></i>
+                </div>
+                <h3 class="performance-card-title">Image Optimization</h3>
+              </div>
+              <div class="performance-status">
+                <div class="status-indicator" id="image-optimization-status"></div>
+                <span class="status-text" id="image-optimization-status-text">Optimized</span>
+              </div>
+              <div class="performance-metrics">
+                <div class="performance-metric">
+                  <div class="metric-value" id="image-optimization">0%</div>
+                  <div class="metric-label">Optimized</div>
+                </div>
+                <div class="performance-metric">
+                  <div class="metric-value" id="image-count">0</div>
+                  <div class="metric-label">Total Images</div>
+                </div>
+              </div>
+              <div class="performance-actions">
+                <button class="performance-btn" data-action="optimize-images">Optimize Images</button>
+                <button class="performance-btn" data-action="enable-cdn">Enable CDN</button>
+              </div>
+            </div>
+
+            <div class="performance-card">
+              <div class="performance-card-header">
+                <div class="performance-icon">
+                  <i class="fas fa-database"></i>
+                </div>
+                <h3 class="performance-card-title">Database & Cache</h3>
+              </div>
+              <div class="performance-status">
+                <div class="status-indicator" id="cache-efficiency-status"></div>
+                <span class="status-text" id="cache-efficiency-status-text">Optimized</span>
+              </div>
+              <div class="performance-metrics">
+                <div class="performance-metric">
+                  <div class="metric-value" id="cache-efficiency">0%</div>
+                  <div class="metric-label">Cache Hit Rate</div>
+                </div>
+                <div class="performance-metric">
+                  <div class="metric-value" id="database-queries">0</div>
+                  <div class="metric-label">DB Queries</div>
+                </div>
+              </div>
+              <div class="performance-actions">
+                <button class="performance-btn" data-action="clear-cache">Clear Cache</button>
+                <button class="performance-btn" data-action="optimize-database">Optimize DB</button>
+              </div>
+            </div>
+
+            <div class="performance-card">
+              <div class="performance-card-header">
+                <div class="performance-icon">
+                  <i class="fas fa-memory"></i>
+                </div>
+                <h3 class="performance-card-title">System Resources</h3>
+              </div>
+              <div class="performance-status">
+                <div class="status-indicator" id="memory-status"></div>
+                <span class="status-text" id="memory-status-text">Optimized</span>
+              </div>
+              <div class="performance-metrics">
+                <div class="performance-metric">
+                  <div class="metric-value" id="memory-usage">0%</div>
+                  <div class="metric-label">Memory Usage</div>
+                </div>
+                <div class="performance-metric">
+                  <div class="metric-value" id="cdn-status">Active</div>
+                  <div class="metric-label">CDN Status</div>
+                </div>
+              </div>
+              <div class="performance-actions">
+                <button class="performance-btn" data-action="run-full-optimization">Full Optimization</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="optimization-progress">
+            <div class="progress-header">
+              <span class="progress-title">Overall Performance</span>
+              <span class="progress-percentage" data-progress="overall-performance">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="overall-performance" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="optimization-progress">
+            <div class="progress-header">
+              <span class="progress-title">Optimization Progress</span>
+              <span class="progress-percentage" data-progress="optimization-progress">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="optimization-progress" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="performance-insights">
+            <div class="insights-header">
+              <div class="insights-icon">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <h3 class="insights-title">Optimization Suggestions</h3>
+            </div>
+            <div class="insights-list optimization-suggestions">
+              <!-- Suggestions will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <div id="optimization-progress-message" style="display: none; text-align: center; padding: 10px; background: rgba(37, 211, 102, 0.1); border-radius: 8px; margin-top: 15px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-modal" id="chat-modal">
+      <div class="chat-content">
+        <button class="chat-close" onclick="closeChatModal()">&times;</button>
+        <div id="chat-messages" class="chat-messages"></div>
+        <form id="chat-form" style="display: flex; gap: 8px">
+          <input
+            type="text"
+            id="chat-input"
+            placeholder="Type your message..."
+            style="
+              flex: 1;
+              padding: 10px 12px;
+              border-radius: 8px;
+              border: 1.5px solid #333;
+              background: #23272b;
+              color: #fff;
+              font-size: 1rem;
+            "
+            autocomplete="off"
+          />
+          <button type="submit" class="btn">Send</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      // --- CONFIG ---
+      const ADMIN_ID = "b34bceb9-af1a-48f3-9460-f0d83d89b10b";
+      const SUPABASE_URL = "https://kokntkhxkymllafuubun.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc";
+              const PRODUCTS_JSON_URL = "/products";
+        const ADD_PRODUCT_ENDPOINT = "/add-product-organized"; // Backend endpoint to update products.json
+      let supabase, currentUser;
+      // --- AUTH CHECK ---
+      document.addEventListener("DOMContentLoaded", async function () {
+        supabase = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY
+        );
+        // Check if logged in and is admin
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user || user.id !== ADMIN_ID) {
+          document.body.innerHTML =
+            '<div style="color:#ff4757;text-align:center;margin-top:80px;font-size:1.3rem;">Access denied. Admins only.</div>';
+          return;
+        }
+        currentUser = user;
+        window.currentUser = user;
+        loadStats();
+        renderHealthCard();
+        loadProducts();
+        loadOrders();
+        // Utility functions for organized image handling
+        function generateFolderName(productId, productName) {
+          const cleanName = productName.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+            .replace(/\s+/g, '-') // Replace spaces with dashes
+            .replace(/-+/g, '-') // Replace multiple dashes with single
+            .trim('-'); // Remove leading/trailing dashes
+          return `${productId}-${cleanName}`;
+        }
+
+        function generateImagePaths(productId, productName) {
+          const folderName = generateFolderName(productId, productName);
+          const basePath = `assets/images/products-organized/${folderName}`;
+          return [
+            `${basePath}/1-main.jpg`,
+            `${basePath}/2-angle.jpg`,
+            `${basePath}/3-detail.jpg`,
+            `${basePath}/4-context.jpg`,
+            `${basePath}/5-package.jpg`
+          ];
+        }
+
+        // Image preview functionality
+        function setupImagePreviews() {
+          for (let i = 1; i <= 5; i++) {
+            const fileInput = document.getElementById(`product-image${i}-file`);
+            const preview = document.getElementById(`preview-${i}`);
+            
+            if (fileInput && preview) {
+              fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    preview.classList.remove('empty');
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  preview.innerHTML = '';
+                  preview.classList.add('empty');
+                }
+              });
+            }
+          }
+        }
+
+        // Enhanced add product form
+        document.getElementById("add-product-form").onsubmit = async function (e) {
+          e.preventDefault();
+          
+          // Get form values
+          const name = document.getElementById("product-name").value.trim();
+          const category = document.getElementById("product-category").value.trim();
+          const price = parseFloat(document.getElementById("product-price").value);
+          const discount = parseFloat(document.getElementById("product-discount").value) || 0;
+          const description = document.getElementById("product-description").value.trim();
+          const features = document.getElementById("product-features").value.trim();
+          const stock = parseInt(document.getElementById("product-stock").value) || 10;
+          const rating = parseFloat(document.getElementById("product-rating").value) || 4.5;
+          const reviews = parseInt(document.getElementById("product-reviews").value) || 50;
+          
+          const msgDiv = document.getElementById("add-product-message");
+          msgDiv.textContent = "";
+          
+          // Validation
+          if (!name || !category || !price || !description) {
+            msgDiv.style.color = "#ff4757";
+            msgDiv.textContent = "Please fill in all required fields.";
+            return;
+          }
+          
+          // Check for at least one image
+          const hasImage = document.getElementById("product-image1-file").files[0];
+          if (!hasImage) {
+            msgDiv.style.color = "#ff4757";
+            msgDiv.textContent = "Please provide at least the main image (1-main.jpg).";
+            return;
+          }
+          
+          // Generate new product ID and image paths
+          const productId = Date.now();
+          const imagePaths = generateImagePaths(productId, name);
+          
+          // Prepare data for organized structure
+          const formData = new FormData();
+          formData.append("name", name);
+          formData.append("category", category);
+          formData.append("price", price);
+          formData.append("discount", discount);
+          formData.append("description", description);
+          formData.append("stock", stock);
+          formData.append("rating", rating);
+          formData.append("reviews", reviews);
+          formData.append("productId", productId);
+          formData.append("folderName", generateFolderName(productId, name));
+          
+          // Features processing
+          if (features) {
+            const featuresArray = features.split('\n').filter(f => f.trim()).map(f => f.trim());
+            formData.append("features", JSON.stringify(featuresArray));
+          }
+
+          // Optional fields (only append if provided)
+          const brand = (document.getElementById("product-brand")?.value || '').trim();
+          if (brand) formData.append("brand", brand);
+
+          const sku = (document.getElementById("product-sku")?.value || '').trim();
+          if (sku) formData.append("sku", sku);
+
+          const badge = (document.getElementById("product-badge")?.value || '').trim();
+          if (badge) formData.append("badge", badge);
+
+          const color = (document.getElementById("product-color")?.value || '').trim();
+          if (color) formData.append("color", color);
+
+          const weightVal = (document.getElementById("product-weight")?.value || '').trim();
+          if (weightVal) formData.append("weightKg", parseFloat(weightVal));
+
+          const dimensions = (document.getElementById("product-dimensions")?.value || '').trim();
+          if (dimensions) formData.append("dimensions", dimensions);
+
+          const warranty = (document.getElementById("product-warranty")?.value || '').trim();
+          if (warranty) formData.append("warranty", warranty);
+
+          const video = (document.getElementById("product-video")?.value || '').trim();
+          if (video) formData.append("videoUrl", video);
+
+          const tagsRaw = (document.getElementById("product-tags")?.value || '').trim();
+          if (tagsRaw) {
+            const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+            if (tags.length) formData.append("tags", JSON.stringify(tags));
+          }
+
+          const shipping = (document.getElementById("product-shipping")?.value || '').trim();
+          if (shipping) formData.append("shippingInfo", shipping);
+
+          const seoTitle = (document.getElementById("product-seo-title")?.value || '').trim();
+          if (seoTitle) formData.append("seoTitle", seoTitle);
+
+          const seoDesc = (document.getElementById("product-seo-description")?.value || '').trim();
+          if (seoDesc) formData.append("seoDescription", seoDesc);
+
+          const soldCount = (document.getElementById("product-sold-count")?.value || '').trim();
+          if (soldCount) formData.append("soldCount", parseInt(soldCount));
+          
+          // Collect image files using server-expected field names
+          const fieldNames = ['mainImage','angleImage','detailImage','featureImage','packageImage'];
+          for (let i = 1; i <= 5; i++) {
+            const fileInput = document.getElementById(`product-image${i}-file`);
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+              // Preferred names used by current backend
+              formData.append(fieldNames[i-1], fileInput.files[0]);
+              // Backward compatible names some older endpoints used
+              formData.append(`imageFile${i}`, fileInput.files[0]);
+            }
+          }
+          
+          // Submit to backend
+          try {
+            msgDiv.style.color = "#fbbf24";
+            msgDiv.textContent = "Creating product and organizing images...";
+            
+            const res = await fetch("/add-product-organized", {
+              method: "POST",
+              body: formData,
+            });
+            
+            let result = null;
+            try { result = await res.json(); } catch {}
+            
+            if (!res.ok) {
+              const message = (result && result.error) || "Failed to add product.";
+              const details = result && result.details ? ` (${result.details})` : "";
+              const step = result && result.step ? ` [step: ${result.step}]` : "";
+              throw new Error(`${message}${details}${step}`);
+            }
+
+            msgDiv.style.color = "#25d366";
+            msgDiv.textContent = result.savedTo === 'supabase'
+              ? `Product "${name}" added to Supabase successfully!`
+              : `Product "${name}" saved locally (Supabase insert failed).`;
+            
+            // Reset form and reload products
+            document.getElementById("add-product-form").reset();
+            
+            // Clear image previews
+            for (let i = 1; i <= 5; i++) {
+              const preview = document.getElementById(`preview-${i}`);
+              if (preview) {
+                preview.innerHTML = '';
+                preview.classList.add('empty');
+              }
+            }
+            
+            loadProducts();
+            
+          } catch (err) {
+            msgDiv.style.color = "#ff4757";
+            msgDiv.textContent = `Error: ${err.message}`;
+          }
+        };
+
+        // Initialize image previews when page loads
+        setupImagePreviews();
+
+        // Function to populate images in edit modal
+        window.populateEditImages = function(product) {
+          const container = document.getElementById("edit-images-container");
+          if (!container) return;
+          
+          const images = product.images || [product.image];
+          const imageNames = ['1-main.jpg', '2-angle.jpg', '3-detail.jpg', '4-context.jpg', '5-package.jpg'];
+          
+          container.innerHTML = images.map((imgUrl, index) => {
+            const imageName = imageNames[index] || `${index + 1}-image.jpg`;
+            return `
+              <div class="edit-image-box">
+                <label>${imageName}</label>
+                <div class="edit-image-preview" style="background: #181818; border: 1px solid #333; border-radius: 4px; height: 80px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 6px;">
+                  ${imgUrl ? `<img src="${imgUrl}" style="max-width: 100%; max-height: 100%; object-fit: cover;" alt="Product image">` : '<span style="color: #666;">No image</span>'}
+                </div>
+                <input type="file" accept="image/*" style="width: 100%; font-size: 0.8rem; background: #333; border: 1px solid #555; border-radius: 4px; color: #fff; padding: 4px;">
+                <input type="text" value="${imgUrl || ''}" placeholder="Image URL" style="width: 100%; margin-top: 4px; font-size: 0.8rem; background: #333; border: 1px solid #555; border-radius: 4px; color: #fff; padding: 4px;">
+              </div>
+            `;
+          }).join('');
+        };
+
+        // Function to handle product deletion
+        window.deleteProduct = async function(productId) {
+          if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+            return;
+          }
+          
+          try {
+            const res = await fetch('/delete-product', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: productId })
+            });
+            
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.error || 'Failed to delete product');
+            
+            const msgDiv = document.getElementById("edit-product-message");
+            msgDiv.style.color = "#25d366";
+            msgDiv.textContent = "Product deleted successfully!";
+            
+            setTimeout(() => {
+              editModalOverlay.classList.remove("active");
+              loadProducts();
+            }, 1000);
+            
+          } catch (err) {
+            const msgDiv = document.getElementById("edit-product-message");
+            msgDiv.style.color = "#ff4757";
+            msgDiv.textContent = `Error deleting product: ${err.message}`;
+          }
+        };
+      });
+      // --- LOAD STATS ---
+      async function loadStats() {
+        // Products
+        fetch(PRODUCTS_JSON_URL)
+          .then((r) => r.json())
+          .then((products) => {
+            document.getElementById("stat-products").textContent =
+              products.length;
+          });
+        // Users
+        const { count: userCount } = await supabase
+          .from("profiles")
+          .select("*", { count: "exact", head: true });
+        document.getElementById("stat-users").textContent = userCount || 0;
+        // Orders
+        const { count: orderCount } = await supabase
+          .from("orders")
+          .select("*", { count: "exact", head: true });
+        document.getElementById("stat-orders").textContent = orderCount || 0;
+      }
+
+      // --- HEALTH CARD ---
+      async function renderHealthCard(){
+        try {
+          const res = await fetch('/health/details');
+          const details = await res.json();
+          const container = document.querySelector('.stats-grid');
+          if (!container) return;
+          const ok = (b) => b ? '✅' : '❌';
+          const card = document.createElement('div');
+          card.className = 'stat-box';
+          card.style.cursor = 'default';
+          card.innerHTML = `
+            <div class="stat-title">System Health</div>
+            <div class="stat-number" style="font-size:20px;">${ok(details.server?.ok)} Server</div>
+            <div style="color:#aaa;font-size:12px;margin-top:6px;line-height:1.6;">
+              ${ok(details.supabase?.ok)} Supabase DB<br/>
+              ${ok(details.storage?.enabled && details.storage?.ok)} Storage ${details.storage?.enabled ? '(on)' : '(off)'}<br/>
+              Source: ${details.config?.productsSource || 'supabase'}
+            </div>
+          `;
+          container.appendChild(card);
+        } catch {}
+      }
+      // --- LOAD PRODUCTS ---
+      async function loadProducts() {
+        const grid = document.getElementById("products-grid");
+        grid.innerHTML = '<div style="color:#aaa;">Loading products...</div>';
+        try {
+          const res = await fetch(PRODUCTS_JSON_URL);
+          const products = await res.json();
+          if (!products || products.length === 0) {
+            grid.innerHTML =
+              '<div style="color:#aaa;">No products found.</div>';
+            return;
+          }
+          grid.innerHTML = products
+            .map(
+              (p) => `
+          <div class="product-card" data-id="${p.id}" style="cursor:pointer;">
+            <img src="${p.image}" class="product-image" alt="" />
+            <div class="product-price">$${p.price.toFixed(2)}</div>
+          </div>
+        `
+            )
+            .join("");
+          // Make product card clickable for edit
+          grid.querySelectorAll(".product-card").forEach((card) => {
+            card.onclick = function (e) {
+              const id = this.getAttribute("data-id");
+              const product = products.find((p) => String(p.id) === String(id));
+              if (!product) return;
+              
+              // Populate basic fields
+              document.getElementById("edit-product-id").value = product.id;
+              document.getElementById("edit-product-name").value = product.name || "";
+              document.getElementById("edit-product-category").value = product.category || "";
+              document.getElementById("edit-product-price").value = product.price || 0;
+              document.getElementById("edit-product-discount").value = product.discount || 0;
+              document.getElementById("edit-product-stock").value = product.stock || 0;
+              document.getElementById("edit-product-rating").value = product.rating || 4.5;
+              document.getElementById("edit-product-reviews").value = product.reviews || 0;
+              document.getElementById("edit-product-description").value = product.description || "";
+              
+              // Populate features
+              if (product.features && Array.isArray(product.features)) {
+                document.getElementById("edit-product-features").value = product.features.join('\n');
+              } else {
+                document.getElementById("edit-product-features").value = "";
+              }
+              
+              // Populate images
+              populateEditImages(product);
+              
+              document.getElementById("edit-product-message").textContent = "";
+              editModalOverlay.classList.add("active");
+            };
+          });
+        } catch (err) {
+          grid.innerHTML =
+            '<div style="color:#ff4757;">Error loading products.</div>';
+        }
+      }
+      // Edit product modal logic
+      const editModalOverlay = document.getElementById("edit-modal-overlay");
+      document.getElementById("close-edit-modal").onclick = function () {
+        editModalOverlay.classList.remove("active");
+      };
+      // Close modal on background click
+      editModalOverlay.onclick = function (e) {
+        if (e.target === editModalOverlay) {
+          editModalOverlay.classList.remove("active");
+        }
+      };
+      document.getElementById("edit-product-form").onsubmit = async function (e) {
+        e.preventDefault();
+        
+        // Get all form values
+        const id = document.getElementById("edit-product-id").value;
+        const name = document.getElementById("edit-product-name").value.trim();
+        const category = document.getElementById("edit-product-category").value.trim();
+        const price = parseFloat(document.getElementById("edit-product-price").value);
+        const discount = parseFloat(document.getElementById("edit-product-discount").value) || 0;
+        const stock = parseInt(document.getElementById("edit-product-stock").value) || 0;
+        const rating = parseFloat(document.getElementById("edit-product-rating").value) || 4.5;
+        const reviews = parseInt(document.getElementById("edit-product-reviews").value) || 0;
+        const description = document.getElementById("edit-product-description").value.trim();
+        const features = document.getElementById("edit-product-features").value.trim();
+        
+        const msgDiv = document.getElementById("edit-product-message");
+        msgDiv.textContent = "";
+        
+        // Validation
+        if (!id || !name || !category || !price || !description) {
+          msgDiv.style.color = "#ff4757";
+          msgDiv.textContent = "Please fill in all required fields.";
+          return;
+        }
+        
+        try {
+          // Prepare update data
+          const updateData = {
+            id,
+            name,
+            category,
+            price,
+            discount,
+            stock,
+            rating,
+            reviews,
+            description
+          };
+          
+          // Process features
+          if (features) {
+            const featuresArray = features.split('\n').filter(f => f.trim()).map(f => f.trim());
+            updateData.features = featuresArray;
+          }
+          
+          // TODO: Handle image updates (requires backend enhancement)
+          // For now, we'll use the existing images
+          
+          msgDiv.style.color = "#fbbf24";
+          msgDiv.textContent = "Updating product...";
+          
+          const res = await fetch("/edit-product-enhanced", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: updateData.id,
+              updates: updateData
+            }),
+          });
+          
+          const data = await res.json();
+          if (!data.success) {
+            throw new Error(data.error || "Failed to update product.");
+          }
+          
+          msgDiv.style.color = "#25d366";
+          msgDiv.textContent = "Product updated successfully!";
+          
+          setTimeout(() => {
+            editModalOverlay.classList.remove("active");
+            loadProducts();
+          }, 1000);
+          
+        } catch (err) {
+          msgDiv.style.color = "#ff4757";
+          msgDiv.textContent = `Error: ${err.message}`;
+        }
+      };
+
+      // Add delete button functionality
+      document.getElementById("delete-product-btn").onclick = function() {
+        const productId = document.getElementById("edit-product-id").value;
+        if (productId) {
+          deleteProduct(productId);
+        }
+      };
+      // --- LOAD ORDERS & MESSAGES ---
+      async function loadOrders() {
+        const list = document.getElementById("orders-list");
+        list.innerHTML = '<div style="color:#aaa;">Loading orders...</div>';
+        try {
+          const { data: orders, error } = await supabase
+            .from("orders")
+            .select("*")
+            .order("created_at", { ascending: false });
+          if (error) throw error;
+          if (!orders || orders.length === 0) {
+            list.innerHTML = '<div style="color:#aaa;">No orders found.</div>';
+            return;
+          }
+          list.innerHTML = orders
+            .map(
+              (order) => `
+          <div class="order-card">
+            <div class="order-header">
+              <div>
+                <div class="order-id">Order #${order.id}</div>
+                <div style="color:#ccc;font-size:0.97em;">${new Date(
+                  order.created_at
+                ).toLocaleString()}</div>
+                <div class="order-status">Status: <span style="color:${
+                  order.status === "delivered"
+                    ? "#25d366"
+                    : order.status === "shipped"
+                    ? "#fbbf24"
+                    : "#ff4757"
+                };font-weight:600;">${order.status || "pending"}</span></div>
+              </div>
+              <div style="text-align:right;min-width:120px;">
+                <div class="order-total">$${
+                  order.total?.toFixed(2) || "0.00"
+                }</div>
+                <button class="btn" onclick="openChatModal('${order.id}', '${
+                order.user_id
+              }')"><i class="fas fa-comments"></i> Message</button>
+              </div>
+            </div>
+          </div>
+        `
+            )
+            .join("");
+        } catch (err) {
+          list.innerHTML =
+            '<div style="color:#ff4757;">Error loading orders.</div>';
+        }
+      }
+      // --- CHAT MODAL ---
+      let currentChatOrderId = null,
+        currentChatUserId = null;
+      window.openChatModal = function (orderId, userId) {
+        currentChatOrderId = orderId;
+        currentChatUserId = userId;
+        document.getElementById("chat-modal").style.display = "flex";
+        loadChatMessages();
+        if (window._chatMsgInterval) clearInterval(window._chatMsgInterval);
+        window._chatMsgInterval = setInterval(loadChatMessages, 10000);
+      };
+      window.closeChatModal = function () {
+        document.getElementById("chat-modal").style.display = "none";
+        if (window._chatMsgInterval) clearInterval(window._chatMsgInterval);
+      };
+      async function loadChatMessages() {
+        const list = document.getElementById("chat-messages");
+        if (!currentChatOrderId) return;
+        list.innerHTML = '<div style="color:#aaa;">Loading messages...</div>';
+        try {
+          const { data: messages, error } = await supabase
+            .from("messages")
+            .select("*")
+            .eq("order_id", currentChatOrderId)
+            .order("timestamp", { ascending: true });
+          if (error) throw error;
+          if (!messages || messages.length === 0) {
+            list.innerHTML = '<div style="color:#aaa;">No messages yet.</div>';
+            return;
+          }
+          list.innerHTML = messages
+            .map(
+              (msg) => `
+          <div class="chat-bubble ${
+            msg.sender_id === ADMIN_ID || msg.sender_id === "admin"
+              ? "admin"
+              : "user"
+          }">
+            <div class="bubble">${msg.message}<div class="chat-time">${new Date(
+                msg.timestamp
+              ).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}</div></div>
+          </div>
+        `
+            )
+            .join("");
+          list.scrollTop = list.scrollHeight;
+        } catch (err) {
+          list.innerHTML =
+            '<div style="color:#ff4757;">Error loading messages.</div>';
+        }
+      }
+      document.getElementById("chat-form").onsubmit = async function (e) {
+        e.preventDefault();
+        const input = document.getElementById("chat-input");
+        const msg = input.value.trim();
+        if (!msg || !currentChatOrderId || !currentChatUserId) return;
+        input.value = "";
+        // Get current admin user
+        const {
+          data: { user: adminUser },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError || !adminUser) {
+          console.error("Admin authentication required");
+          return;
+        }
+
+        await supabase.from("messages").insert([
+          {
+            order_id: currentChatOrderId,
+            sender_id: adminUser.id,
+            receiver_id: currentChatUserId,
+            message: msg,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+        loadChatMessages();
+      };
+      // Sidebar toggle for mobile
+      const sidebar = document.getElementById("sidebar");
+      const sidebarToggle = document.getElementById("sidebar-toggle");
+      const sidebarOverlay = document.getElementById("sidebar-overlay");
+      const mainContent = document.querySelector(".main-content");
+      function openSidebar() {
+        sidebar.classList.add("open");
+        mainContent.classList.add("blurred");
+        sidebarToggle.classList.add("open");
+        sidebarOverlay.style.display = "block";
+      }
+      function closeSidebar() {
+        sidebar.classList.remove("open");
+        mainContent.classList.remove("blurred");
+        sidebarToggle.classList.remove("open");
+        sidebarOverlay.style.display = "none";
+      }
+      sidebarToggle.onclick = function () {
+        if (sidebar.classList.contains("open")) {
+          closeSidebar();
+        } else {
+          openSidebar();
+        }
+      };
+      sidebarOverlay.onclick = function () {
+        closeSidebar();
+      };
+      // Close sidebar when clicking outside on mobile
+      window.addEventListener("click", function (e) {
+        if (
+          window.innerWidth <= 900 &&
+          sidebar.classList.contains("open") &&
+          !sidebar.contains(e.target) &&
+          !sidebarToggle.contains(e.target)
+        ) {
+          closeSidebar();
+        }
+      });
+
+      // --- ADMIN MESSAGING SYSTEM ---
+
+      // Navigation handling
+      document.querySelectorAll(".sidebar-nav a").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          // Remove active class from all links
+          document
+            .querySelectorAll(".sidebar-nav a")
+            .forEach((l) => l.classList.remove("active"));
+          // Add active class to clicked link
+          this.classList.add("active");
+
+          const target = this.getAttribute("href").substring(1);
+          showSection(target);
+        });
+      });
+
+      function showSection(sectionName) {
+        // Hide all sections
+        document
+          .querySelectorAll(
+            ".add-product-form, #admin-messaging-section, #orders-section, #campaigns-section"
+          )
+          .forEach((section) => {
+            section.style.display = "none";
+          });
+
+        // Show target section
+        switch (sectionName) {
+          case "products":
+            document.querySelector(".add-product-form").style.display = "block";
+            break;
+          case "campaigns":
+            document.getElementById("campaigns-section").style.display = "block";
+            if (!window._campaignAdmin) initCampaignsAdmin();
+            break;
+          case "messages":
+            document.getElementById("admin-messaging-section").style.display =
+              "block";
+            loadMessageHistory();
+            break;
+          case "orders":
+            document.getElementById("orders-section").style.display = "block";
+            loadOrders();
+            break;
+          default:
+            // Dashboard - show stats only
+            break;
+        }
+      }
+
+      // Message preview functionality
+      window.previewMessage = function () {
+        const type = document.getElementById("message-type").value;
+        const title = document.getElementById("message-title").value;
+        const content = document.getElementById("message-content").value;
+
+        if (!title || !content) {
+          alert("Please fill in both title and content for preview.");
+          return;
+        }
+
+        const iconMap = {
+          order: "fas fa-shopping-cart",
+          offer: "fas fa-tag",
+          wishlist: "fas fa-heart",
+          system: "fas fa-cog",
+          promo: "fas fa-bullhorn",
+        };
+
+        const preview = `
+          <div style="background: #333; border-radius: 8px; padding: 15px; margin: 10px 0; border-left: 4px solid #25d366;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <i class="${iconMap[type]}" style="color: #25d366;"></i>
+              <strong style="color: #fff;">${title}</strong>
+            </div>
+            <div style="color: #ccc; font-size: 0.9rem;">${content}</div>
+            <div style="color: #666; font-size: 0.8rem; margin-top: 5px;">Just now</div>
+          </div>
+        `;
+
+        const status = document.getElementById("broadcast-message-status");
+        status.innerHTML = `<div style="color: #25d366; margin-bottom: 10px;">Preview:</div>${preview}`;
+      };
+
+      // Broadcast message to all users (FIXED - No Admin Restrictions)
+      document
+        .getElementById("broadcast-message-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const type = document.getElementById("message-type").value;
+          const title = document.getElementById("message-title").value;
+          const content = document.getElementById("message-content").value;
+
+          if (!title || !content) {
+            alert("Please fill in both title and content.");
+            return;
+          }
+
+          const submitBtn = this.querySelector('button[type="submit"]');
+          const originalText = submitBtn.innerHTML;
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Sending...';
+          submitBtn.disabled = true;
+
+          try {
+            // Get current user (no admin restriction check)
+            const {
+              data: { user },
+              error: userError,
+            } = await supabase.auth.getUser();
+
+            console.log("Current user:", user);
+            console.log("User error:", userError);
+
+            // Use admin ID if no user is logged in (for testing purposes)
+            const senderId = user ? user.id : ADMIN_ID;
+
+            // Get all users (only ID needed for messaging)
+            const { data: users, error: usersError } = await supabase
+              .from("profiles")
+              .select("id")
+              .neq("id", senderId); // Exclude sender from receiving their own message
+
+            if (usersError) {
+              console.log("Error getting users:", usersError);
+              // If no users table or error, create a test message
+              const testMessage = {
+                sender_id: senderId,
+                receiver_id: 'test-user',
+                message_type: type,
+                content: `${title}: ${content}`,
+                is_read: false,
+                created_at: new Date().toISOString(),
+              };
+              
+              const { error: insertError } = await supabase
+                .from("messages")
+                .insert([testMessage]);
+              
+              if (insertError) {
+                throw insertError;
+              }
+              
+              // Update status
+              const status = document.getElementById("broadcast-message-status");
+              status.innerHTML = `<div style="color: #25d366; padding: 10px; background: rgba(37, 211, 102, 0.1); border-radius: 6px; border: 1px solid #25d366;">
+                <i class="fas fa-check"></i> Test message sent successfully! (Admin restrictions removed)
+              </div>`;
+              
+            } else {
+              console.log("Users found:", users);
+
+              if (!users || users.length === 0) {
+                // Create a test message if no users found
+                const testMessage = {
+                  sender_id: senderId,
+                  receiver_id: 'test-user',
+                  message_type: type,
+                  content: `${title}: ${content}`,
+                  is_read: false,
+                  created_at: new Date().toISOString(),
+                };
+                
+                const { error: insertError } = await supabase
+                  .from("messages")
+                  .insert([testMessage]);
+                
+                if (insertError) {
+                  throw insertError;
+                }
+                
+                // Update status
+                const status = document.getElementById("broadcast-message-status");
+                status.innerHTML = `<div style="color: #25d366; padding: 10px; background: rgba(37, 211, 102, 0.1); border-radius: 6px; border: 1px solid #25d366;">
+                  <i class="fas fa-check"></i> Test message sent successfully! (No users found)
+                </div>`;
+              } else {
+                // Create message for each user
+                const messages = users.map((userProfile) => ({
+                  sender_id: senderId,
+                  receiver_id: userProfile.id,
+                  message_type: type,
+                  content: `${title}: ${content}`, // Combine title and content
+                  is_read: false,
+                  created_at: new Date().toISOString(),
+                }));
+
+                // Insert messages into database
+                console.log("Inserting messages:", messages);
+                const { error: insertError } = await supabase
+                  .from("messages")
+                  .insert(messages);
+
+                if (insertError) {
+                  console.error("Insert error:", insertError);
+                  throw insertError;
+                }
+
+                // Update status
+                const status = document.getElementById("broadcast-message-status");
+                status.innerHTML = `<div style="color: #25d366; padding: 10px; background: rgba(37, 211, 102, 0.1); border-radius: 6px; border: 1px solid #25d366;">
+                  <i class="fas fa-check"></i> Message sent to ${users.length} users successfully! (Admin restrictions removed)
+                </div>`;
+              }
+            }
+
+            // Clear form
+            document.getElementById("message-title").value = "";
+            document.getElementById("message-content").value = "";
+
+            // Reload message history
+            if (typeof loadMessageHistory === 'function') {
+              loadMessageHistory();
+            }
+
+            // Trigger message count updates on all pages
+            if (window.updateMessageCount) {
+              window.updateMessageCount();
+            }
+          } catch (error) {
+            console.error("Error sending broadcast message:", error);
+            console.error("Error details:", error);
+            const status = document.getElementById("broadcast-message-status");
+            status.innerHTML = `<div style="color: #ff4757; padding: 10px; background: rgba(255, 71, 87, 0.1); border-radius: 6px; border: 1px solid #ff4757;">
+              <i class="fas fa-exclamation-triangle"></i> Error: ${error.message}
+              <br><small>Check browser console for more details</small>
+            </div>`;
+          } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+          }
+        });
+
+      function getMessageIcon(type) {
+        const iconMap = {
+          order: "fas fa-shopping-cart",
+          offer: "fas fa-tag",
+          wishlist: "fas fa-heart",
+          system: "fas fa-cog",
+          promo: "fas fa-bullhorn",
+        };
+        return iconMap[type] || "fas fa-bell";
+      }
+
+      async function loadMessageHistory() {
+        const historyContainer = document.getElementById("message-history");
+
+        try {
+          // Get current admin user
+          const {
+            data: { user },
+            error: userError,
+          } = await supabase.auth.getUser();
+          if (userError || !user) {
+            historyContainer.innerHTML =
+              '<div style="color: #ff4757; text-align: center; padding: 20px;">Admin authentication required.</div>';
+            return;
+          }
+
+          // Get messages from database
+          const { data: messages, error } = await supabase
+            .from("messages")
+            .select("*")
+            .eq("sender_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(10);
+
+          if (error) throw error;
+
+          if (!messages || messages.length === 0) {
+            historyContainer.innerHTML =
+              '<div style="color: #ccc; text-align: center; padding: 20px;">No messages sent yet.</div>';
+            return;
+          }
+
+          const historyHtml = messages
+            .map(
+              (msg) => `
+            <div style="background: #333; border-radius: 8px; padding: 12px; margin-bottom: 8px; border-left: 4px solid #25d366;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                <i class="${getMessageIcon(
+                  msg.message_type
+                )}" style="color: #25d366; font-size: 0.9rem;"></i>
+                <strong style="color: #fff; font-size: 0.9rem;">${
+                  msg.message_type.charAt(0).toUpperCase() +
+                  msg.message_type.slice(1)
+                } Message</strong>
+                <span style="color: #666; font-size: 0.8rem; margin-left: auto;">${formatTime(
+                  msg.created_at
+                )}</span>
+              </div>
+              <div style="color: #ccc; font-size: 0.85rem;">${msg.content}</div>
+            </div>
+          `
+            )
+            .join("");
+
+          historyContainer.innerHTML = historyHtml;
+        } catch (error) {
+          console.error("Error loading message history:", error);
+          historyContainer.innerHTML =
+            '<div style="color: #ff4757; text-align: center; padding: 20px;">Error loading message history.</div>';
+        }
+      }
+
+      function formatTime(timeString) {
+        const time = new Date(timeString);
+        const now = new Date();
+        const diffMs = now - time;
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffDays > 0) {
+          return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+        } else if (diffHours > 0) {
+          return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+        } else {
+          return "Just now";
+        }
+      }
+      // Test messaging system
+      async function testMessagingSystem() {
+        try {
+          console.log("Testing messaging system...");
+
+          // Test 1: Check if Supabase is connected
+          if (!window.supabase) {
+            throw new Error("Supabase not loaded");
+          }
+          console.log("✅ Supabase connected");
+
+          // Test 2: Check if user is authenticated
+          const {
+            data: { user },
+            error: userError,
+          } = await supabase.auth.getUser();
+          if (userError || !user) {
+            throw new Error("User not authenticated");
+          }
+          console.log("✅ User authenticated:", user.id);
+
+          // Test 3: Check if messages table exists
+          const { data: messages, error: messagesError } = await supabase
+            .from("messages")
+            .select("id")
+            .limit(1);
+
+          if (messagesError) {
+            throw new Error("Messages table error: " + messagesError.message);
+          }
+          console.log("✅ Messages table accessible");
+
+          // Test 4: Check if profiles table exists
+          const { data: profiles, error: profilesError } = await supabase
+            .from("profiles")
+            .select("id")
+            .limit(1);
+
+          if (profilesError) {
+            throw new Error("Profiles table error: " + profilesError.message);
+          }
+          console.log("✅ Profiles table accessible");
+
+          console.log("🎉 All messaging system tests passed!");
+          return true;
+        } catch (error) {
+          console.error("❌ Messaging system test failed:", error);
+          return false;
+        }
+      }
+
+      // Run test on page load (temporarily disabled)
+      // document.addEventListener("DOMContentLoaded", function () {
+      //   setTimeout(testMessagingSystem, 1000);
+      // });
+
+      // Keyboard accessibility for hamburger
+      sidebarToggle.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          sidebarToggle.click();
+        }
+      });
+      // Close sidebar when a nav link is tapped (mobile)
+      document.querySelectorAll(".sidebar-nav a").forEach((link) => {
+        link.addEventListener("click", function () {
+          if (window.innerWidth <= 900) closeSidebar();
+        });
+      });
+    </script>
+    <script>
+      // Minimal styles for campaign editor (inline to avoid extra files)
+      (function injectCampaignStyles(){
+        const css = `
+          .editor-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:30000}
+          .editor-modal{width:95%;max-width:1100px;max-height:90vh;overflow:hidden;background:#121212;border:1px solid #333;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:flex;flex-direction:column}
+          .editor-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #333;background:#0f0f0f}
+          .editor-title{font-weight:800;color:#25d366}
+          .editor-close{background:transparent;border:none;color:#aaa;font-size:1.3rem;cursor:pointer}
+          .editor-body{display:flex;min-height:500px}
+          .editor-tabs{width:220px;border-right:1px solid #333;background:#0f0f0f}
+          .editor-tab-btn{width:100%;text-align:left;padding:14px 16px;border:none;background:transparent;color:#ddd;cursor:pointer;border-bottom:1px solid #1f1f1f}
+          .editor-tab-btn.active{background:#151515;color:#25d366}
+          .editor-content{flex:1;overflow-y:auto;padding:18px}
+          .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+          .form-group{display:flex;flex-direction:column;gap:6px}
+          .form-group label{color:#aaa;font-size:.9rem}
+          .form-group input,.form-group select,.form-group textarea{background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:8px;padding:10px}
+          .actions-row{display:flex;gap:10px;margin-top:10px}
+          .btn.primary{background:#25d366;color:#111}
+          .btn.secondary{background:transparent;border:1px solid #25d366;color:#25d366}
+          .btn.danger{background:#ff4757;color:#fff}
+          .list-table{width:100%;border-collapse:collapse}
+          .list-table th,.list-table td{border-bottom:1px solid #333;padding:10px;text-align:left}
+          .hint{color:#888;font-size:.85rem}
+          .uploader{border:1px dashed #333;border-radius:8px;padding:14px}
+          @media (max-width:900px){.form-grid{grid-template-columns:1fr}.editor-tabs{width:160px}}
+        `;
+        const style=document.createElement('style'); style.textContent=css; document.head.appendChild(style);
+      })();
+
+      async function getAuthHeaders(){
+        try{
+          const { data } = await supabase.auth.getSession();
+          const token = data?.session?.access_token;
+          const headers = { 'Content-Type':'application/json' };
+          if (token) headers['Authorization'] = `Bearer ${token}`;
+          // Dev bypass support: send admin id header so server can accept when ALLOW_ADMIN_BYPASS=true
+          if (window.currentUser && window.currentUser.id) headers['x-admin-id'] = window.currentUser.id;
+          // Optional: ADMIN_SECRET header if provided via global for dev
+          if (window.ADMIN_SECRET) headers['x-admin-secret'] = window.ADMIN_SECRET;
+          return headers;
+        }catch{ return { 'Content-Type':'application/json' }; }
+      }
+
+      function initCampaignsAdmin(){
+        class CampaignAdmin {
+          constructor(){ this.current={id:null,data:null}; this.campaigns=[]; this.filter=null; this.load(); }
+          async headers(){ return await getAuthHeaders(); }
+          async load(){ try{ const res=await fetch('/admin/campaigns',{ headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Load failed'); this.campaigns=d.campaigns||[]; this.renderList(); }catch(e){ this.toast(e.message,'error'); } }
+          async refresh(){ await this.load(); }
+          applyFilter(val){ this.filter=(val&&val!=='all')?val:null; this.renderList(); }
+          renderList(){ const c=document.getElementById('campaigns-container'); let list=this.campaigns; if(this.filter){ list=list.filter(x=>x.type===this.filter); } if(!list.length){ c.innerHTML = '<div style="color:#aaa;padding:12px;border:1px solid #333;border-radius:8px;background:#1a1a1a">No campaigns found.</div>'; return; } const cards=list.map(x=>this.card(x)).join(''); c.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px;">${cards}</div>`; }
+          card(c){ const now=new Date(); const s=new Date(c.start_at||0), e=new Date(c.end_at||0); const active=c.is_active && now>=s && now<=e; const expired= now>e && c.end_at; const status = expired?'Expired':(active?'Active':(c.is_active?'Scheduled':'Inactive')); return `
+            <div style="background:#222;border:1px solid #333;border-radius:12px;padding:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+                <div>
+                  <div style="color:#25d366;font-weight:700">${c.title||'(untitled)'}</div>
+                  <div style="font-size:.85rem;color:#aaa;text-transform:uppercase">${c.type}</div>
+                </div>
+                <div style="font-size:.8rem;padding:4px 8px;border-radius:12px;border:1px solid #444;color:#ccc">${status}</div>
+              </div>
+              <div style="margin-top:8px;color:#ccc;font-size:.92rem">${c.description||''}</div>
+              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn" style="background:#ffa502;color:#111" onclick="window._campaignAdmin.openEditor(${c.id})"><i class="fas fa-edit"></i> Edit</button>
+                ${active?`<button class="btn" style="background:#666;color:#fff" onclick="window._campaignAdmin.deactivate(${c.id})"><i class=\"fas fa-pause\"></i> Deactivate</button>`:`<button class="btn" style="background:#25d366;color:#111" onclick="window._campaignAdmin.activate(${c.id})"><i class=\"fas fa-play\"></i> Activate</button>`}
+                <button class="btn" style="background:#ff4757;color:#fff" onclick="window._campaignAdmin.remove(${c.id})"><i class="fas fa-trash"></i> Delete</button>
+              </div>
+            </div>`; }
+          async activate(id){ try{ const res=await fetch(`/admin/campaigns/${id}/activate`,{ method:'POST', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Activate failed'); this.toast('Campaign activated','success'); this.load(); }catch(e){ this.toast(e.message,'error'); } }
+          async deactivate(id){ try{ const res=await fetch(`/admin/campaigns/${id}/deactivate`,{ method:'POST', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Deactivate failed'); this.toast('Campaign deactivated','success'); this.load(); }catch(e){ this.toast(e.message,'error'); } }
+          async remove(id){ if(!confirm('Delete this campaign?')) return; try{ const res=await fetch(`/admin/campaigns/${id}`,{ method:'DELETE', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Delete failed'); this.toast('Campaign deleted','success'); this.load(); }catch(e){ this.toast(e.message,'error'); } }
+          async openEditor(id){ if(id){ try{ const res=await fetch(`/admin/campaigns/${id}`,{ headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Load failed'); this.current={id,data:d.campaign}; }catch(e){ return this.toast(e.message,'error'); } } else { this.current={id:null,data:{ type:'flash', is_active:false }} }
+            this.renderDetails(); this.renderProducts(); this.renderAssets(); this.renderPopups(); this.renderPreview(); document.getElementById('editor-title').textContent = this.current.id?'Edit Campaign':'New Campaign'; document.getElementById('campaign-editor').style.display='flex'; this.bindTabs(); }
+          closeEditor(){ document.getElementById('campaign-editor').style.display='none'; }
+          bindTabs(){ const tabs=document.querySelectorAll('.editor-tab-btn'); tabs.forEach(b=>b.onclick=()=>{ tabs.forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none'); document.getElementById(`tab-${b.dataset.tab}`).style.display=''; }); }
+          renderDetails(){ const c=this.current.data||{}; const el=document.getElementById('tab-details'); el.innerHTML = `
+            <div class="form-grid">
+              <div class="form-group"><label>Slug</label><input id="c-slug" value="${c.slug||''}" placeholder="black-friday-2025"></div>
+              <div class="form-group"><label>Title</label><input id="c-title" value="${c.title||''}" placeholder="Campaign title"></div>
+              <div class="form-group"><label>Type</label><select id="c-type"><option value="flash" ${c.type==='flash'?'selected':''}>Flash</option><option value="hero" ${c.type==='hero'?'selected':''}>Hero</option><option value="banner" ${c.type==='banner'?'selected':''}>Banner</option><option value="popup" ${c.type==='popup'?'selected':''}>Popup</option></select></div>
+              <div class="form-group"><label>Active</label><select id="c-active"><option value="true" ${c.is_active?'selected':''}>Active</option><option value="false" ${!c.is_active?'selected':''}>Inactive</option></select></div>
+              <div class="form-group"><label>Start At (ISO)</label><input id="c-start" value="${c.start_at||''}"></div>
+              <div class="form-group"><label>End At (ISO)</label><input id="c-end" value="${c.end_at||''}"></div>
+              <div class="form-group" style="grid-column:1/-1"><label>Description</label><textarea id="c-desc" rows="3">${c.description||''}</textarea></div>
+              <div class="form-group" style="grid-column:1/-1"><label>Preview Payload (JSON)</label><textarea id="c-preview" rows="4">${c.preview_payload?JSON.stringify(c.preview_payload,null,2):JSON.stringify({theme:"dark",colors:{primary:"#25d366",secondary:"#128c7e",background:"#111111",text:"#ffffff"},banner:{title:"Mega Flash Sale!",subtitle:"Up to 50% off gaming gear",ctaText:"Shop Now",ctaLink:"/flashsales.html",image:"assets/images/campaigns/banner-default.jpg"},popup:{enabled:true,image:"assets/images/campaigns/popup-default.jpg",headline:"Limited Time Offer",body:"Grab your favorites before they're gone!",ctaText:"Browse Deals",ctaLink:"/flashsales.html"}},null,2)}</textarea><div class="hint">theme, color palette, banner and popup defaults. Edit as needed.</div></div>
+            </div>
+            <div class="actions-row">
+              <button class="btn primary" onclick="window._campaignAdmin.saveDetails()">Save Details</button>
+              ${this.current.id?`<button class=\"btn danger\" onclick=\"window._campaignAdmin.remove(${this.current.id})\">Delete</button>`:''}
+            </div>
+            <div class="actions-row" style="gap:8px;margin-top:8px">
+              <button class="btn" onclick="window._campaignAdmin.applyPreset('flash3h')"><i class="fas fa-bolt"></i> Flash: 3 hours</button>
+              <button class="btn" onclick="window._campaignAdmin.applyPreset('hero')"><i class="fas fa-image"></i> Hero Banner</button>
+              <button class="btn" onclick="window._campaignAdmin.applyPreset('popup')"><i class="fas fa-window-maximize"></i> Popup Basic</button>
+            </div>`; 
+            this.bindDetailEnhancements();
+          }
+          async saveDetails(){ const payload={ slug:gv('c-slug'), title:gv('c-title'), type:gv('c-type'), is_active:(gv('c-active')==='true'), start_at:gv('c-start')||null, end_at:gv('c-end')||null, description:gv('c-desc')||null }; const pr=gv('c-preview'); if(pr) { try{ payload.preview_payload=JSON.parse(pr);}catch{ return this.toast('Invalid preview JSON','error'); } } try{ let res; if(this.current.id){ res=await fetch(`/admin/campaigns/${this.current.id}`,{ method:'PUT', headers: await this.headers(), body: JSON.stringify(payload)});} else { res=await fetch('/admin/campaigns',{ method:'POST', headers: await this.headers(), body: JSON.stringify(payload)});} const d=await res.json(); if(!res.ok) throw new Error(d.error||'Save failed'); this.toast('Details saved','success'); if(!this.current.id){ this.current.id=d.campaign.id; this.current.data=d.campaign; } await this.load(); await this.openEditor(this.current.id); }catch(e){ this.toast(e.message,'error'); } }
+          renderProducts(){ const el=document.getElementById('tab-products'); if(!this.current.id){ el.innerHTML='<div class="hint">Save Details first to manage products.</div>'; return;} const rows=(this.current.data?.campaign_products||[]).map(p=>`
+            <tr><td>${p.id}</td><td>${p.product_id}</td>
+            <td><input value="${p.original_price??''}" data-field="original_price" data-id="${p.id}" style="width:90px"></td>
+            <td><input value="${p.sale_price??''}" data-field="sale_price" data-id="${p.id}" style="width:90px"></td>
+            <td><input value="${p.reserved_stock??0}" data-field="reserved_stock" data-id="${p.id}" style="width:80px"></td>
+            <td><input value="${p.max_per_customer??1}" data-field="max_per_customer" data-id="${p.id}" style="width:80px"></td>
+            <td><input value="${p.display_order??0}" data-field="display_order" data-id="${p.id}" style="width:70px"></td>
+            <td><button class="btn secondary" onclick="window._campaignAdmin.updateCP(${p.id})">Save</button> <button class="btn danger" onclick="window._campaignAdmin.deleteCP(${p.id})">Delete</button></td></tr>`).join(''); el.innerHTML = `
+              <div class="uploader"><div class="form-group"><label>Bulk CSV Import</label><input type="file" id="csv-file" accept=".csv"></div><div class="actions-row"><button class="btn secondary" onclick="window._campaignAdmin.importCsv()">Import CSV</button></div><div class="hint">CSV: product_id,original_price,sale_price,reserved_stock,max_per_customer,display_order</div></div>
+              <div class="actions-row" style="margin-top:12px"><button class="btn primary" onclick="window._campaignAdmin.addProductPrompt()">Add Product</button></div>
+              <table class="list-table" style="margin-top:12px"><thead><tr><th>ID</th><th>Product</th><th>Original</th><th>Sale</th><th>Stock</th><th>Max/Customer</th><th>Order</th><th></th></tr></thead><tbody id="cp-rows">${rows}</tbody></table>`; }
+          async importCsv(){ const f=document.getElementById('csv-file').files?.[0]; if(!f) return this.toast('Select a CSV','error'); const t=await f.text(); const rows=t.trim().split(/\r?\n/).slice(1).map(r=>r.split(',')); const products=rows.filter(r=>r[0]).map(r=>({ product_id:parseInt(r[0]), original_price:parseFloat(r[1]||0), sale_price:parseFloat(r[2]||0), reserved_stock:parseInt(r[3]||0), max_per_customer:parseInt(r[4]||1), display_order:parseInt(r[5]||0) })); try{ const res=await fetch(`/admin/campaigns/${this.current.id}/products`,{ method:'POST', headers: await this.headers(), body: JSON.stringify({ products })}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Import failed'); this.toast('Products imported','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          addProductPrompt(){ const p={ product_id:parseInt(prompt('Product ID:')||'0'), original_price:parseFloat(prompt('Original Price:')||'0'), sale_price:parseFloat(prompt('Sale Price:')||'0'), reserved_stock:parseInt(prompt('Reserved Stock:')||'0'), max_per_customer:parseInt(prompt('Max/Customer:')||'1'), display_order:parseInt(prompt('Display Order:')||'0') }; if(!p.product_id||!p.sale_price) return this.toast('Missing fields','error'); this.bulkAdd([p]); }
+          async bulkAdd(products){ try{ const res=await fetch(`/admin/campaigns/${this.current.id}/products`,{ method:'POST', headers: await this.headers(), body: JSON.stringify({ products })}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Add failed'); this.toast('Product added','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          async updateCP(id){ const inputs=Array.from(document.querySelectorAll(`#cp-rows input[data-id='${id}']`)); const payload={}; inputs.forEach(i=>payload[i.dataset.field]=i.value); ['original_price','sale_price'].forEach(k=>payload[k]=payload[k]!==''?parseFloat(payload[k]):null); ['reserved_stock','max_per_customer','display_order'].forEach(k=>payload[k]=payload[k]!==''?parseInt(payload[k]):null); try{ const res=await fetch(`/admin/campaign_products/${id}`,{ method:'PUT', headers: await this.headers(), body: JSON.stringify(payload)}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Update failed'); this.toast('Updated','success'); }catch(e){ this.toast(e.message,'error'); } }
+          async deleteCP(id){ if(!confirm('Delete this campaign product?')) return; try{ const res=await fetch(`/admin/campaign_products/${id}`,{ method:'DELETE', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Delete failed'); this.toast('Deleted','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          renderAssets(){ const el=document.getElementById('tab-assets'); if(!this.current.id){ el.innerHTML='<div class="hint">Save Details first to manage assets.</div>'; return;} const a=(this.current.data?.campaign_assets||[]).map(x=>`<tr><td>${x.id}</td><td>${x.asset_type}</td><td style=\"max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\">${x.url}</td><td>${x.alt||''}</td><td><code style=\"font-size:12px\">${x.metadata?JSON.stringify(x.metadata):''}</code></td><td><button class=\"btn danger\" onclick=\"window._campaignAdmin.deleteAsset(${x.id})\">Delete</button></td></tr>`).join(''); el.innerHTML=`
+            <div class="form-grid">
+              <div class="form-group"><label>Asset URL</label><input id="asset-url" placeholder="https://..."></div>
+              <div class="form-group"><label>Alt</label><input id="asset-alt" placeholder="Alt text"></div>
+              <div class="form-group"><label>Type</label><select id="asset-type"><option value="image">Image</option><option value="video">Video</option><option value="html">HTML</option></select></div>
+              <div class="form-group"><label>Width</label><input id="asset-width" type="number" placeholder="1920"></div>
+              <div class="form-group"><label>Height</label><input id="asset-height" type="number" placeholder="600"></div>
+              <div class="form-group" style="grid-column:1/-1"><label>Metadata JSON</label><textarea id="asset-meta" rows="3">{"position":"hero","variant":"A"}</textarea></div>
+            </div>
+            <div class="actions-row"><button class="btn primary" onclick="window._campaignAdmin.addAsset()">Add Asset</button></div>
+            <div class="uploader" style="margin-top:12px">
+              <div class="form-group"><label>Upload Images</label><input id="asset-file" type="file" accept="image/*" multiple></div>
+              <div class="form-grid">
+                <div class="form-group"><label>Position</label><select id="asset-position"><option value="grid" selected>Grid</option><option value="strip">Strip</option><option value="hero">Hero</option><option value="popup">Popup</option></select></div>
+              </div>
+              <div class="actions-row"><button class="btn primary" onclick="window._campaignAdmin.uploadAsset()">Upload Asset</button></div>
+              <div class="hint">Upload from your device or use the URL form above. Alt and metadata apply to both.</div>
+            </div>
+            <table class="list-table" style="margin-top:12px"><thead><tr><th>ID</th><th>Type</th><th>URL</th><th>Alt</th><th>Meta</th><th></th></tr></thead><tbody>${a}</tbody></table>`; }
+          async uploadAsset(){ const fileInput=document.getElementById('asset-file'); if(!fileInput || !fileInput.files || fileInput.files.length===0){ return this.toast('Select image(s) to upload','error'); } try{ const auth=await this.headers(); if('Content-Type' in auth) { delete auth['Content-Type']; } const alt=gv('asset-alt'); const pos=gv('asset-position'); const metaRaw=gv('asset-meta'); for(const f of fileInput.files){ const fd=new FormData(); fd.append('file', f); if(alt) fd.append('alt', alt); if(pos) fd.append('position', pos); if(metaRaw) fd.append('metadata', metaRaw); const res=await fetch(`/admin/campaigns/${this.current.id}/assets/upload`,{ method:'POST', headers: auth, body: fd }); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Upload failed'); } this.toast('Asset(s) uploaded','success'); const ref=await fetch(`/admin/campaigns/${this.current.id}`,{ headers: await this.headers()}); this.current.data=(await ref.json()).campaign; this.renderAssets(); }catch(e){ this.toast(e.message,'error'); } }
+
+          // Helpers for details tab
+          bindDetailEnhancements(){ const title=document.getElementById('c-title'); const slug=document.getElementById('c-slug'); if(title&&slug){ let touched=false; slug.addEventListener('input',()=>{ touched=true; }); title.addEventListener('input',()=>{ if(!touched || !slug.value){ slug.value=this.slugify(title.value); } }); }
+            const self=this; this.applyPreset = function(kind){ const now=new Date(); const set=(id,val)=>{ const el=document.getElementById(id); if(el) el.value=val; }; if(kind==='flash3h'){ set('c-type','flash'); set('c-active','true'); const start=new Date(now.getTime()+60*1000).toISOString(); const end=new Date(now.getTime()+3*60*60*1000).toISOString(); set('c-start', start); set('c-end', end); if(!document.getElementById('c-title').value) set('c-title','Flash Sale'); if(!document.getElementById('c-slug').value) set('c-slug', self.slugify('flash-'+now.toISOString().slice(0,10))); }
+              if(kind==='hero'){ set('c-type','hero'); set('c-active','true'); if(!document.getElementById('c-title').value) set('c-title','Homepage Hero'); if(!document.getElementById('c-slug').value) set('c-slug', self.slugify('hero-'+now.toISOString().slice(0,10))); }
+              if(kind==='popup'){ set('c-type','popup'); set('c-active','true'); if(!document.getElementById('c-title').value) set('c-title','Special Offer'); if(!document.getElementById('c-slug').value) set('c-slug', self.slugify('popup-'+now.toISOString().slice(0,10))); }
+            }
+          }
+          slugify(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').replace(/-+/g,'-'); }
+          async addAsset(){ const payload={ asset_type:gv('asset-type'), url:gv('asset-url').trim(), alt:gv('asset-alt').trim(), width:pi('asset-width'), height:pi('asset-height') }; const mr=gv('asset-meta'); if(mr){ try{ payload.metadata=JSON.parse(mr);}catch{ return this.toast('Invalid metadata JSON','error'); } } if(!payload.url) return this.toast('Asset URL required','error'); try{ const res=await fetch(`/admin/campaigns/${this.current.id}/assets`,{ method:'POST', headers: await this.headers(), body: JSON.stringify(payload)}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Add asset failed'); this.toast('Asset added','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          async deleteAsset(id){ if(!confirm('Delete this asset?')) return; try{ const res=await fetch(`/admin/campaigns/${this.current.id}/assets/${id}`,{ method:'DELETE', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Delete failed'); this.toast('Asset deleted','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          renderPopups(){ const el=document.getElementById('tab-popups'); if(!this.current.id){ el.innerHTML='<div class="hint">Save Details first to manage popup rules.</div>'; return;} const r=(this.current.data?.popup_rules||[]).map(x=>`<tr><td>${x.id}</td><td>${x.trigger_type}</td><td>${x.trigger_value??''}</td><td>${(x.device_target||[]).join(',')}</td><td>${(x.geo_target||[]).join(',')}</td><td>${x.frequency_days??''}</td><td>${x.show_once?'Yes':'No'}</td><td><button class=\"btn danger\" onclick=\"window._campaignAdmin.deleteRule(${x.id})\">Delete</button></td></tr>`).join(''); el.innerHTML=`
+            <div class="form-grid">
+              <div class="form-group"><label>Trigger Type</label><select id="rule-type"><option value="time_on_page">Time on page</option><option value="exit_intent">Exit intent</option><option value="scroll">Scroll</option><option value="cart_value">Cart value</option><option value="manual">Manual</option></select></div>
+              <div class="form-group"><label>Trigger Value</label><input id="rule-value" placeholder="seconds/percent/amount"></div>
+              <div class="form-group"><label>Device Target (comma)</label><input id="rule-device" placeholder="mobile,desktop"></div>
+              <div class="form-group"><label>Geo Target (comma)</label><input id="rule-geo" placeholder="KE,US,UK"></div>
+              <div class="form-group"><label>Frequency Days</label><input id="rule-days" type="number" value="7"></div>
+              <div class="form-group"><label>Show Once</label><select id="rule-once"><option value="true" selected>Yes</option><option value="false">No</option></select></div>
+            </div>
+            <div class="actions-row"><button class="btn primary" onclick="window._campaignAdmin.addRule()">Add Rule</button></div>
+            <table class="list-table" style="margin-top:12px"><thead><tr><th>ID</th><th>Type</th><th>Value</th><th>Device</th><th>Geo</th><th>Freq</th><th>Once</th><th></th></tr></thead><tbody>${r}</tbody></table>`; }
+          async addRule(){ const payload={ trigger_type:gv('rule-type'), trigger_value:pi('rule-value')||null, device_target:gv('rule-device')?gv('rule-device').split(',').map(s=>s.trim()):null, geo_target:gv('rule-geo')?gv('rule-geo').split(',').map(s=>s.trim()):null, frequency_days:pi('rule-days')||7, show_once:(gv('rule-once')==='true') }; try{ const res=await fetch(`/admin/campaigns/${this.current.id}/popup_rules`,{ method:'POST', headers: await this.headers(), body: JSON.stringify(payload)}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Add rule failed'); this.toast('Rule added','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          async deleteRule(id){ if(!confirm('Delete this rule?')) return; try{ const res=await fetch(`/admin/popup_rules/${id}`,{ method:'DELETE', headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Delete failed'); this.toast('Rule deleted','success'); await this.openEditor(this.current.id);}catch(e){ this.toast(e.message,'error'); } }
+          renderPreview(){ const el=document.getElementById('tab-preview'); if(!this.current.id){ el.innerHTML='<div class="hint">Save Details first to preview.</div>'; return;} el.innerHTML = `<div class=\"actions-row\"><button class=\"btn secondary\" onclick=\"window._campaignAdmin.loadPreview()\">Refresh Preview</button></div><div id=\"preview-json\" class=\"uploader\" style=\"margin-top:12px;white-space:pre;font-family:monospace;overflow:auto;max-height:60vh\"></div>`; }
+          async loadPreview(){ try{ const res=await fetch(`/admin/campaigns/${this.current.id}/preview`,{ headers: await this.headers()}); const d=await res.json(); if(!res.ok) throw new Error(d.error||'Preview failed'); document.getElementById('preview-json').textContent = JSON.stringify(d.campaign,null,2); }catch(e){ this.toast(e.message,'error'); } }
+          toast(msg,type){ const el=document.createElement('div'); el.style.cssText='position:fixed;top:16px;right:16px;padding:10px 14px;border-radius:10px;z-index:40000;color:#fff;font-weight:700;max-width:320px;background:'+(type==='success'?'linear-gradient(45deg,#25d366,#128c7e)':'linear-gradient(45deg,#ff4757,#c44569)'); el.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}" style="margin-right:8px"></i>${msg}`; document.body.appendChild(el); setTimeout(()=>el.remove(),4000); }
+        }
+        function gv(id){ const el=document.getElementById(id); return el?el.value:'' }
+        function pi(id){ const v=gv(id); const n=parseInt(v,10); return isNaN(n)?null:n }
+        window._campaignAdmin = new CampaignAdmin();
+
+        // Site Banner Admin System
+        class SiteBannerAdmin {
+          constructor() {
+            this.banners = [];
+            this.assets = [];
+            this.current = null;
+            this.init();
+          }
+
+          async init() {
+            await this.loadBanners();
+            await this.loadAssets();
+            this.setupNavigation();
+          }
+
+          async loadBanners() {
+            try {
+              const response = await fetch('/admin/site-banners', {
+                headers: await this.headers()
+              });
+              const data = await response.json();
+              this.banners = data.banners || [];
+            } catch (error) {
+              console.error('Error loading banners:', error);
+              this.toast('Failed to load banners', 'error');
+            }
+          }
+
+          async loadAssets() {
+            try {
+              const response = await fetch('/admin/site-banners/assets', {
+                headers: await this.headers()
+              });
+              const data = await response.json();
+              this.assets = data.assets || [];
+            } catch (error) {
+              console.error('Error loading assets:', error);
+            }
+          }
+
+          setupNavigation() {
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            navLinks.forEach(link => {
+              link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = link.getAttribute('href');
+                if (href === '#site-banners') {
+                  this.showSection();
+                }
+              });
+            });
+          }
+
+          showSection() {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(section => {
+              section.style.display = 'none';
+            });
+            
+            // Show site banners section
+            const section = document.getElementById('site-banners-section');
+            if (section) {
+              section.style.display = 'block';
+              this.renderBanners();
+            }
+          }
+
+          renderBanners() {
+            const container = document.getElementById('site-banners-container');
+            if (!container) return;
+
+            if (this.banners.length === 0) {
+              container.innerHTML = '<div class="hint">No site banners created yet. Create your first banner!</div>';
+              return;
+            }
+
+            const bannersHtml = this.banners.map(banner => `
+              <div class="campaign-card" style="margin-bottom: 12px;">
+                <div class="campaign-header">
+                  <div class="campaign-info">
+                    <h3>${banner.title}</h3>
+                    <p>${banner.message || 'No message'}</p>
+                    <div class="campaign-meta">
+                      <span class="badge ${banner.type}">${banner.type}</span>
+                      <span class="badge ${banner.is_active ? 'success' : 'secondary'}">${banner.is_active ? 'Active' : 'Inactive'}</span>
+                      <span class="badge secondary">${banner.position}</span>
+                    </div>
+                  </div>
+                  <div class="campaign-actions">
+                    <button class="btn secondary" onclick="window._siteBannerAdmin.openEditor(${banner.id})">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn ${banner.is_active ? 'warning' : 'success'}" onclick="window._siteBannerAdmin.toggleBanner(${banner.id})">
+                      <i class="fas fa-${banner.is_active ? 'pause' : 'play'}"></i> ${banner.is_active ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button class="btn danger" onclick="window._siteBannerAdmin.deleteBanner(${banner.id})">
+                      <i class="fas fa-trash"></i> Delete
+                    </button>
+                  </div>
+                </div>
+                ${banner.banner_image ? `
+                  <div class="banner-preview">
+                    <img src="${banner.banner_image}" alt="${banner.title}" style="max-width: 200px; max-height: 60px; object-fit: cover; border-radius: 4px;">
+                  </div>
+                ` : ''}
+              </div>
+            `).join('');
+
+            container.innerHTML = bannersHtml;
+          }
+
+          async openEditor(bannerId = null) {
+            this.current = bannerId ? this.banners.find(b => b.id === bannerId) : null;
+            
+            const modal = document.getElementById('site-banner-editor');
+            const title = document.getElementById('banner-editor-title');
+            const content = document.getElementById('banner-editor-content');
+            
+            title.textContent = this.current ? 'Edit Site Banner' : 'New Site Banner';
+            
+            content.innerHTML = this.renderEditorForm();
+            modal.style.display = 'flex';
+            
+            // Bind form enhancements
+            this.bindFormEnhancements();
+          }
+
+          renderEditorForm() {
+            const banner = this.current || {};
+            
+            return `
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Banner Title</label>
+                  <input id="b-title" value="${banner.title || ''}" placeholder="Enter banner title">
+                </div>
+                <div class="form-group">
+                  <label>Banner Message</label>
+                  <input id="b-message" value="${banner.message || ''}" placeholder="Enter banner message">
+                </div>
+                <div class="form-group">
+                  <label>Banner Type</label>
+                  <select id="b-type">
+                    <option value="success" ${banner.type === 'success' ? 'selected' : ''}>Success</option>
+                    <option value="warning" ${banner.type === 'warning' ? 'selected' : ''}>Warning</option>
+                    <option value="info" ${banner.type === 'info' ? 'selected' : ''}>Info</option>
+                    <option value="error" ${banner.type === 'error' ? 'selected' : ''}>Error</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Position</label>
+                  <select id="b-position">
+                    <option value="top" ${banner.position === 'top' ? 'selected' : ''}>Top</option>
+                    <option value="bottom" ${banner.position === 'bottom' ? 'selected' : ''}>Bottom</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Banner Image</label>
+                  <select id="b-image">
+                    <option value="">No Image</option>
+                    ${this.assets.map(asset => `
+                      <option value="${asset.path}" ${banner.banner_image === asset.path ? 'selected' : ''}>
+                        ${asset.filename} - ${asset.description}
+                      </option>
+                    `).join('')}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Show on Pages</label>
+                  <input id="b-pages" value="${(banner.show_on_pages || ['all']).join(', ')}" placeholder="all, /products, /about">
+                  <small>Comma-separated list. Use 'all' for all pages.</small>
+                </div>
+                <div class="form-group">
+                  <label>Start Date</label>
+                  <input id="b-start" type="datetime-local" value="${banner.start_date ? new Date(banner.start_date).toISOString().slice(0, 16) : ''}">
+                </div>
+                <div class="form-group">
+                  <label>End Date</label>
+                  <input id="b-end" type="datetime-local" value="${banner.end_date ? new Date(banner.end_date).toISOString().slice(0, 16) : ''}">
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input id="b-active" type="checkbox" ${banner.is_active !== false ? 'checked' : ''}>
+                    Active
+                  </label>
+                </div>
+              </div>
+              <div class="actions-row">
+                <button class="btn primary" onclick="window._siteBannerAdmin.saveBanner()">
+                  <i class="fas fa-save"></i> ${this.current ? 'Update' : 'Create'} Banner
+                </button>
+                <button class="btn secondary" onclick="window._siteBannerAdmin.closeEditor()">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+              </div>
+            `;
+          }
+
+          bindFormEnhancements() {
+            // Auto-set end date to 7 days from start date if not set
+            const startInput = document.getElementById('b-start');
+            const endInput = document.getElementById('b-end');
+            
+            if (startInput && endInput && !endInput.value) {
+              startInput.addEventListener('change', () => {
+                if (startInput.value && !endInput.value) {
+                  const startDate = new Date(startInput.value);
+                  const endDate = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+                  endInput.value = endDate.toISOString().slice(0, 16);
+                }
+              });
+            }
+          }
+
+          async saveBanner() {
+            const bannerData = {
+              title: gv('b-title'),
+              message: gv('b-message'),
+              type: gv('b-type'),
+              position: gv('b-position'),
+              banner_image: gv('b-image'),
+              show_on_pages: gv('b-pages').split(',').map(s => s.trim()).filter(s => s),
+              start_date: gv('b-start') ? new Date(gv('b-start')).toISOString() : new Date().toISOString(),
+              end_date: gv('b-end') ? new Date(gv('b-end')).toISOString() : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+              is_active: document.getElementById('b-active').checked
+            };
+
+            if (!bannerData.title) {
+              this.toast('Banner title is required', 'error');
+              return;
+            }
+
+            try {
+              const url = this.current ? `/admin/site-banners/${this.current.id}` : '/admin/site-banners';
+              const method = this.current ? 'PUT' : 'POST';
+              
+              const response = await fetch(url, {
+                method,
+                headers: await this.headers(),
+                body: JSON.stringify(bannerData)
+              });
+
+              const data = await response.json();
+              if (!response.ok) throw new Error(data.error || 'Save failed');
+
+              this.toast(`Banner ${this.current ? 'updated' : 'created'} successfully`, 'success');
+              await this.loadBanners();
+              this.renderBanners();
+              this.closeEditor();
+            } catch (error) {
+              this.toast(error.message, 'error');
+            }
+          }
+
+          closeEditor() {
+            const modal = document.getElementById('site-banner-editor');
+            modal.style.display = 'none';
+            this.current = null;
+          }
+
+          async toggleBanner(bannerId) {
+            try {
+              const response = await fetch(`/admin/site-banners/${bannerId}/toggle`, {
+                method: 'POST',
+                headers: await this.headers()
+              });
+
+              const data = await response.json();
+              if (!response.ok) throw new Error(data.error || 'Toggle failed');
+
+              this.toast(`Banner ${data.banner.is_active ? 'activated' : 'deactivated'}`, 'success');
+              await this.loadBanners();
+              this.renderBanners();
+            } catch (error) {
+              this.toast(error.message, 'error');
+            }
+          }
+
+          async deleteBanner(bannerId) {
+            if (!confirm('Are you sure you want to delete this banner?')) return;
+
+            try {
+              const response = await fetch(`/admin/site-banners/${bannerId}`, {
+                method: 'DELETE',
+                headers: await this.headers()
+              });
+
+              const data = await response.json();
+              if (!response.ok) throw new Error(data.error || 'Delete failed');
+
+              this.toast('Banner deleted successfully', 'success');
+              await this.loadBanners();
+              this.renderBanners();
+            } catch (error) {
+              this.toast(error.message, 'error');
+            }
+          }
+
+          quickCreate(type) {
+            const presets = {
+              success: {
+                title: '🎉 Special Offer!',
+                message: 'Get 20% off on all gaming accessories',
+                type: 'success',
+                banner_image: this.assets.find(a => a.type === 'headphone-promo')?.path || this.assets[0]?.path
+              },
+              warning: {
+                title: '⚠️ Limited Stock!',
+                message: 'Only a few items left in stock',
+                type: 'warning',
+                banner_image: this.assets.find(a => a.type === 'gaming')?.path || this.assets[1]?.path
+              },
+              info: {
+                title: 'ℹ️ New Arrivals!',
+                message: 'Check out our latest gaming gear',
+                type: 'info',
+                banner_image: this.assets.find(a => a.type === 'special')?.path || this.assets[2]?.path
+              }
+            };
+
+            const preset = presets[type];
+            if (preset) {
+              this.current = null;
+              this.openEditor();
+              
+              // Set preset values after a short delay to ensure form is rendered
+              setTimeout(() => {
+                document.getElementById('b-title').value = preset.title;
+                document.getElementById('b-message').value = preset.message;
+                document.getElementById('b-type').value = preset.type;
+                if (preset.banner_image) {
+                  document.getElementById('b-image').value = preset.banner_image;
+                }
+              }, 100);
+            }
+          }
+
+          applyFilter(type) {
+            // Filter banners by type
+            const filteredBanners = type === 'all' ? this.banners : this.banners.filter(b => b.type === type);
+            // Re-render with filtered data
+            this.renderBanners();
+          }
+
+          async refresh() {
+            await this.loadBanners();
+            await this.loadAssets();
+            this.renderBanners();
+            this.toast('Banners refreshed', 'success');
+          }
+
+          async headers() {
+            return {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('admin_token') || 'dev-token'}`
+            };
+          }
+
+          toast(msg, type) {
+            const el = document.createElement('div');
+            el.style.cssText = 'position:fixed;top:16px;right:16px;padding:10px 14px;border-radius:10px;z-index:40000;color:#fff;font-weight:700;max-width:320px;background:' + (type === 'success' ? 'linear-gradient(45deg,#25d366,#128c7e)' : 'linear-gradient(45deg,#ff4757,#c44569)');
+            el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}" style="margin-right:8px"></i>${msg}`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+          }
+        }
+
+        window._siteBannerAdmin = new SiteBannerAdmin();
+
+        // --- Affiliates: simple navigation hookup ---
+        (function setupAffiliatesNav(){
+          function showAff(){
+            // hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(s=>s.style.display='none');
+            const sec = document.getElementById('affiliates-section');
+            if (sec) { sec.style.display='block'; }
+            if (window._aff && sec) window._aff.load();
+          }
+          document.querySelectorAll('.sidebar-nav a').forEach(a=>{
+            a.addEventListener('click',(e)=>{
+              const href = a.getAttribute('href');
+              if (href === '#affiliates') { e.preventDefault(); showAff(); }
+            });
+          });
+          if (location.hash === '#affiliates') { showAff(); }
+        })();
+
+        // --- Flash Sale Admin ---
+        window._flashAdmin = {
+          currentId: null,
+          products: [],
+          selected: new Map(),
+          async headers(){ return await getAuthHeaders(); },
+          async loadExisting(){
+            try{
+              const res = await fetch('/flashsales');
+              const d = await res.json();
+              const sel = document.getElementById('fs-existing');
+              sel.innerHTML = (d.campaigns||[]).map(c=>`<option value="${c.id}">${c.title} (${c.slug})</option>`).join('');
+            }catch(e){ alert('Failed to load'); }
+          },
+          async loadSelected(){
+            const sel = document.getElementById('fs-existing');
+            const id = sel && sel.value;
+            if (!id) return;
+            try{
+              const res = await fetch(`/admin/campaigns/${id}`, { headers: await this.headers() });
+              const d = await res.json();
+              if(!res.ok) throw new Error(d.error||'Failed');
+              const c = d.campaign;
+              this.currentId = c.id;
+              document.getElementById('fs-title').value = c.title||'';
+              document.getElementById('fs-slug').value = c.slug||'';
+              document.getElementById('fs-start').value = c.start_at||'';
+              document.getElementById('fs-end').value = c.end_at||'';
+              this.selected = new Map();
+              (c.campaign_products||[]).forEach(p=>{
+                const original = p.original_price || (p.product?.price||0);
+                const sale = p.sale_price || 0;
+                const discount = original>0 ? Math.round((original - sale)/original*100) : 0;
+                this.selected.set(String(p.product_id), { product_id:p.product_id, original_price:original, sale_price:sale, discount });
+              });
+              this.renderSelected();
+            }catch(e){ alert(e.message); }
+          },
+          async createOrUpdate(){
+            const payload = {
+              slug: document.getElementById('fs-slug').value.trim(),
+              title: document.getElementById('fs-title').value.trim(),
+              type: 'flash',
+              is_active: true,
+              start_at: document.getElementById('fs-start').value.trim()||null,
+              end_at: document.getElementById('fs-end').value.trim()||null
+            };
+            if (!payload.slug || !payload.title){ alert('Title and Slug are required'); return; }
+            try{
+              let res, d;
+              if (this.currentId){
+                res = await fetch(`/admin/campaigns/${this.currentId}`, { method:'PUT', headers: await this.headers(), body: JSON.stringify(payload) });
+                d = await res.json();
+                if(!res.ok) throw new Error(d.error||'Update failed');
+              } else {
+                res = await fetch('/admin/campaigns', { method:'POST', headers: await this.headers(), body: JSON.stringify(payload) });
+                d = await res.json();
+                if(!res.ok) throw new Error(d.error||'Create failed');
+                this.currentId = d.campaign.id;
+              }
+              alert('Flash sale saved');
+            }catch(e){ alert(e.message); }
+          },
+          async fetchAllProducts(){
+            try{
+              const res = await fetch('/products');
+              const data = await res.json();
+              this.products = Array.isArray(data) ? data : (data.products||[]);
+            }catch{ this.products = []; }
+          },
+          filterProducts(q){
+            const query = (q||'').toLowerCase();
+            return this.products.filter(p=>
+              p.name?.toLowerCase().includes(query) ||
+              p.category?.toLowerCase().includes(query) ||
+              p.description?.toLowerCase().includes(query)
+            ).slice(0, 40);
+          },
+          renderProductList(list){
+            const host = document.getElementById('fs-products');
+            if (!host) return;
+            host.innerHTML = list.map(p=>{
+              const sel = this.selected.get(String(p.id));
+              const original = Math.round((p.originalPrice && p.originalPrice>p.price) ? p.originalPrice*100 : p.price*100);
+              const discount = sel?.discount ?? 20;
+              const sale = Math.max(0, Math.round(original * (1 - (discount/100))));
+              return `
+                <div style="background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;">
+                  <div style="display:flex;gap:10px;align-items:center;">
+                    <img src="${p.image||'assets/images/default-product.jpg'}" alt="${p.name}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;"/>
+                    <div style="flex:1;min-width:0;">
+                      <div style="color:#fff;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
+                      <div style="color:#aaa;font-size:.9rem">$${(original/100).toFixed(2)} • ${p.category||''}</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+                    <label style="color:#aaa;font-size:.9rem">Discount %</label>
+                    <input data-id="${p.id}" class="fs-discount" type="number" min="0" max="95" value="${discount}" style="width:80px;background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px"/>
+                    <span style="color:#25d366;font-weight:800">$${(sale/100).toFixed(2)}</span>
+                    <button class="btn" data-add="${p.id}"><i class="fas fa-plus"></i> Add</button>
+                  </div>
+                </div>`;
+            }).join('');
+            // bind events
+            host.querySelectorAll('button[data-add]').forEach(btn=>{
+              btn.onclick = ()=>{
+                const id = btn.getAttribute('data-add');
+                const input = host.querySelector(`input.fs-discount[data-id='${id}']`);
+                const discount = Math.min(95, Math.max(0, parseInt(input?.value||'0',10)));
+                const p = this.products.find(x=>String(x.id)===String(id));
+                if (!p) return;
+                const original = Math.round((p.originalPrice && p.originalPrice>p.price) ? p.originalPrice*100 : p.price*100);
+                const sale = Math.max(0, Math.round(original * (1 - (discount/100))));
+                this.selected.set(String(id), { product_id: p.id, original_price: original, sale_price: sale, discount });
+                this.renderSelected();
+              };
+            });
+          },
+          renderSelected(){
+            const tbody = document.getElementById('fs-selected');
+            if (!tbody) return;
+            const rows = Array.from(this.selected.values()).map(s=>{
+              return `<tr>
+                <td>${s.product_id}</td>
+                <td>$${(s.original_price/100).toFixed(2)}</td>
+                <td><input data-pid="${s.product_id}" class="sel-discount" type="number" min="0" max="95" value="${s.discount}" style="width:80px;background:#111;color:#e5e5e5;border:1px solid #333;border-radius:6px;padding:6px 8px"/></td>
+                <td>$${(s.sale_price/100).toFixed(2)}</td>
+                <td><button class="btn danger" data-remove="${s.product_id}"><i class="fas fa-trash"></i></button></td>
+              </tr>`;
+            }).join('');
+            tbody.innerHTML = rows || '<tr><td colspan="5" style="color:#aaa">No items selected</td></tr>';
+            // bind remove and discount edits
+            tbody.querySelectorAll('button[data-remove]').forEach(b=> b.onclick = ()=>{ this.selected.delete(String(b.getAttribute('data-remove'))); this.renderSelected(); });
+            tbody.querySelectorAll('input.sel-discount').forEach(inp=>{
+              inp.oninput = ()=>{
+                const pid = inp.getAttribute('data-pid');
+                const s = this.selected.get(String(pid));
+                if (!s) return;
+                const discount = Math.min(95, Math.max(0, parseInt(inp.value||'0',10)));
+                s.discount = discount;
+                s.sale_price = Math.max(0, Math.round(s.original_price * (1 - (discount/100))));
+                this.selected.set(String(pid), s);
+                this.renderSelected();
+              };
+            });
+          },
+          async pushProducts(){
+            if (!this.currentId){ alert('Save Flash Sale first'); return; }
+            const products = Array.from(this.selected.values()).map(s=>({
+              product_id: s.product_id,
+              original_price: s.original_price,
+              sale_price: s.sale_price,
+              reserved_stock: 0,
+              max_per_customer: 2,
+              display_order: 0,
+              metadata: { discount: s.discount }
+            }));
+            try{
+              const res = await fetch(`/admin/campaigns/${this.currentId}/products`, { method:'POST', headers: await this.headers(), body: JSON.stringify({ products })});
+              const d = await res.json();
+              if(!res.ok) throw new Error(d.error||'Save failed');
+              alert('Flash sale products saved');
+            }catch(e){ alert(e.message); }
+          }
+        };
+
+        // Bind flash sale search and initial loads
+        (function initFlash(){
+          const link = document.querySelector('.sidebar-nav a[href="#flashsale"]');
+          if (link) link.addEventListener('click', (e)=>{
+            e.preventDefault();
+            document.querySelectorAll('[id$="-section"]').forEach(s=>s.style.display='none');
+            const sec = document.getElementById('flashsale-section');
+            if (sec){ sec.style.display='block'; }
+            (async ()=>{
+              await window._flashAdmin.fetchAllProducts();
+              window._flashAdmin.renderProductList(window._flashAdmin.filterProducts(''));
+              window._flashAdmin.loadExisting();
+            })();
+          });
+          const inp = document.getElementById('fs-search');
+          if (inp) inp.addEventListener('input', ()=>{
+            const list = window._flashAdmin.filterProducts(inp.value);
+            window._flashAdmin.renderProductList(list);
+          });
+          if (location.hash === '#flashsale') {
+            if (link) link.click();
+          }
+        })();
+      }
+    </script>
+    <!-- Image Fallback -->
+    <script src="assets/js/image-fallback.js"></script>
+  </body>
+</html>

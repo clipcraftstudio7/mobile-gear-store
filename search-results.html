@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Results | Mobile Gear Hub</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="components/navbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      body {
+        background: #101010;
+        color: #fff;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .results-container {
+        max-width: 1100px;
+        margin: 100px auto 40px;
+        padding: 0 20px;
+      }
+      .results-title {
+        color: #25d366;
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 18px;
+      }
+      .results-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+      }
+      .result-card {
+        background: #1c1c1c;
+        border-radius: 14px;
+        border: 1px solid #333;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .result-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.2);
+        border-color: #25d366;
+      }
+      .result-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+      }
+      .result-info {
+        padding: 15px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .result-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 8px;
+        line-height: 1.3;
+      }
+      .result-price {
+        color: #25d366;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .result-desc {
+        color: #ccc;
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        line-height: 1.4;
+      }
+      .result-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+      }
+      .result-link {
+        background: #222;
+        color: #25d366;
+        border: 1px solid #25d366;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        flex: 1;
+        transition: all 0.3s ease;
+      }
+      .result-link:hover {
+        background: #25d366;
+        color: #111;
+      }
+      .add-to-cart-btn {
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        flex: 1;
+        transition: all 0.3s ease;
+      }
+      .add-to-cart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+      }
+      .no-results {
+        color: #ff4757;
+        font-size: 1.2rem;
+        margin: 40px 0;
+        text-align: center;
+      }
+      @media (max-width: 600px) {
+        .results-list {
+          grid-template-columns: 1fr;
+        }
+        .results-container {
+          margin-top: 80px;
+        }
+      }
+      @media (max-width: 480px) {
+        /* Hide the top navbar on mobile */
+        .navbar {
+          display: none !important;
+        }
+
+        .results-container {
+          padding: 28px 12px !important;
+          margin: 32px 0 20px 0 !important;
+          border-radius: 18px !important;
+          max-width: 100vw !important;
+        }
+        .results-title {
+          font-size: 1.7rem !important;
+          margin-bottom: 20px !important;
+        }
+        .results-filters {
+          gap: 18px !important;
+          margin-bottom: 20px !important;
+          flex-wrap: wrap !important;
+        }
+        .results-filters button {
+          padding: 18px 28px !important;
+          border-radius: 24px !important;
+          font-size: 1.3rem !important;
+          margin-bottom: 12px !important;
+        }
+        .results-list {
+          gap: 24px !important;
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .result-card {
+          border-radius: 12px !important;
+          padding: 0 !important;
+          min-width: 0 !important;
+          box-shadow: 0 4px 16px rgba(37, 211, 102, 0.12) !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: stretch !important;
+          aspect-ratio: 1 / 1.2 !important;
+          margin: 0 !important;
+          height: auto !important;
+          max-height: none !important;
+          overflow: hidden !important;
+          background: #1c1c1c !important;
+        }
+        .result-image {
+          width: 100% !important;
+          height: 120px !important;
+          border-radius: 0 !important;
+          margin-bottom: 0 !important;
+          object-fit: cover !important;
+        }
+        .result-info {
+          padding: 12px !important;
+          flex: 1 !important;
+          display: flex !important;
+          flex-direction: column !important;
+        }
+        .result-name {
+          font-size: 0.9rem !important;
+          margin-bottom: 6px !important;
+          font-weight: 600 !important;
+          text-align: left !important;
+          white-space: normal !important;
+          overflow: visible !important;
+          text-overflow: unset !important;
+          line-height: 1.3 !important;
+        }
+        .result-price {
+          font-size: 1rem !important;
+          margin-bottom: 6px !important;
+          text-align: left !important;
+        }
+        .result-desc {
+          display: block !important;
+          font-size: 0.75rem !important;
+          margin-bottom: 8px !important;
+          line-height: 1.3 !important;
+        }
+        .result-actions {
+          display: flex !important;
+          gap: 6px !important;
+          margin-top: auto !important;
+        }
+        .result-link {
+          font-size: 0.75rem !important;
+          padding: 6px 8px !important;
+          border-radius: 4px !important;
+          margin: 0 !important;
+          background: #222 !important;
+          color: #25d366 !important;
+          border: 1px solid #25d366 !important;
+          font-weight: 600 !important;
+          text-align: center !important;
+          display: flex !important;
+          text-decoration: none !important;
+          transition: all 0.3s ease !important;
+          flex: 1 !important;
+        }
+        .result-link:hover {
+          background: #25d366 !important;
+          color: #111 !important;
+        }
+        .add-to-cart-btn {
+          font-size: 0.75rem !important;
+          padding: 6px 8px !important;
+          border-radius: 4px !important;
+          margin: 0 !important;
+          background: linear-gradient(135deg, #25d366, #128c7e) !important;
+          color: white !important;
+          border: none !important;
+          font-weight: 600 !important;
+          cursor: pointer !important;
+          flex: 1 !important;
+          transition: all 0.3s ease !important;
+        }
+        .add-to-cart-btn:hover {
+          transform: translateY(-1px) !important;
+          box-shadow: 0 3px 8px rgba(37, 211, 102, 0.3) !important;
+        }
+        .no-results {
+          font-size: 1.3rem !important;
+          margin: 24px 0 !important;
+        }
+        .footer {
+          padding: 6px 1px 2px !important;
+          margin-top: 10px !important;
+        }
+        .footer-content {
+          display: flex !important;
+          flex-wrap: wrap !important;
+          gap: 0 !important;
+          justify-content: center !important;
+          padding: 0 1px !important;
+        }
+        .footer-section.contact-section,
+        .footer-section.newsletter-section {
+          width: 50% !important;
+          min-width: 0 !important;
+          box-sizing: border-box !important;
+          text-align: center !important;
+          font-size: 0.5rem !important;
+          padding: 2px 0 !important;
+        }
+        .footer-section h3 {
+          font-size: 0.65rem !important;
+          margin-bottom: 3px !important;
+        }
+        .footer-section p,
+        .footer-section a {
+          font-size: 0.5rem !important;
+          line-height: 1.2 !important;
+        }
+        .newsletter-form {
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 2px !important;
+          margin-top: 2px !important;
+          margin-bottom: 0 !important;
+          justify-content: center !important;
+        }
+        .newsletter-input {
+          flex: 1 1 0 !important;
+          min-width: 0 !important;
+          padding: 3px 5px !important;
+          font-size: 0.5rem !important;
+          border-radius: 4px !important;
+        }
+        .newsletter-btn {
+          padding: 3px 7px !important;
+          font-size: 0.5rem !important;
+          border-radius: 4px !important;
+        }
+        .footer-bottom {
+          padding-top: 4px !important;
+          font-size: 0.45rem !important;
+        }
+        /* Navbar: only show user, cart, search bar */
+        .navbar .nav-logo,
+        .navbar .nav-menu {
+          display: none !important;
+        }
+        .navbar .nav-actions {
+          display: flex !important;
+          align-items: center !important;
+          gap: 10px !important;
+          justify-content: flex-end !important;
+          padding-right: 8px !important;
+        }
+        .navbar .search-container {
+          display: block !important;
+          position: fixed !important;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 4000;
+          background: #181818;
+          padding: 6px 8px 4px 8px;
+          border-bottom: 1px solid #222;
+          max-width: 100vw !important;
+          margin: 0 !important;
+        }
+        body {
+          padding-top: 56px !important;
+        }
+      }
+      @media (max-width: 480px) {
+        /* Exact Killmall mobile bottom navbar */
+        .mobile-bottom-navbar {
+          display: flex !important;
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          top: auto;
+          width: 100%;
+          height: 50px;
+          min-height: 50px;
+          max-height: 50px;
+          padding: 0;
+          font-size: 0.7rem;
+          z-index: 3001;
+          border-top: 1px solid #333;
+          background: #1a1a1a;
+          box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-bottom-navbar .nav-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          width: 100%;
+          height: 100%;
+          padding: 0 4px;
+        }
+
+        .mobile-bottom-navbar .nav-item {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          position: relative;
+        }
+
+        .mobile-bottom-navbar .nav-link {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 2px;
+          color: #999;
+          text-decoration: none;
+          font-size: 0.65rem;
+          font-weight: 400;
+          padding: 4px 2px;
+          border-radius: 4px;
+          transition: all 0.15s ease;
+          width: 100%;
+          height: 100%;
+        }
+
+        .mobile-bottom-navbar .nav-link:hover,
+        .mobile-bottom-navbar .nav-link.active {
+          color: #25d366;
+          background: transparent;
+        }
+
+        .mobile-bottom-navbar .nav-link i {
+          font-size: 1.1rem;
+          margin-bottom: 1px;
+        }
+
+        .mobile-bottom-navbar .nav-link span {
+          font-size: 0.6rem;
+          line-height: 1;
+          font-weight: 400;
+        }
+
+        .mobile-bottom-navbar .cart-link {
+          position: relative;
+        }
+
+        .mobile-bottom-navbar .cart-count {
+          position: absolute;
+          top: 2px;
+          right: 2px;
+          background: #ff4757;
+          color: white;
+          border-radius: 50%;
+          width: 14px;
+          height: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.55rem;
+          font-weight: 600;
+          border: 1px solid #1a1a1a;
+        }
+
+        .mobile-bottom-navbar .user-link {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+        }
+
+        body {
+          padding-bottom: 50px !important;
+        }
+      }
+      @media (max-width: 480px) {
+        .mobile-categories-dropup {
+          position: relative;
+        }
+        .mobile-categories-dropup-menu {
+          display: none;
+          position: absolute;
+          bottom: 50px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #2a2a2a;
+          border-radius: 8px 8px 0 0;
+          box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+          border: 1px solid #444;
+          z-index: 4002;
+          min-width: 160px;
+          padding: 6px 0;
+          animation: dropupIn 0.15s;
+        }
+        .mobile-categories-dropup-menu a {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #ccc;
+          padding: 8px 16px;
+          text-decoration: none;
+          font-size: 0.8em;
+          transition: background 0.15s, color 0.15s;
+        }
+        .mobile-categories-dropup-menu a:hover {
+          background: rgba(37, 211, 102, 0.1);
+          color: #25d366;
+        }
+        @keyframes dropupIn {
+          from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+          }
+        }
+      }
+      @media (max-width: 480px) {
+        .mobile-bottom-navbar #user-area-mobile {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+
+        .mobile-bottom-navbar #user-area-mobile .user-avatar {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 28px !important;
+          height: 28px !important;
+          border-radius: 50% !important;
+          background: #25d366 !important;
+          color: #111 !important;
+          font-weight: 600 !important;
+          font-size: 0.8rem !important;
+          text-decoration: none !important;
+        }
+
+        .mobile-bottom-navbar #user-area-mobile .login-btn {
+          background: transparent !important;
+          color: #999 !important;
+          border: none !important;
+          font-size: 0.65rem !important;
+          padding: 4px 2px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          gap: 2px !important;
+        }
+
+        .mobile-bottom-navbar #user-area-mobile .login-btn:hover {
+          color: #25d366 !important;
+          background: transparent !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+    <script>
+      // Move the search bar into a responsive container after navbar loads
+      document.addEventListener("DOMContentLoaded", function () {
+        var navbar = document.getElementById("navbar-container");
+        var search = navbar.querySelector(".search-container");
+        if (search) {
+          var wrapper = document.createElement("div");
+          wrapper.className = "responsive-search-bar";
+          search.parentNode.insertBefore(wrapper, search);
+          wrapper.appendChild(search);
+        }
+      });
+    </script>
+    <!-- Mobile bottom navbar, exact Killmall layout -->
+    <nav class="mobile-bottom-navbar" style="display: none">
+      <div class="nav-container">
+        <!-- Home -->
+        <div class="nav-item">
+          <a href="index.html" class="nav-link">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+          </a>
+        </div>
+
+        <!-- Categories -->
+        <div class="nav-item mobile-categories-dropup">
+          <a href="#categories" id="mobile-categories-btn" class="nav-link">
+            <i class="fas fa-th-large"></i>
+            <span>Categories</span>
+          </a>
+          <div
+            class="mobile-categories-dropup-menu"
+            id="mobile-categories-dropup-menu"
+          >
+            <a href="category.html?cat=Controllers">
+              <i class="fas fa-gamepad"></i> Controllers
+            </a>
+            <a href="category.html?cat=Triggers">
+              <i class="fas fa-bullseye"></i> Triggers
+            </a>
+            <a href="category.html?cat=Holders">
+              <i class="fas fa-mobile-alt"></i> Holders
+            </a>
+            <a href="category.html?cat=Cooling Fans">
+              <i class="fas fa-fan"></i> Cooling Fans
+            </a>
+            <a href="category.html?cat=Joystick">
+              <i class="fas fa-dot-circle"></i> Joystick
+            </a>
+            <a href="category.html?cat=Accessories">
+              <i class="fas fa-headphones"></i> Accessories
+            </a>
+          </div>
+        </div>
+
+        <!-- Cart -->
+        <div class="nav-item">
+          <a href="cart.html" class="nav-link cart-link" id="cart-btn-mobile">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Cart</span>
+            <span class="cart-count" id="cart-count-mobile">0</span>
+          </a>
+        </div>
+
+        <!-- User Account -->
+        <div class="nav-item">
+          <div id="user-area-mobile" class="user-link">
+            <div class="user-skeleton">
+              <span class="user-spinner"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="results-container">
+      <div class="results-title" id="results-title">Search Results</div>
+      <div
+        class="results-filters"
+        id="results-filters"
+        style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap"
+      ></div>
+      <div class="results-list" id="results-list"></div>
+      <div class="no-results" id="no-results" style="display: none">
+        No products found for your search.
+      </div>
+    </div>
+    <footer
+      class="footer"
+      style="
+        background: #1a1a1a;
+        color: #fff;
+        text-align: center;
+        padding: 24px 0 12px 0;
+        margin-top: 40px;
+        border-top: 1.5px solid #222;
+        font-size: 1rem;
+      "
+    >
+      <div
+        class="footer-content"
+        style="
+          max-width: 900px;
+          margin: 0 auto;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0;
+        "
+      >
+        <div
+          class="footer-section contact-section"
+          style="flex: 1 1 180px; min-width: 140px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 8px; font-size: 1.05rem">
+            Contact
+          </h3>
+          <p style="color: #fff; margin-bottom: 4px; font-size: 0.95rem">
+            Email: mobilegearstore06@gmail.com
+          </p>
+          <p style="color: #fff; font-size: 0.95rem">
+            Live Chat: Available 24/7
+          </p>
+        </div>
+        <div
+          class="footer-section newsletter-section"
+          style="flex: 1 1 180px; min-width: 140px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 8px; font-size: 1.05rem">
+            Newsletter
+          </h3>
+          <form
+            class="newsletter-form"
+            action="https://formspree.io/f/mgvzzlnb"
+            method="POST"
+            style="
+              display: flex;
+              gap: 6px;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <input
+              type="email"
+              name="email"
+              class="newsletter-input"
+              placeholder="Your email address"
+              required
+              style="
+                padding: 7px 10px;
+                border-radius: 6px;
+                border: 1px solid #333;
+                background: #222;
+                color: #fff;
+                font-size: 0.95rem;
+              "
+            />
+            <input
+              type="hidden"
+              name="form_type"
+              value="newsletter_subscription"
+            />
+            <button
+              type="submit"
+              class="newsletter-btn"
+              style="
+                padding: 7px 16px;
+                border-radius: 6px;
+                background: #25d366;
+                color: #111;
+                border: none;
+                font-weight: 600;
+                font-size: 0.95rem;
+              "
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+        <div
+          class="footer-section social-section"
+          style="flex: 1 1 180px; min-width: 140px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 8px; font-size: 1.05rem">
+            Connect With Us
+          </h3>
+          <div
+            class="social-links"
+            style="
+              display: flex;
+              gap: 15px;
+              justify-content: center;
+              margin-top: 10px;
+            "
+          >
+            <a
+              href="https://www.facebook.com/share/1EtKUXckLm/"
+              target="_blank"
+              class="social-link"
+              style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #25d366, #128c7e);
+                color: #fff;
+                border-radius: 50%;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                font-size: 18px;
+              "
+            >
+              <i class="fab fa-facebook"></i>
+            </a>
+            <a
+              href="https://www.tiktok.com/@mobilegear.hub?_t=ZM-8yVp0OzGZqH&_r=1"
+              target="_blank"
+              class="social-link"
+              style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #25d366, #128c7e);
+                color: #fff;
+                border-radius: 50%;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                font-size: 18px;
+              "
+            >
+              <i class="fab fa-tiktok"></i>
+            </a>
+            <a
+              href="https://www.instagram.com/mobile.gearhub?igsh=MXFyMWI1enlwMzBydQ=="
+              target="_blank"
+              class="social-link"
+              style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #25d366, #128c7e);
+                color: #fff;
+                border-radius: 50%;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                font-size: 18px;
+              "
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a
+              href="https://youtube.com/@mobilegearhub?si=fWzMZvcXYKcIGo0q"
+              target="_blank"
+              class="social-link"
+              style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #25d366, #128c7e);
+                color: #fff;
+                border-radius: 50%;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                font-size: 18px;
+              "
+            >
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="footer-bottom"
+        style="
+          text-align: center;
+          padding-top: 10px;
+          margin-top: 10px;
+          border-top: 1px solid #222;
+          font-size: 0.95rem;
+        "
+      >
+        &copy; 2025 Mobile Gear Hub. All rights reserved.
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+      window.supabase = window.supabase || {};
+      window.supabase = window.supabase.createClient(
+        "https://kokntkhxkymllafuubun.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtva250a2h4a3ltbGxhZnV1YnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI3NzYxODcsImV4cCI6MjA2ODM1MjE4N30.Ekc6HLszFSYTIgsvzTdKJWr85nFMUH2HQBQrg_uqXRc"
+      );
+    </script>
+    <script src="assets/js/cart.js"></script>
+    <script src="components/navbar.js"></script>
+    <script src="components/navbar-behavior.js"></script>
+    <script>
+      // Initialize Supabase globally
+      // Load navbar
+      fetch("components/navbar.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("navbar-container").innerHTML = html;
+          window.navbar = new NavbarComponent();
+          // Robust user area update
+          function updateUserArea() {
+            supabase.auth.getUser().then(({ data: { user } }) => {
+              const userArea = document.getElementById("user-area");
+              if (!userArea) {
+                setTimeout(updateUserArea, 100);
+                return;
+              }
+              if (user) {
+                const letter = user.email ? user.email[0].toUpperCase() : "?";
+                userArea.innerHTML = `
+                  <a href="profile.html" class="user-avatar" style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:#25d366;color:#111;font-weight:700;font-size:1.1rem;text-decoration:none;">${letter}</a>
+                `;
+              } else {
+                userArea.innerHTML = `
+                  <a href="login.html" class="nav-btn login-btn">Login</a>
+                `;
+              }
+              // Update cart count after user area update
+              if (window.updateCartUI) window.updateCartUI();
+              if (window.loadCart) window.loadCart();
+            });
+          }
+          supabase.auth.onAuthStateChange(() => {
+            updateUserArea();
+          });
+          updateUserArea();
+          // Re-initialize navbar dropdowns after user area update
+          if (window.initNavbarBehavior) window.initNavbarBehavior();
+        });
+      // Get query param
+      function getQueryParam(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name) || "";
+      }
+      const query = decodeURIComponent(getQueryParam("q") || "").trim();
+      document.getElementById("results-title").textContent = query
+        ? `Results for "${query}"`
+        : "Search Results";
+      let allResults = [];
+      let allCategories = [];
+      let activeCategory = "All";
+      function renderFilters() {
+        const filtersDiv = document.getElementById("results-filters");
+        filtersDiv.innerHTML = "";
+        const cats = ["All", ...allCategories];
+        cats.forEach((cat) => {
+          const btn = document.createElement("button");
+          btn.textContent = cat;
+          btn.style = `padding:8px 18px;border-radius:20px;border:none;font-weight:600;font-size:1rem;cursor:pointer;background:${
+            activeCategory === cat ? "#25d366" : "#222"
+          };color:${
+            activeCategory === cat ? "#111" : "#25d366"
+          };margin-bottom:6px;`;
+          btn.onclick = () => {
+            activeCategory = cat;
+            renderResults();
+            renderFilters();
+          };
+          filtersDiv.appendChild(btn);
+        });
+      }
+      function renderResults() {
+        const list = document.getElementById("results-list");
+        const noResults = document.getElementById("no-results");
+        let filtered = allResults;
+        if (activeCategory !== "All") {
+          filtered = filtered.filter((p) => p.category === activeCategory);
+        }
+        if (!filtered.length) {
+          list.innerHTML = "";
+          noResults.style.display = "";
+          return;
+        }
+        noResults.style.display = "none";
+        list.innerHTML = filtered
+          .map(
+            (p) => `
+          <div class='result-card'>
+            <img src='${p.image}' class='result-image' alt='${p.name}' />
+            <div class='result-info'>
+              <div class='result-name'>${p.name}</div>
+              <div class='result-price'>$${p.price}</div>
+              <div class='result-desc'>${p.description || ""}</div>
+              <div class='result-actions'>
+                <a href='${p.link}' class='result-link'>View</a>
+                <button class='add-to-cart-btn' onclick='addToCartFromSearch(${JSON.stringify(
+                  p
+                ).replace(/'/g, "&#39;")})'>Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+              fetch("/products")
+        .then((r) => r.json())
+        .then((products) => {
+          allResults = products.filter(
+            (p) =>
+              p.name.toLowerCase().includes(query.toLowerCase()) ||
+              (p.category &&
+                p.category.toLowerCase().includes(query.toLowerCase())) ||
+              (p.description &&
+                p.description.toLowerCase().includes(query.toLowerCase()))
+          );
+          allCategories = Array.from(
+            new Set(allResults.map((p) => p.category).filter(Boolean))
+          );
+          renderFilters();
+          renderResults();
+        });
+      // Add to Cart from search results
+      window.addToCartFromSearch = function (product) {
+        if (typeof window.addToCart === "function") {
+          window.addToCart(product);
+          showSearchNotification(product.name + " added to cart!");
+        } else {
+          alert("Cart system not loaded!");
+        }
+      };
+      function showSearchNotification(msg) {
+        const notification = document.createElement("div");
+        notification.style.cssText = `
+          position: fixed;top: 20px;right: 20px;background: linear-gradient(135deg, #25d366, #128c7e);color: white;padding: 15px 25px;border-radius: 10px;font-weight: 600;z-index: 10000;transform: translateX(100%);transition: transform 0.3s ease;box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3);`;
+        notification.textContent = msg;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+          notification.style.transform = "translateX(0)";
+        }, 100);
+        setTimeout(() => {
+          notification.style.transform = "translateX(100%)";
+          setTimeout(() => {
+            document.body.removeChild(notification);
+          }, 300);
+        }, 2000);
+      }
+
+      // Mobile navbar functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        var btn = document.getElementById("mobile-categories-btn");
+        var menu = document.getElementById("mobile-categories-dropup-menu");
+        var dropupContainer = document.querySelector(
+          ".mobile-categories-dropup"
+        );
+
+        if (btn && menu && dropupContainer) {
+          btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            const isVisible = menu.style.display === "block";
+            menu.style.display = isVisible ? "none" : "block";
+          });
+
+          // Hide dropup when clicking outside
+          document.addEventListener("click", function (e) {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+              menu.style.display = "none";
+            }
+          });
+        }
+
+        // Set active state for current page
+        function setActiveNavItem() {
+          const currentPath = window.location.pathname;
+          const navLinks = document.querySelectorAll(
+            ".mobile-bottom-navbar .nav-link"
+          );
+
+          navLinks.forEach((link) => {
+            link.classList.remove("active");
+            if (currentPath.includes("search-results.html")) {
+              if (
+                link
+                  .closest(".nav-item")
+                  .querySelector(".mobile-categories-dropup")
+              ) {
+                link.classList.add("active");
+              }
+            }
+          });
+        }
+
+        // Show mobile navbar on mobile devices
+        function showMobileNavbar() {
+          const mobileNavbar = document.querySelector(".mobile-bottom-navbar");
+          if (mobileNavbar && window.innerWidth <= 480) {
+            mobileNavbar.style.display = "block";
+            setActiveNavItem();
+          }
+        }
+
+        // Show mobile navbar on load and resize
+        showMobileNavbar();
+        window.addEventListener("resize", showMobileNavbar);
+      });
+    </script>
+  </body>
+</html>

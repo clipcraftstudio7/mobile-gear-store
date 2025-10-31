@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Cart | Mobile Gear Hub</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="assets/js/cart.js"></script>
+    <style>
+      body {
+        background: #111;
+        color: #fff;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+      }
+      .container {
+        max-width: 700px;
+        margin: 80px auto 0;
+        background: #1c1c1c;
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        border: 1px solid #333;
+      }
+      h1 {
+        text-align: center;
+        color: #25d366;
+        margin-bottom: 30px;
+      }
+      .cart-list {
+        margin-bottom: 30px;
+      }
+      .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 18px 0;
+        border-bottom: 1px solid #333;
+      }
+      .cart-item:last-child {
+        border-bottom: none;
+      }
+      .cart-img {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: #222;
+      }
+      .cart-info {
+        flex: 1;
+      }
+      .cart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .cart-price {
+        color: #25d366;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .cart-qty {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .cart-qty-btn {
+        background: #333;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .cart-qty-btn:hover {
+        background: #25d366;
+        color: #111;
+      }
+      .cart-remove {
+        background: #ff4757;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: background 0.2s;
+      }
+      .cart-remove:hover {
+        background: #ff3742;
+      }
+      .cart-summary {
+        background: #222;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+        border: 1px solid #333;
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .summary-label {
+        color: #aaa;
+      }
+      .summary-value {
+        color: #fff;
+        font-weight: 600;
+      }
+      .checkout-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: #111;
+        border: none;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.2s;
+      }
+      .checkout-btn:hover {
+        background: linear-gradient(135deg, #128c7e, #25d366);
+        color: #fff;
+      }
+      .empty-cart {
+        text-align: center;
+        color: #aaa;
+        margin: 40px 0;
+      }
+      .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 30px;
+        color: #25d366;
+        text-decoration: none;
+        font-size: 1rem;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Your Cart</h1>
+      <div id="cart-list" class="cart-list"></div>
+      <div id="cart-summary" class="cart-summary"></div>
+      <a href="index.html" class="back-link">&larr; Continue Shopping</a>
+    </div>
+    <section class="section" id="related-products">
+      <div class="section-header">
+        <h2 class="section-title">Related Products</h2>
+      </div>
+      <div
+        class="products-grid"
+        id="related-products-grid"
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 14px;
+        "
+      ></div>
+    </section>
+
+    <footer
+      class="footer"
+      style="
+        background: #1a1a1a;
+        color: #ccc;
+        padding: 40px 0 20px;
+        margin-top: 60px;
+        border-top: 1px solid #333;
+      "
+    >
+      <div
+        class="footer-content"
+        style="
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 40px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0;
+          justify-content: center;
+        "
+      >
+        <div
+          class="footer-section contact-section"
+          style="flex: 1 1 200px; min-width: 180px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 10px; font-size: 1.1rem">
+            Contact
+          </h3>
+          <p style="color: #fff; margin-bottom: 6px">
+            Email: mobilegearstore06@gmail.com
+          </p>
+          <p style="color: #fff">Live Chat: Available 24/7</p>
+        </div>
+        <div
+          class="footer-section newsletter-section"
+          style="flex: 1 1 200px; min-width: 180px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 10px; font-size: 1.1rem">
+            Newsletter
+          </h3>
+          <form
+            class="newsletter-form"
+            style="
+              display: flex;
+              gap: 6px;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <input
+              type="email"
+              class="newsletter-input"
+              placeholder="Your email address"
+              required
+              style="
+                padding: 7px 10px;
+                border-radius: 6px;
+                border: 1px solid #333;
+                background: #222;
+                color: #fff;
+                font-size: 0.95rem;
+              "
+            />
+            <button
+              type="submit"
+              class="newsletter-btn"
+              style="
+                padding: 7px 16px;
+                border-radius: 6px;
+                background: #25d366;
+                color: #111;
+                border: none;
+                font-weight: 600;
+                font-size: 0.95rem;
+              "
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+      <div
+        class="footer-bottom"
+        style="
+          text-align: center;
+          padding-top: 20px;
+          margin-top: 30px;
+          border-top: 1px solid #333;
+          font-size: 0.95rem;
+        "
+      >
+        <p>&copy; 2024 MobileGaming. All rights reserved.</p>
+      </div>
+    </footer>
+    <script>
+      // Use the same cart logic as cart.js
+      function renderCartPage() {
+        const cartList = document.getElementById("cart-list");
+        const cartSummary = document.getElementById("cart-summary");
+        if (!window.cart || cart.length === 0) {
+          cartList.innerHTML =
+            '<div class="empty-cart"><i class="fas fa-shopping-cart" style="font-size:2.5rem;opacity:0.3;"></i><br>Your cart is empty.</div>';
+          cartSummary.innerHTML = "";
+          return;
+        }
+        cartList.innerHTML = cart
+          .map(
+            (item) => `
+        <div class="cart-item">
+          <img src="${item.image}" class="cart-img" alt="${item.name}" />
+          <div class="cart-info">
+            <div class="cart-title">${item.name}</div>
+            <div class="cart-price">$${item.price.toLocaleString()}</div>
+            <div class="cart-qty">
+              <button class="cart-qty-btn" onclick="updateQuantity(${
+                item.id
+              }, ${item.quantity - 1})">-</button>
+              <span>${item.quantity}</span>
+              <button class="cart-qty-btn" onclick="updateQuantity(${
+                item.id
+              }, ${item.quantity + 1})">+</button>
+              <button class="cart-remove" onclick="removeFromCart(${
+                item.id
+              })">Remove</button>
+            </div>
+          </div>
+        </div>
+      `
+          )
+          .join("");
+        const subtotal = getCartSubtotal();
+        const shippingFee = getShippingFee();
+        const total = getCartTotal();
+        
+        cartSummary.innerHTML = `
+        <div class="summary-row"><span class="summary-label">Items:</span><span class="summary-value">${
+          cart.length
+        }</span></div>
+        <div class="summary-row" style="border-top: 1px solid #333; padding-top: 10px; font-weight: 700;"><span class="summary-label">Total:</span><span class="summary-value">$${total.toLocaleString()}</span></div>
+        <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+      `;
+      }
+      // Patch cart functions to re-render page
+      window.updateCartUI = function () {
+        renderCartPage();
+        // Also update cart icon if present
+        const cartCount = document.querySelector(".cart-count");
+        if (cartCount) {
+          const count = getCartCount();
+          cartCount.textContent = count;
+          cartCount.style.display = count > 0 ? "flex" : "none";
+        }
+      };
+      // Initial render: manually load cart from localStorage, then render
+      document.addEventListener("DOMContentLoaded", function () {
+        let cart = [];
+        try {
+          cart = JSON.parse(localStorage.getItem("cart_guest")) || [];
+        } catch (e) {
+          cart = [];
+        }
+        window.cart = cart; // Make it global for other functions
+        renderCartPage();
+      });
+
+      // Smarter Related Products logic with Add to Cart CTA and compact cards
+      async function renderRelatedProducts() {
+        try {
+          const response = await fetch("/products");
+          const products = await response.json();
+          // Get cart from localStorage (in case global cart is not up to date)
+          let cart = [];
+          try {
+            cart = JSON.parse(localStorage.getItem("cart_guest")) || [];
+          } catch (e) {
+            cart = [];
+          }
+          const cartIds = new Set(cart.map((item) => item.id));
+          const cartCategories = Array.from(
+            new Set(cart.map((item) => item.category))
+          );
+          // Filter products by matching category and not in cart
+          let related = products.filter(
+            (p) => cartCategories.includes(p.category) && !cartIds.has(p.id)
+          );
+          // If less than 4, fill with random products not in cart or already in related
+          if (related.length < 4) {
+            const notInCartOrRelated = products.filter(
+              (p) => !cartIds.has(p.id) && !related.some((r) => r.id === p.id)
+            );
+            for (let p of notInCartOrRelated.sort(() => 0.5 - Math.random())) {
+              if (related.length >= 4) break;
+              related.push(p);
+            }
+          }
+          related = related.slice(0, 4);
+          const grid = document.getElementById("related-products-grid");
+          if (related.length === 0) {
+            grid.innerHTML =
+              '<p style="color:#aaa">No related products found.</p>';
+            return;
+          }
+          grid.innerHTML = related
+            .map(
+              (product) => `
+            <div class="product-card enhanced" style="background: #1c1c1c; border-radius: 12px; overflow: hidden; border: 1px solid #333; display: flex; flex-direction: column; min-width: 0;">
+              <div class="product-image-container" style="position: relative; overflow: hidden;">
+                <img src="${product.image}" alt="${
+                product.name
+              }" class="product-image" style="width: 100%; height: 80px; object-fit: cover;" />
+              </div>
+              <div class="product-info" style="padding: 8px; flex: 1; display: flex; flex-direction: column;">
+                <h3 class="product-title" style="font-size: 0.9rem; font-weight: 600; margin-bottom: 3px; color: #fff;">${
+                  product.name
+                }</h3>
+                <div class="product-price" style="font-size: 0.95rem; font-weight: 700; color: #25d366; margin-bottom: 4px;">$${
+                  product.price
+                }</div>
+                <p class="product-description" style="color: #ccc; font-size: 11px; margin-bottom: 6px;">${product.description.substring(
+                  0,
+                  35
+                )}...</p>
+                <div style="display: flex; gap: 4px; margin-top: auto;">
+                  <a href="${
+                    product.link
+                  }" class="add-to-cart-btn" style="background: #222; color: #25d366; border: 1px solid #25d366; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; text-align: center; text-decoration: none; flex: 1;">View</a>
+                  <button class="add-related-btn" data-product='${JSON.stringify(
+                    product
+                  ).replace(
+                    /'/g,
+                    "&#39;"
+                  )}' style="background: linear-gradient(135deg, #25d366, #128c7e); color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; flex: 1;">Add to Cart</button>
+                </div>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+          // Add event listeners for Add to Cart buttons
+          grid.querySelectorAll(".add-related-btn").forEach((btn) => {
+            btn.addEventListener("click", function () {
+              const product = JSON.parse(this.getAttribute("data-product"));
+              if (typeof addToCart === "function") {
+                addToCart(product);
+                if (typeof showNotification === "function") {
+                  showNotification(product.name + " added to cart!", "success");
+                } else {
+                  alert(product.name + " added to cart!");
+                }
+              }
+            });
+          });
+        } catch (e) {
+          document.getElementById("related-products-grid").innerHTML =
+            '<p style="color:#aaa">Could not load related products.</p>';
+        }
+      }
+      document.addEventListener("DOMContentLoaded", renderRelatedProducts);
+    </script>
+    <script src="components/cookie-consent.js"></script>
+  </body>
+</html>

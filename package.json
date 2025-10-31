@@ -1,0 +1,38 @@
+{
+  "name": "mobile-gaming-store",
+  "version": "1.0.0",
+  "description": "Mobile Gaming Store with Admin Panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "predeploy": "node pre-deploy-backup.js",
+    "backup": "node backup-products.js backup",
+    "restore": "node backup-products.js restore",
+    "test:campaign": "node test-campaign-system.js",
+    "worker": "node workers/campaign-worker.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.1.5",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "gaming",
+    "store",
+    "admin",
+    "mobile"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

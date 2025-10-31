@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - MobileGaming</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      body {
+        background: #101010;
+        color: #fff;
+      }
+      .checkout-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        background: #181818;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        padding: 40px 30px;
+        display: flex;
+        gap: 40px;
+      }
+      .checkout-main {
+        flex: 2;
+      }
+      .checkout-sidebar {
+        flex: 1;
+        background: #222;
+        border-radius: 12px;
+        padding: 24px;
+        min-width: 280px;
+        max-width: 340px;
+        height: fit-content;
+      }
+      .stepper {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        gap: 8px;
+      }
+      .step {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        border-radius: 8px;
+        background: #222;
+        color: #888;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: background 0.2s, color 0.2s;
+      }
+      .step.active {
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: #fff;
+      }
+      .step.completed {
+        background: #25d366;
+        color: #fff;
+      }
+      .step:not(:last-child)::after {
+        content: "";
+        display: block;
+        height: 2px;
+        background: #333;
+        margin: 8px 0 0 0;
+      }
+      .step-content {
+        min-height: 340px;
+      }
+      .step-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .step-btn {
+        padding: 12px 28px;
+        border-radius: 8px;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, #25d366, #128c7e);
+        color: #fff;
+        transition: background 0.2s;
+      }
+      .step-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .order-summary-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        color: #25d366;
+      }
+      .order-items {
+        margin-bottom: 18px;
+      }
+      .order-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 1rem;
+      }
+      .order-total,
+      .order-shipping {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #25d366;
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #333;
+        padding-top: 10px;
+      }
+      .order-shipping {
+        color: #fbbf24;
+        font-weight: 600;
+      }
+      .confirmation-message {
+        background: #222;
+        color: #25d366;
+        border: 1px solid #25d366;
+        border-radius: 8px;
+        padding: 18px;
+        margin-top: 20px;
+        text-align: center;
+        display: none;
+      }
+      @media (max-width: 900px) {
+        .checkout-container {
+          flex-direction: column;
+          padding: 20px 10px;
+        }
+        .checkout-sidebar {
+          margin-top: 30px;
+        }
+      }
+      @media (max-width: 480px) {
+        .checkout-container {
+          flex-direction: column !important;
+          padding: 14px 8px !important;
+          margin: 18px 0 12px 0 !important;
+          border-radius: 12px !important;
+          gap: 14px !important;
+        }
+        .checkout-main {
+          padding: 0 !important;
+        }
+        .checkout-sidebar {
+          min-width: 0 !important;
+          max-width: 100vw !important;
+          padding: 16px 8px !important;
+          border-radius: 10px !important;
+        }
+        .stepper {
+          gap: 6px !important;
+          margin-bottom: 14px !important;
+        }
+        .step {
+          font-size: 0.85rem !important;
+          padding: 8px 0 !important;
+          border-radius: 7px !important;
+        }
+        .step-content {
+          min-height: 180px !important;
+          font-size: 0.85rem !important;
+          padding: 0 !important;
+        }
+        .step-buttons {
+          gap: 8px !important;
+          margin-top: 14px !important;
+        }
+        .step-btn {
+          padding: 8px 18px !important;
+          border-radius: 10px !important;
+          font-size: 0.85rem !important;
+        }
+        .order-summary-title {
+          font-size: 1.1rem !important;
+          margin-bottom: 12px !important;
+        }
+        .order-items,
+        .order-shipping,
+        .order-total {
+          font-size: 0.85rem !important;
+          padding-top: 7px !important;
+          margin-bottom: 7px !important;
+        }
+        .order-item {
+          font-size: 0.85rem !important;
+          margin-bottom: 5px !important;
+        }
+        .confirmation-message {
+          font-size: 0.85rem !important;
+          padding: 12px !important;
+          margin-top: 12px !important;
+        }
+        input,
+        textarea,
+        select,
+        button {
+          font-size: 0.85rem !important;
+          padding: 10px 14px !important;
+          border-radius: 8px !important;
+        }
+        label {
+          font-size: 0.8rem !important;
+        }
+        .footer {
+          padding: 4px 1px 2px !important;
+          margin-top: 8px !important;
+        }
+        .footer-content {
+          gap: 0 !important;
+          padding: 0 1px !important;
+        }
+        .footer-section.contact-section,
+        .footer-section.newsletter-section {
+          width: 50% !important;
+          font-size: 0.48rem !important;
+          padding: 2px 0 !important;
+        }
+        .footer-section h3 {
+          font-size: 0.6rem !important;
+          margin-bottom: 3px !important;
+        }
+        .footer-section p,
+        .footer-section a {
+          font-size: 0.5rem !important;
+          line-height: 1.2 !important;
+        }
+        .newsletter-form {
+          gap: 2px !important;
+          margin-top: 2px !important;
+        }
+        .newsletter-input {
+          padding: 3px 5px !important;
+          font-size: 0.5rem !important;
+          border-radius: 4px !important;
+        }
+        .newsletter-btn {
+          padding: 3px 7px !important;
+          font-size: 0.5rem !important;
+          border-radius: 4px !important;
+        }
+        .footer-bottom {
+          padding-top: 4px !important;
+          font-size: 0.45rem !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="checkout-container">
+      <div class="checkout-main">
+        <div class="stepper" id="stepper">
+          <div class="step active" data-step="1">1. Address</div>
+          <div class="step" data-step="2">2. Delivery</div>
+          <div class="step" data-step="3">3. Payment</div>
+          <div class="step" data-step="4">4. Review</div>
+        </div>
+        <div class="step-content" id="step-content">
+          <!-- Step content will be rendered here by JS -->
+        </div>
+        <div class="step-buttons" id="step-buttons">
+          <!-- Step navigation buttons rendered by JS -->
+        </div>
+        <div class="confirmation-message" id="confirmation-message"></div>
+      </div>
+      <div class="checkout-sidebar">
+        <div class="order-summary-title">Order Summary</div>
+        <div class="order-items" id="order-items"></div>
+        <div class="order-shipping" id="order-shipping"></div>
+        <div class="order-total" id="order-total"></div>
+      </div>
+    </div>
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="assets/js/checkout.js"></script>
+
+    <footer
+      class="footer"
+      style="
+        background: #1a1a1a;
+        color: #ccc;
+        padding: 40px 0 20px;
+        margin-top: 60px;
+        border-top: 1px solid #333;
+      "
+    >
+      <div
+        class="footer-content"
+        style="
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 40px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0;
+          justify-content: center;
+        "
+      >
+        <div
+          class="footer-section contact-section"
+          style="flex: 1 1 200px; min-width: 180px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 10px; font-size: 1.1rem">
+            Contact
+          </h3>
+          <p style="color: #fff; margin-bottom: 6px">
+            Email: support@mobilegearhub.com
+          </p>
+          <p style="color: #fff">Live Chat: Available 24/7</p>
+        </div>
+        <div
+          class="footer-section newsletter-section"
+          style="flex: 1 1 200px; min-width: 180px; text-align: center"
+        >
+          <h3 style="color: #25d366; margin-bottom: 10px; font-size: 1.1rem">
+            Newsletter
+          </h3>
+          <form
+            class="newsletter-form"
+            style="
+              display: flex;
+              gap: 6px;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <input
+              type="email"
+              class="newsletter-input"
+              placeholder="Your email address"
+              required
+              style="
+                padding: 7px 10px;
+                border-radius: 6px;
+                border: 1px solid #333;
+                background: #222;
+                color: #fff;
+                font-size: 0.95rem;
+              "
+            />
+            <button
+              type="submit"
+              class="newsletter-btn"
+              style="
+                padding: 7px 16px;
+                border-radius: 6px;
+                background: #25d366;
+                color: #111;
+                border: none;
+                font-weight: 600;
+                font-size: 0.95rem;
+              "
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+      <div
+        class="footer-bottom"
+        style="
+          text-align: center;
+          padding-top: 20px;
+          margin-top: 30px;
+          border-top: 1px solid #333;
+          font-size: 0.95rem;
+        "
+      >
+        <p>&copy; 2024 MobileGaming. All rights reserved.</p>
+      </div>
+    </footer>
+    <script src="components/cookie-consent.js"></script>
+  </body>
+</html>

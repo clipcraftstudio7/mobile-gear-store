@@ -1,0 +1,1238 @@
+{
+  "timestamp": "2025-10-31T12:28:35.611Z",
+  "products": [
+    {
+      "id": 1,
+      "name": "Gaming Controller",
+      "price": 119.99,
+      "originalPrice": 149.99,
+      "discount": 20,
+      "image": "assets/images/products-organized/1-gaming-controller/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/1-gaming-controller/1-main.jpg",
+        "assets/images/products-organized/1-gaming-controller/2-angle.jpg",
+        "assets/images/products-organized/1-gaming-controller/3-detail.jpg",
+        "assets/images/products-organized/1-gaming-controller/4-context.jpg",
+        "assets/images/products-organized/1-gaming-controller/5-package.jpg"
+      ],
+      "link": "product-template.html?id=1",
+      "category": "Controllers",
+      "description": "Premium Bluetooth gaming controller with customizable buttons and\n          ergonomic design. Perfect for mobile gaming enthusiasts who demand\n          precision and comfort. Features include responsive analog sticks,\n          programmable buttons, vibration feedback, and long battery life.\n          Compatible with most mobile devices and gaming platforms.",
+      "stock": 8,
+      "rating": 4.8,
+      "reviews": 234,
+      "features": [
+        "Bluetooth Connectivity",
+        "Customizable Buttons",
+        "Responsive Analog Sticks",
+        "Vibration Feedback",
+        "Long Battery Life",
+        "Ergonomic Design"
+      ],
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "isNew": true
+    },
+    {
+      "id": 2,
+      "name": "SY830 Gaming Headset",
+      "price": 69.99,
+      "originalPrice": 89.99,
+      "discount": 22,
+      "image": "assets/images/products-organized/2-sy830-gaming-headset/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/2-sy830-gaming-headset/1-main.jpg",
+        "assets/images/products-organized/2-sy830-gaming-headset/2-angle.jpg",
+        "assets/images/products-organized/2-sy830-gaming-headset/3-detail.jpg",
+        "assets/images/products-organized/2-sy830-gaming-headset/4-context.jpg",
+        "assets/images/products-organized/2-sy830-gaming-headset/5-package.jpg"
+      ],
+      "link": "product-template.html?id=2",
+      "category": "Audio",
+      "description": "SY830 Premium wireless gaming headset with noise cancellation and\n          crystal clear audio. Perfect for mobile gaming enthusiasts who demand\n          immersive sound quality and comfort. Features include active noise\n          cancellation, 7.1 surround sound, long battery life, and comfortable\n          memory foam ear cushions for extended gaming sessions.",
+      "stock": 12,
+      "rating": 4.6,
+      "reviews": 156,
+      "features": [
+        "Active Noise Cancellation",
+        "7.1 Surround Sound",
+        "Wireless Connectivity",
+        "Long Battery Life",
+        "Memory Foam Ear Cushions",
+        "Crystal Clear Audio"
+      ],
+      "createdAt": "2024-01-10T14:20:00.000Z",
+      "isNew": true
+    },
+    {
+      "id": 10,
+      "name": "Gaming Trigger Controller",
+      "price": 15,
+      "originalPrice": 20,
+      "discount": 25,
+      "image": "assets/images/products-organized/10-gaming-trigger-controller/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/10-gaming-trigger-controller/1-main.jpg",
+        "assets/images/products-organized/10-gaming-trigger-controller/2-angle.jpg",
+        "assets/images/products-organized/10-gaming-trigger-controller/3-detail.jpg",
+        "assets/images/products-organized/10-gaming-trigger-controller/4-context.jpg",
+        "assets/images/products-organized/10-gaming-trigger-controller/5-package.jpg"
+      ],
+      "link": "product-template.html?id=10",
+      "category": "Mobile Accessories",
+      "description": "Professional gaming trigger controller designed for competitive mobile\n          gaming. Features precision triggers, ergonomic design, and advanced\n          sensitivity controls. Perfect for FPS games, battle royales, and\n          action titles requiring split-second reactions and superior control.",
+      "stock": 78,
+      "rating": 4.8,
+      "reviews": 89,
+      "features": [
+        "Precision Triggers",
+        "Ergonomic Design",
+        "Advanced Sensitivity Controls",
+        "Universal Compatibility",
+        "Split-Second Response",
+        "Competitive Gaming Ready"
+      ],
+      "createdAt": "2024-01-20T09:15:00.000Z",
+      "isNew": true
+    },
+    {
+      "id": 11,
+      "name": "Twolf One Handed Keyboard",
+      "price": 19,
+      "originalPrice": 26,
+      "discount": 27,
+      "image": "assets/images/products-organized/11-twolf-one-handed-keyboard/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/11-twolf-one-handed-keyboard/1-main.jpg",
+        "assets/images/products-organized/11-twolf-one-handed-keyboard/2-angle.jpg",
+        "assets/images/products-organized/11-twolf-one-handed-keyboard/3-detail.jpg",
+        "assets/images/products-organized/11-twolf-one-handed-keyboard/4-context.jpg",
+        "assets/images/products-organized/11-twolf-one-handed-keyboard/5-package.jpg"
+      ],
+      "link": "product-template.html?id=11",
+      "category": "Gaming Accessories",
+      "description": "Professional one-handed gaming keyboard designed for competitive\n          gaming and efficient typing. Features mechanical switches, RGB\n          backlighting, and ergonomic design for extended gaming sessions.\n          Perfect for FPS games, MOBAs, and productivity tasks requiring quick\n          access to essential keys.",
+      "stock": 92,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Mechanical Switches",
+        "RGB Backlighting",
+        "One-Handed Design",
+        "Ergonomic Layout",
+        "Quick Access Keys",
+        "Competitive Gaming Ready"
+      ],
+      "createdAt": "2024-01-18T16:45:00.000Z",
+      "isNew": true
+    },
+    {
+      "id": 12,
+      "name": "S03 Semiconductor",
+      "price": 9,
+      "originalPrice": 12,
+      "discount": 25,
+      "image": "assets/images/products-organized/12-s03-semiconductor/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/12-s03-semiconductor/1-main.jpg",
+        "assets/images/products-organized/12-s03-semiconductor/2-angle.jpg",
+        "assets/images/products-organized/12-s03-semiconductor/3-detail.jpg",
+        "assets/images/products-organized/12-s03-semiconductor/4-context.jpg",
+        "assets/images/products-organized/12-s03-semiconductor/5-package.jpg"
+      ],
+      "link": "product-template.html?id=12",
+      "category": "Controllers",
+      "description": "Advanced semiconductor gaming controller with precision controls and\n          ergonomic design. Features responsive buttons, customizable mapping,\n          and universal compatibility. Perfect for competitive gaming with\n          superior accuracy and comfort during extended gaming sessions.",
+      "stock": 156,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Semiconductor Technology",
+        "Precision Controls",
+        "Responsive Buttons",
+        "Customizable Mapping",
+        "Universal Compatibility",
+        "Ergonomic Design"
+      ],
+      "createdAt": "2024-01-22T11:30:00.000Z",
+      "isNew": true
+    },
+    {
+      "id": 13,
+      "name": "Portable Round Joystick",
+      "price": 1.5,
+      "originalPrice": 2,
+      "discount": 25,
+      "image": "assets/images/products-organized/13-portable-round-joystick/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/13-portable-round-joystick/1-main.jpg",
+        "assets/images/products-organized/13-portable-round-joystick/2-angle.jpg",
+        "assets/images/products-organized/13-portable-round-joystick/3-detail.jpg",
+        "assets/images/products-organized/13-portable-round-joystick/4-context.jpg",
+        "assets/images/products-organized/13-portable-round-joystick/5-package.jpg"
+      ],
+      "link": "product-template.html?id=13",
+      "category": "Controllers",
+      "description": "Compact and portable round joystick controller perfect for mobile\n          gaming. Features suction cup design for secure attachment, washable\n          buttons, and universal compatibility with all mobile phones and\n          tablets. Ideal for gaming on the go with precise control and easy\n          portability.",
+      "stock": 312,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "Suction Cup Design",
+        "Washable Buttons",
+        "Universal Compatibility",
+        "Compact & Portable",
+        "Precise Control",
+        "Easy Portability"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "D19 Triggers",
+      "price": 1.5,
+      "originalPrice": 2,
+      "discount": 25,
+      "image": "assets/images/products-organized/14-d19-triggers/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/14-d19-triggers/1-main.jpg",
+        "assets/images/products-organized/14-d19-triggers/2-angle.jpg",
+        "assets/images/products-organized/14-d19-triggers/3-detail.jpg",
+        "assets/images/products-organized/14-d19-triggers/4-context.jpg",
+        "assets/images/products-organized/14-d19-triggers/5-package.jpg"
+      ],
+      "link": "product-template.html?id=14",
+      "category": "Controllers",
+      "description": "Advanced D19 gaming triggers designed for enhanced mobile gaming\n          performance. Features responsive trigger buttons, ergonomic design,\n          and universal compatibility with all mobile devices. Perfect for FPS\n          games and action titles requiring quick response times and precise\n          control during intense gaming sessions.",
+      "stock": 245,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Responsive Trigger Buttons",
+        "Ergonomic Design",
+        "Universal Compatibility",
+        "Quick Response Times",
+        "Precise Control",
+        "FPS Gaming Optimized"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Finger Sleeve",
+      "price": 7,
+      "originalPrice": 10,
+      "discount": 30,
+      "image": "assets/images/products-organized/15-finger-sleeve/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/15-finger-sleeve/1-main.jpg",
+        "assets/images/products-organized/15-finger-sleeve/2-angle.jpg",
+        "assets/images/products-organized/15-finger-sleeve/3-detail.jpg",
+        "assets/images/products-organized/15-finger-sleeve/4-context.jpg",
+        "assets/images/products-organized/15-finger-sleeve/5-package.jpg"
+      ],
+      "link": "product-template.html?id=15",
+      "category": "Mobile Accessories",
+      "description": "Premium finger sleeve designed for enhanced mobile gaming performance\n          and comfort. Features anti-sweat material, ergonomic fit, and\n          responsive touch sensitivity. Perfect for extended gaming sessions\n          with superior grip and precision control for all mobile games.",
+      "stock": 178,
+      "rating": 4.9,
+      "reviews": 0,
+      "features": [
+        "Anti-Sweat Material",
+        "Ergonomic Fit",
+        "Responsive Touch Sensitivity",
+        "Superior Grip",
+        "Precision Control",
+        "Extended Gaming Comfort"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "RGB Joystick Trigger",
+      "price": 7,
+      "originalPrice": 9,
+      "discount": 22,
+      "image": "assets/images/products-organized/16-rgb-joystick-trigger/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/16-rgb-joystick-trigger/1-main.jpg",
+        "assets/images/products-organized/16-rgb-joystick-trigger/2-angle.jpg",
+        "assets/images/products-organized/16-rgb-joystick-trigger/3-detail.jpg",
+        "assets/images/products-organized/16-rgb-joystick-trigger/4-context.jpg",
+        "assets/images/products-organized/16-rgb-joystick-trigger/5-package.jpg"
+      ],
+      "link": "product-template.html?id=16",
+      "category": "Controllers",
+      "description": "Advanced RGB joystick trigger with customizable lighting effects and\n          precision control. Features ergonomic design, responsive triggers, and\n          universal compatibility with mobile gaming devices. The RGB lighting\n          adds a stunning visual element while providing superior gaming\n          performance and comfort during extended play sessions.",
+      "stock": 156,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "RGB Lighting Effects",
+        "Customizable Lighting",
+        "Precision Control",
+        "Ergonomic Design",
+        "Responsive Triggers",
+        "Universal Compatibility"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Desktop Arm Controller Holder",
+      "price": 15,
+      "originalPrice": 20,
+      "discount": 25,
+      "image": "assets/images/products-organized/17-desktop-arm-controller-holder/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/17-desktop-arm-controller-holder/1-main.jpg",
+        "assets/images/products-organized/17-desktop-arm-controller-holder/2-angle.jpg",
+        "assets/images/products-organized/17-desktop-arm-controller-holder/3-detail.jpg",
+        "assets/images/products-organized/17-desktop-arm-controller-holder/4-context.jpg",
+        "assets/images/products-organized/17-desktop-arm-controller-holder/5-package.jpg"
+      ],
+      "link": "product-template.html?id=17",
+      "category": "Accessories",
+      "description": "Premium desktop arm controller holder designed for ergonomic gaming\n          setup. Features adjustable arm positioning, secure controller\n          mounting, and cable management system. Perfect for creating an\n          organized gaming station with easy access to controllers while\n          maintaining a clean desktop environment. Ideal for both casual and\n          professional gamers.",
+      "stock": 78,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "Adjustable Arm Positioning",
+        "Secure Controller Mounting",
+        "Cable Management System",
+        "Ergonomic Gaming Setup",
+        "Organized Gaming Station",
+        "Clean Desktop Environment"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Analogue Rubber Joystick",
+      "price": 7,
+      "originalPrice": 9,
+      "discount": 22,
+      "image": "assets/images/products-organized/18-analogue-rubber-joystick/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/18-analogue-rubber-joystick/1-main.jpg",
+        "assets/images/products-organized/18-analogue-rubber-joystick/2-angle.jpg",
+        "assets/images/products-organized/18-analogue-rubber-joystick/3-detail.jpg",
+        "assets/images/products-organized/18-analogue-rubber-joystick/4-context.jpg",
+        "assets/images/products-organized/18-analogue-rubber-joystick/5-package.jpg"
+      ],
+      "link": "product-template.html?id=18",
+      "category": "Controllers",
+      "description": "Premium analogue rubber joystick designed for precise gaming control\n          and superior tactile feedback. Features high-quality rubber material\n          for excellent grip, smooth 360-degree movement, and universal\n          compatibility with mobile gaming devices. Perfect for competitive\n          gaming with responsive and accurate directional control.",
+      "stock": 203,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "High-Quality Rubber Material",
+        "Excellent Grip",
+        "Smooth 360-Degree Movement",
+        "Universal Compatibility",
+        "Responsive Control",
+        "Accurate Directional Control"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Semiconductor Magnetic Cooler",
+      "price": 32,
+      "originalPrice": 40,
+      "discount": 20,
+      "image": "assets/images/products-organized/19-semiconductor-magnetic-cooler/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/19-semiconductor-magnetic-cooler/1-main.jpg",
+        "assets/images/products-organized/19-semiconductor-magnetic-cooler/2-angle.jpg",
+        "assets/images/products-organized/19-semiconductor-magnetic-cooler/3-detail.jpg",
+        "assets/images/products-organized/19-semiconductor-magnetic-cooler/4-context.jpg",
+        "assets/images/products-organized/19-semiconductor-magnetic-cooler/5-package.jpg"
+      ],
+      "link": "product-template.html?id=19",
+      "category": "Cooling",
+      "description": "Advanced semiconductor magnetic cooling technology designed for\n          optimal mobile device temperature management. Features powerful\n          magnetic cooling system, silent operation, and intelligent temperature\n          control. Perfect for intensive gaming sessions and heavy device usage\n          with superior heat dissipation and energy efficiency.",
+      "stock": 67,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Semiconductor Technology",
+        "Magnetic Cooling System",
+        "Silent Operation",
+        "Intelligent Temperature Control",
+        "Superior Heat Dissipation",
+        "Energy Efficient"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Mobile Cooling Fan Dual",
+      "price": 24,
+      "originalPrice": 30,
+      "discount": 20,
+      "image": "assets/images/products-organized/3-mobile-cooling-fan-dual/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/3-mobile-cooling-fan-dual/1-main.jpg",
+        "assets/images/products-organized/3-mobile-cooling-fan-dual/2-angle.jpg",
+        "assets/images/products-organized/3-mobile-cooling-fan-dual/3-detail.jpg",
+        "assets/images/products-organized/3-mobile-cooling-fan-dual/4-context.jpg",
+        "assets/images/products-organized/3-mobile-cooling-fan-dual/5-package.jpg"
+      ],
+      "link": "product-template.html?id=3",
+      "category": "Cooling",
+      "description": "USB-powered mobile cooling fan designed to prevent overheating during\n          intense gaming sessions. Perfect for mobile gaming enthusiasts who\n          demand optimal performance. Features include high-speed cooling, quiet\n          operation, adjustable speed settings, and universal USB compatibility\n          for all mobile devices and gaming setups.",
+      "stock": 18,
+      "rating": 4.3,
+      "reviews": 0,
+      "features": [
+        "Dual Fan Design",
+        "USB-Powered",
+        "High-Speed Cooling",
+        "Quiet Operation",
+        "Adjustable Speed Settings",
+        "Universal USB Compatibility"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "FSO1 Dual Fan Plug In",
+      "price": 12,
+      "originalPrice": 12,
+      "discount": 0,
+      "image": "assets/images/products-organized/20-fso1-dual-fan-plug-in/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/20-fso1-dual-fan-plug-in/1-main.jpg",
+        "assets/images/products-organized/20-fso1-dual-fan-plug-in/2-angle.jpg",
+        "assets/images/products-organized/20-fso1-dual-fan-plug-in/3-detail.jpg",
+        "assets/images/products-organized/20-fso1-dual-fan-plug-in/4-context.jpg",
+        "assets/images/products-organized/20-fso1-dual-fan-plug-in/5-package.jpg"
+      ],
+      "link": "product-template.html?id=20",
+      "category": "Cooling",
+      "description": "Advanced dual fan cooling system designed for optimal mobile device\n          temperature control. Features two high-speed fans, plug-in design for\n          easy installation, and intelligent thermal management. Perfect for\n          intensive gaming sessions and heavy device usage with superior heat\n          dissipation and quiet operation.",
+      "stock": 124,
+      "rating": 4.6,
+      "reviews": 0,
+      "features": [
+        "Dual Fan System",
+        "High-Speed Fans",
+        "Plug-In Design",
+        "Easy Installation",
+        "Intelligent Thermal Management",
+        "Superior Heat Dissipation"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "4 in 1 Half Canded Combo",
+      "price": 50,
+      "originalPrice": 50,
+      "discount": 0,
+      "image": "assets/images/products-organized/21-4-in-1-half-canded-combo/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/21-4-in-1-half-canded-combo/1-main.jpg",
+        "assets/images/products-organized/21-4-in-1-half-canded-combo/2-angle.jpg",
+        "assets/images/products-organized/21-4-in-1-half-canded-combo/3-detail.jpg",
+        "assets/images/products-organized/21-4-in-1-half-canded-combo/4-context.jpg",
+        "assets/images/products-organized/21-4-in-1-half-canded-combo/5-package.jpg"
+      ],
+      "link": "product-template.html?id=21",
+      "category": "Gaming Keyboard",
+      "description": "Premium 4-in-1 gaming keyboard combo featuring half-canded design for\n          enhanced gaming performance. Includes mechanical switches, RGB\n          backlighting, programmable keys, and ergonomic design. Perfect for\n          competitive gaming with superior tactile feedback and customizable\n          lighting effects.",
+      "stock": 45,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "4-in-1 Design",
+        "Half-Canded Layout",
+        "Mechanical Switches",
+        "RGB Backlighting",
+        "Programmable Keys",
+        "Ergonomic Design"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "Elo Vagabond Mobile Controller",
+      "price": 98,
+      "originalPrice": 98,
+      "discount": 0,
+      "image": "assets/images/products-organized/22-elo-vagabond-mobile-controller/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/22-elo-vagabond-mobile-controller/1-main.jpg",
+        "assets/images/products-organized/22-elo-vagabond-mobile-controller/2-angle.jpg",
+        "assets/images/products-organized/22-elo-vagabond-mobile-controller/3-detail.jpg",
+        "assets/images/products-organized/22-elo-vagabond-mobile-controller/4-context.jpg",
+        "assets/images/products-organized/22-elo-vagabond-mobile-controller/5-package.jpg"
+      ],
+      "link": "product-template.html?id=22",
+      "category": "Gaming Controller",
+      "description": "Premium Elo Vagabond mobile controller designed for professional\n          gaming performance. Features advanced haptic feedback, customizable\n          buttons, ergonomic design, and wireless connectivity. Perfect for\n          competitive mobile gaming with superior precision and comfort during\n          extended gaming sessions.",
+      "stock": 23,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "Advanced Haptic Feedback",
+        "Customizable Buttons",
+        "Ergonomic Design",
+        "Wireless Connectivity",
+        "Professional Gaming Performance",
+        "Superior Precision"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "Razer Mouse Pad",
+      "price": 29,
+      "originalPrice": 29,
+      "discount": 0,
+      "image": "assets/images/products-organized/23-razer-mouse-pad/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/23-razer-mouse-pad/1-main.jpg",
+        "assets/images/products-organized/23-razer-mouse-pad/2-angle.jpg",
+        "assets/images/products-organized/23-razer-mouse-pad/3-detail.jpg",
+        "assets/images/products-organized/23-razer-mouse-pad/4-context.jpg",
+        "assets/images/products-organized/23-razer-mouse-pad/5-package.jpg"
+      ],
+      "link": "product-template.html?id=23",
+      "category": "Mouse Pad",
+      "description": "Premium Razer gaming mouse pad designed for ultimate precision and\n          control. Features high-quality surface material, anti-slip rubber\n          base, and optimized tracking for gaming mice. Perfect for competitive\n          gaming with superior accuracy and smooth mouse movement.",
+      "stock": 67,
+      "rating": 4.9,
+      "reviews": 0,
+      "features": [
+        "High-Quality Surface Material",
+        "Anti-Slip Rubber Base",
+        "Optimized Tracking",
+        "Ultimate Precision",
+        "Smooth Mouse Movement",
+        "Competitive Gaming Ready"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Acedays Phone Controller",
+      "price": 15,
+      "originalPrice": 15,
+      "discount": 0,
+      "image": "assets/images/products-organized/24-acedays-phone-controller/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/24-acedays-phone-controller/1-main.jpg",
+        "assets/images/products-organized/24-acedays-phone-controller/2-angle.jpg",
+        "assets/images/products-organized/24-acedays-phone-controller/3-detail.jpg",
+        "assets/images/products-organized/24-acedays-phone-controller/4-context.jpg",
+        "assets/images/products-organized/24-acedays-phone-controller/5-package.jpg"
+      ],
+      "link": "product-template.html?id=24",
+      "category": "Phone Controller",
+      "description": "Premium Acedays phone controller designed for enhanced mobile gaming\n          experience. Features ergonomic design, responsive buttons, universal\n          compatibility, and comfortable grip. Perfect for competitive mobile\n          gaming with superior control and precision.",
+      "stock": 89,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Ergonomic Design",
+        "Responsive Buttons",
+        "Universal Compatibility",
+        "Comfortable Grip",
+        "Superior Control",
+        "Competitive Mobile Gaming"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "OIVO PS5 Phone Mount",
+      "price": 13,
+      "originalPrice": 13,
+      "discount": 0,
+      "image": "assets/images/products-organized/25-oivo-ps5-phone-mount/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/25-oivo-ps5-phone-mount/1-main.jpg",
+        "assets/images/products-organized/25-oivo-ps5-phone-mount/2-angle.jpg",
+        "assets/images/products-organized/25-oivo-ps5-phone-mount/3-detail.jpg",
+        "assets/images/products-organized/25-oivo-ps5-phone-mount/4-context.jpg",
+        "assets/images/products-organized/25-oivo-ps5-phone-mount/5-package.jpg"
+      ],
+      "link": "product-template.html?id=25",
+      "category": "Mounts & Holders",
+      "description": "Securely attach your phone to your PS5 controller with the OIVO Phone\n          Mount. Adjustable viewing angles, sturdy grip, and universal\n          compatibility make it perfect for remote play and cloud gaming. Enjoy\n          hands-free gaming sessions with comfort and stability.",
+      "stock": 120,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "Adjustable Viewing Angles",
+        "Sturdy Grip",
+        "Universal Compatibility",
+        "Remote Play Ready",
+        "Cloud Gaming Compatible",
+        "Hands-Free Gaming"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "Casque Deep Base Sterio Headset",
+      "price": 45,
+      "originalPrice": 45,
+      "discount": 0,
+      "image": "assets/images/products-organized/26-casque-deep-base-sterio-headset/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/26-casque-deep-base-sterio-headset/1-main.jpg",
+        "assets/images/products-organized/26-casque-deep-base-sterio-headset/2-angle.jpg",
+        "assets/images/products-organized/26-casque-deep-base-sterio-headset/3-detail.jpg",
+        "assets/images/products-organized/26-casque-deep-base-sterio-headset/4-context.jpg",
+        "assets/images/products-organized/26-casque-deep-base-sterio-headset/5-package.jpg"
+      ],
+      "link": "product-template.html?id=26",
+      "category": "Headsets",
+      "description": "Experience immersive sound with the Casque Deep Base Sterio Headset.\n          Designed for gamers and music lovers, it delivers powerful bass, clear\n          highs, and a comfortable fit for long sessions. Compatible with all\n          major devices.",
+      "stock": 60,
+      "rating": 4.5,
+      "reviews": 0,
+      "features": [
+        "Immersive Sound",
+        "Powerful Bass",
+        "Clear Highs",
+        "Comfortable Fit",
+        "Long Session Comfort",
+        "Universal Device Compatibility"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Executive Venom Controller - Phone Holder",
+      "price": 40,
+      "originalPrice": 40,
+      "discount": 0,
+      "image": "assets/images/products-organized/27-executive-venom-controller---phone-holder/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/27-executive-venom-controller---phone-holder/1-main.jpg",
+        "assets/images/products-organized/27-executive-venom-controller---phone-holder/2-angle.jpg",
+        "assets/images/products-organized/27-executive-venom-controller---phone-holder/3-detail.jpg",
+        "assets/images/products-organized/27-executive-venom-controller---phone-holder/4-context.jpg",
+        "assets/images/products-organized/27-executive-venom-controller---phone-holder/5-package.jpg"
+      ],
+      "link": "product-template.html?id=27",
+      "category": "Phone Holders",
+      "description": "Premium Executive Venom Controller with integrated phone holder.\n          Features ergonomic design, adjustable phone mount, responsive\n          controls, and comfortable grip. Perfect for mobile gaming with\n          enhanced control and convenience.",
+      "stock": 75,
+      "rating": 4.6,
+      "reviews": 0,
+      "features": [
+        "Integrated Phone Holder",
+        "Ergonomic Design",
+        "Adjustable Phone Mount",
+        "Responsive Controls",
+        "Comfortable Grip",
+        "Enhanced Control & Convenience"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "JAKO Underdesk Holder",
+      "price": 12,
+      "originalPrice": 12,
+      "discount": 0,
+      "image": "assets/images/products-organized/28-jako-underdesk-holder/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/28-jako-underdesk-holder/1-main.jpg",
+        "assets/images/products-organized/28-jako-underdesk-holder/2-angle.jpg",
+        "assets/images/products-organized/28-jako-underdesk-holder/3-detail.jpg",
+        "assets/images/products-organized/28-jako-underdesk-holder/4-context.jpg",
+        "assets/images/products-organized/28-jako-underdesk-holder/5-package.jpg"
+      ],
+      "link": "product-template.html?id=28",
+      "category": "Desk Accessories",
+      "description": "Space-saving JAKO Underdesk Holder designed to keep your desk\n          organized and clutter-free. Features adjustable mounting, sturdy\n          construction, and universal compatibility. Perfect for holding phones,\n          tablets, and other devices under your desk.",
+      "stock": 120,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Space-Saving Design",
+        "Adjustable Mounting",
+        "Sturdy Construction",
+        "Universal Compatibility",
+        "Desk Organization",
+        "Clutter-Free Setup"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Red Magic 10 Pro Smartphone 5G 16/512",
+      "price": 1100,
+      "originalPrice": 1100,
+      "discount": 0,
+      "image": "assets/images/products-organized/29-red-magic-10-pro-smartphone-5g-16512/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/29-red-magic-10-pro-smartphone-5g-16512/1-main.jpg",
+        "assets/images/products-organized/29-red-magic-10-pro-smartphone-5g-16512/2-angle.jpg",
+        "assets/images/products-organized/29-red-magic-10-pro-smartphone-5g-16512/3-detail.jpg",
+        "assets/images/products-organized/29-red-magic-10-pro-smartphone-5g-16512/4-context.jpg",
+        "assets/images/products-organized/29-red-magic-10-pro-smartphone-5g-16512/5-package.jpg"
+      ],
+      "link": "product-template.html?id=29",
+      "category": "Gaming Smartphones",
+      "description": "Ultimate gaming smartphone with 5G connectivity, 16GB RAM, and 512GB\n          storage. Features advanced cooling system, 165Hz refresh rate display,\n          and dedicated gaming triggers. Powered by the latest Snapdragon\n          processor for unmatched gaming performance.",
+      "stock": 25,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "5G Connectivity",
+        "16GB RAM",
+        "512GB Storage",
+        "Advanced Cooling System",
+        "165Hz Refresh Rate Display",
+        "Dedicated Gaming Triggers"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "SL17 Magnetic Semiconductor Cooler",
+      "price": 15,
+      "originalPrice": 15,
+      "discount": 0,
+      "image": "assets/images/products-organized/4-sl17-magnetic-semiconductor-cooler/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/4-sl17-magnetic-semiconductor-cooler/1-main.jpg",
+        "assets/images/products-organized/4-sl17-magnetic-semiconductor-cooler/2-angle.jpg",
+        "assets/images/products-organized/4-sl17-magnetic-semiconductor-cooler/3-detail.jpg",
+        "assets/images/products-organized/4-sl17-magnetic-semiconductor-cooler/4-context.jpg",
+        "assets/images/products-organized/4-sl17-magnetic-semiconductor-cooler/5-package.jpg"
+      ],
+      "link": "product-template.html?id=4",
+      "category": "Cooling",
+      "description": "Advanced magnetic semiconductor cooling technology designed for mobile\n          gaming devices. Features magnetic attachment for easy installation,\n          semiconductor cooling for superior heat dissipation, and ultra-quiet\n          operation. Perfect for preventing thermal throttling during intense\n          gaming sessions while maintaining device performance.",
+      "stock": 25,
+      "rating": 4.5,
+      "reviews": 0,
+      "features": [
+        "Magnetic Attachment",
+        "Semiconductor Cooling",
+        "Superior Heat Dissipation",
+        "Ultra-Quiet Operation",
+        "Thermal Throttling Prevention",
+        "Easy Installation"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "Vakilli Gaming Joystick",
+      "price": 12,
+      "originalPrice": 12,
+      "discount": 0,
+      "image": "assets/images/products-organized/30-vakilli-gaming-joystick/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/30-vakilli-gaming-joystick/1-main.jpg",
+        "assets/images/products-organized/30-vakilli-gaming-joystick/2-angle.jpg",
+        "assets/images/products-organized/30-vakilli-gaming-joystick/3-detail.jpg",
+        "assets/images/products-organized/30-vakilli-gaming-joystick/4-context.jpg",
+        "assets/images/products-organized/30-vakilli-gaming-joystick/5-package.jpg"
+      ],
+      "link": "product-template.html?id=30",
+      "category": "Gaming Controllers",
+      "description": "Premium gaming joystick with precise control and ergonomic design.\n          Features responsive buttons, comfortable grip, and universal\n          compatibility with mobile devices. Perfect for mobile gaming\n          enthusiasts seeking enhanced control and precision during gameplay.",
+      "stock": 156,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Precise Control",
+        "Ergonomic Design",
+        "Responsive Buttons",
+        "Comfortable Grip",
+        "Universal Compatibility",
+        "Enhanced Control & Precision"
+      ]
+    },
+    {
+      "id": 36,
+      "name": "Paladon Xbox Icon Lights",
+      "price": 29.75,
+      "originalPrice": 29.75,
+      "discount": 0,
+      "image": "assets/images/products-organized/36-paladon-xbox-icon-lights/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/36-paladon-xbox-icon-lights/1-main.jpg",
+        "assets/images/products-organized/36-paladon-xbox-icon-lights/2-angle.jpg",
+        "assets/images/products-organized/36-paladon-xbox-icon-lights/3-detail.jpg",
+        "assets/images/products-organized/36-paladon-xbox-icon-lights/4-context.jpg",
+        "assets/images/products-organized/36-paladon-xbox-icon-lights/5-package.jpg"
+      ],
+      "link": "product-template.html?id=36",
+      "category": "Lighting",
+      "description": "Illuminate your gaming setup with the Paladon Xbox Icon Lights. These\n          premium LED lights feature authentic Xbox branding and create an\n          immersive gaming atmosphere. Perfect for Xbox enthusiasts and gaming\n          room decoration.",
+      "stock": 45,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Authentic Xbox Branding",
+        "Premium LED Lights",
+        "Immersive Gaming Atmosphere",
+        "Gaming Room Decoration",
+        "Xbox Enthusiast Ready",
+        "Professional Lighting"
+      ]
+    },
+    {
+      "id": 39,
+      "name": "Sundisk 128GB Gameplay 190ms",
+      "price": 28,
+      "originalPrice": 28,
+      "discount": 0,
+      "image": "assets/images/products-organized/39-sundisk-128gb-gameplay-190ms/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/39-sundisk-128gb-gameplay-190ms/1-main.jpg",
+        "assets/images/products-organized/39-sundisk-128gb-gameplay-190ms/2-angle.jpg",
+        "assets/images/products-organized/39-sundisk-128gb-gameplay-190ms/3-detail.jpg",
+        "assets/images/products-organized/39-sundisk-128gb-gameplay-190ms/4-context.jpg",
+        "assets/images/products-organized/39-sundisk-128gb-gameplay-190ms/5-package.jpg"
+      ],
+      "link": "product-template.html?id=39",
+      "category": "Storage",
+      "description": "Experience ultra-fast gaming storage with the Sundisk 128GB microSD\n          card, designed for mobile gamers. Enjoy blazing 190MB/s read speeds,\n          low 190ms gameplay latency, and robust reliability for all your\n          favorite titles. Expand your device storage and never worry about lag\n          or load times again!",
+      "stock": 120,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "128GB Storage",
+        "190MB/s Read Speed",
+        "Low 190ms Latency",
+        "Robust Reliability",
+        "Mobile Gaming Optimized",
+        "Expandable Storage"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Logitech G933s Lightsync Wireless Gaming Headset",
+      "price": 159,
+      "originalPrice": 199,
+      "discount": 20,
+      "image": "assets/images/products-organized/5-logitech-g933s-lightsync-wireless-gaming-headset/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/5-logitech-g933s-lightsync-wireless-gaming-headset/1-main.jpg",
+        "assets/images/products-organized/5-logitech-g933s-lightsync-wireless-gaming-headset/2-angle.jpg",
+        "assets/images/products-organized/5-logitech-g933s-lightsync-wireless-gaming-headset/3-detail.jpg",
+        "assets/images/products-organized/5-logitech-g933s-lightsync-wireless-gaming-headset/4-context.jpg",
+        "assets/images/products-organized/5-logitech-g933s-lightsync-wireless-gaming-headset/5-package.jpg"
+      ],
+      "link": "product-template.html?id=5",
+      "category": "Audio",
+      "description": "Premium wireless gaming headset featuring advanced RGB lighting,\n          surround sound technology, and long battery life. Perfect for mobile\n          gaming, streaming, and professional use. Features noise-canceling\n          microphone, customizable lighting effects, and premium comfort design.",
+      "stock": 45,
+      "rating": 4.9,
+      "reviews": 0,
+      "features": [
+        "RGB Lighting",
+        "Surround Sound Technology",
+        "Wireless Connectivity",
+        "Long Battery Life",
+        "Noise-Canceling Microphone",
+        "Customizable Lighting Effects"
+      ]
+    },
+    {
+      "id": 40,
+      "name": "Avengers Executive Phone Holder",
+      "price": 44,
+      "originalPrice": 44,
+      "discount": 0,
+      "image": "assets/images/products-organized/40-avengers-executive-phone-holder/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/40-avengers-executive-phone-holder/1-main.jpg",
+        "assets/images/products-organized/40-avengers-executive-phone-holder/2-angle.jpg",
+        "assets/images/products-organized/40-avengers-executive-phone-holder/3-detail.jpg",
+        "assets/images/products-organized/40-avengers-executive-phone-holder/4-context.jpg",
+        "assets/images/products-organized/40-avengers-executive-phone-holder/5-package.jpg"
+      ],
+      "link": "product-template.html?id=40",
+      "category": "Phone Holders",
+      "description": "Elevate your workspace or gaming setup with the Avengers Executive\n          Phone Holder. Crafted for stability and style, this premium holder\n          features a sturdy base, adjustable viewing angles, and a sleek\n          Avengers-inspired design. Perfect for hands-free calls, video\n          watching, or charging your device in style.",
+      "stock": 52,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Sturdy Base",
+        "Adjustable Viewing Angles",
+        "Avengers-Inspired Design",
+        "Hands-Free Calls",
+        "Video Watching Ready",
+        "Charging Compatible"
+      ]
+    },
+    {
+      "id": 41,
+      "name": "ASUS RT-AX82U Dual Band WiFi 6 Gaming Router",
+      "price": 160,
+      "originalPrice": 160,
+      "discount": 0,
+      "image": "assets/images/products-organized/41-asus-rt-ax82u-dual-band-wifi-6-gaming-router/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/41-asus-rt-ax82u-dual-band-wifi-6-gaming-router/1-main.jpg",
+        "assets/images/products-organized/41-asus-rt-ax82u-dual-band-wifi-6-gaming-router/2-angle.jpg",
+        "assets/images/products-organized/41-asus-rt-ax82u-dual-band-wifi-6-gaming-router/3-detail.jpg",
+        "assets/images/products-organized/41-asus-rt-ax82u-dual-band-wifi-6-gaming-router/4-context.jpg",
+        "assets/images/products-organized/41-asus-rt-ax82u-dual-band-wifi-6-gaming-router/5-package.jpg"
+      ],
+      "link": "product-template.html?id=41",
+      "category": "Networking",
+      "description": "Experience lightning-fast gaming with the ASUS RT-AX82U Dual Band WiFi\n          6 Gaming Router. Featuring advanced gaming optimization, extendable\n          mesh networking, and ultra-low latency for competitive gaming. Perfect\n          for mobile gaming enthusiasts who demand the best network performance.",
+      "stock": 23,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "WiFi 6 Technology",
+        "Dual Band Operation",
+        "Advanced Gaming Optimization",
+        "Extendable Mesh Networking",
+        "Ultra-Low Latency",
+        "Competitive Gaming Ready"
+      ]
+    },
+    {
+      "id": 45,
+      "name": "Paladon 33cm PlayStation Glitter Glow",
+      "price": 32,
+      "originalPrice": 32,
+      "discount": 0,
+      "image": "assets/images/products-organized/45-paladon-33cm-playstation-glitter-glow/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/45-paladon-33cm-playstation-glitter-glow/1-main.jpg",
+        "assets/images/products-organized/45-paladon-33cm-playstation-glitter-glow/2-angle.jpg",
+        "assets/images/products-organized/45-paladon-33cm-playstation-glitter-glow/3-detail.jpg",
+        "assets/images/products-organized/45-paladon-33cm-playstation-glitter-glow/4-context.jpg",
+        "assets/images/products-organized/45-paladon-33cm-playstation-glitter-glow/5-package.jpg"
+      ],
+      "link": "product-template.html?id=45",
+      "category": "Gaming Accessories",
+      "description": "Illuminate your gaming space with the stunning Paladon 33cm\n          PlayStation Glitter Glow! This premium gaming accessory features a\n          beautiful glitter finish with LED lighting effects that create an\n          immersive atmosphere. Perfect for PlayStation enthusiasts who want to\n          add a touch of glamour and style to their gaming setup while\n          showcasing their love for the iconic PlayStation brand.",
+      "stock": 34,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "33cm Size",
+        "Glitter Finish",
+        "LED Lighting Effects",
+        "Immersive Atmosphere",
+        "PlayStation Branded",
+        "Gaming Room Decoration"
+      ]
+    },
+    {
+      "id": 49,
+      "name": "PlayStation 5 Alarm Clock",
+      "price": 24,
+      "originalPrice": 30,
+      "discount": 20,
+      "image": "assets/images/products-organized/49-playstation-5-alarm-clock/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/49-playstation-5-alarm-clock/1-main.jpg",
+        "assets/images/products-organized/49-playstation-5-alarm-clock/2-angle.jpg",
+        "assets/images/products-organized/49-playstation-5-alarm-clock/3-detail.jpg",
+        "assets/images/products-organized/49-playstation-5-alarm-clock/4-context.jpg",
+        "assets/images/products-organized/49-playstation-5-alarm-clock/5-package.jpg"
+      ],
+      "link": "product-template.html?id=49",
+      "category": "Alarm Clock",
+      "description": "Wake up in style with the PlayStation 5 Alarm Clock! Designed to look\n          just like the iconic PS5 console, this alarm clock is perfect for\n          gamers and fans. Features a clear digital display, easy-to-set alarms,\n          and a compact, stylish design that fits any gaming setup or bedroom.",
+      "stock": 34,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "PS5 Console Design",
+        "Clear Digital Display",
+        "Easy-to-Set Alarms",
+        "Compact & Stylish",
+        "Gaming Setup Compatible",
+        "Iconic PlayStation Branding"
+      ]
+    },
+    {
+      "id": 52,
+      "name": "Mobile Gaming Trigger Joystick Gamepad",
+      "price": 9,
+      "originalPrice": 12,
+      "discount": 25,
+      "image": "assets/images/products-organized/52-mobile-gaming-trigger-joystick-gamepad/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/52-mobile-gaming-trigger-joystick-gamepad/1-main.jpg",
+        "assets/images/products-organized/52-mobile-gaming-trigger-joystick-gamepad/2-angle.jpg",
+        "assets/images/products-organized/52-mobile-gaming-trigger-joystick-gamepad/3-detail.jpg",
+        "assets/images/products-organized/52-mobile-gaming-trigger-joystick-gamepad/4-context.jpg",
+        "assets/images/products-organized/52-mobile-gaming-trigger-joystick-gamepad/5-package.jpg"
+      ],
+      "link": "product-template.html?id=52",
+      "category": "Mobile Accessories",
+      "description": "Advanced mobile gaming trigger joystick gamepad designed for\n          professional gaming performance. Features responsive triggers,\n          ergonomic design, and universal compatibility with all mobile devices.\n          Perfect for FPS games, racing games, and action titles requiring\n          precise control and quick response times.",
+      "stock": 134,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Responsive Triggers",
+        "Ergonomic Design",
+        "Universal Compatibility",
+        "Professional Gaming Performance",
+        "Precise Control",
+        "Quick Response Times"
+      ]
+    },
+    {
+      "id": 50,
+      "name": "Paladone PlayStation Logo Light Up",
+      "price": 25,
+      "originalPrice": 32,
+      "discount": 22,
+      "image": "assets/images/products-organized/50-paladone-playstation-logo-light-up/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/50-paladone-playstation-logo-light-up/1-main.jpg",
+        "assets/images/products-organized/50-paladone-playstation-logo-light-up/2-angle.jpg",
+        "assets/images/products-organized/50-paladone-playstation-logo-light-up/3-detail.jpg",
+        "assets/images/products-organized/50-paladone-playstation-logo-light-up/4-context.jpg",
+        "assets/images/products-organized/50-paladone-playstation-logo-light-up/5-package.jpg"
+      ],
+      "link": "product-template.html?id=50",
+      "category": "Light Up Decor",
+      "description": "Illuminate your space with the iconic PlayStation logo! The Paladone\n          PlayStation Logo Light Up is the perfect addition to any gaming room,\n          bedroom, or office. Featuring vibrant LED lighting, USB or battery\n          power options, and an officially licensed design, this light is a\n          must-have for PlayStation fans.",
+      "stock": 41,
+      "rating": 4.9,
+      "reviews": 0,
+      "features": [
+        "Iconic PlayStation Logo",
+        "Vibrant LED Lighting",
+        "USB or Battery Power",
+        "Officially Licensed Design",
+        "Gaming Room Decoration",
+        "PlayStation Fan Essential"
+      ]
+    },
+    {
+      "id": 51,
+      "name": "Paladone Xbox Logo Light Up",
+      "price": 29,
+      "originalPrice": 29,
+      "discount": 0,
+      "image": "assets/images/products-organized/51-paladone-xbox-logo-light-up/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/51-paladone-xbox-logo-light-up/1-main.jpg",
+        "assets/images/products-organized/51-paladone-xbox-logo-light-up/2-angle.jpg",
+        "assets/images/products-organized/51-paladone-xbox-logo-light-up/3-detail.jpg",
+        "assets/images/products-organized/51-paladone-xbox-logo-light-up/4-context.jpg",
+        "assets/images/products-organized/51-paladone-xbox-logo-light-up/5-package.jpg"
+      ],
+      "link": "product-template.html?id=51",
+      "category": "Light Up Decor",
+      "description": "Light up your gaming space with the Paladone Xbox Logo Light Up!\n          Featuring the iconic Xbox logo, this officially licensed light is\n          perfect for any Xbox fan's room, setup, or office. Enjoy vibrant LED\n          illumination, USB or battery power options, and a stylish design that\n          stands out day or night.",
+      "stock": 52,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "Iconic Xbox Logo",
+        "Vibrant LED Illumination",
+        "USB or Battery Power",
+        "Officially Licensed",
+        "Stylish Design",
+        "Day & Night Visibility"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Universal 360 Degree ABS Gaming Accessories",
+      "price": 7,
+      "originalPrice": 10,
+      "discount": 30,
+      "image": "assets/images/products-organized/6-universal-360-degree-abs-gaming-accessories/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/6-universal-360-degree-abs-gaming-accessories/1-main.jpg",
+        "assets/images/products-organized/6-universal-360-degree-abs-gaming-accessories/2-angle.jpg",
+        "assets/images/products-organized/6-universal-360-degree-abs-gaming-accessories/3-detail.jpg",
+        "assets/images/products-organized/6-universal-360-degree-abs-gaming-accessories/4-context.jpg",
+        "assets/images/products-organized/6-universal-360-degree-abs-gaming-accessories/5-package.jpg"
+      ],
+      "link": "product-template.html?id=6",
+      "category": "Mobile Accessories",
+      "description": "Premium universal gaming accessories made from high-quality ABS\n          material with 360-degree rotation capability. Features ergonomic\n          design, anti-slip grips, and universal compatibility with all mobile\n          devices. Perfect for enhancing gaming performance with superior\n          control and comfort during extended gaming sessions.",
+      "stock": 89,
+      "rating": 4.6,
+      "reviews": 0,
+      "features": [
+        "360-Degree Rotation",
+        "ABS Material",
+        "Ergonomic Design",
+        "Anti-Slip Grips",
+        "Universal Compatibility",
+        "Superior Control"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Anti Sweat Finger Sleeve",
+      "price": 3,
+      "originalPrice": 4,
+      "discount": 25,
+      "image": "assets/images/products-organized/7-anti-sweat-finger-sleeve/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/7-anti-sweat-finger-sleeve/1-main.jpg",
+        "assets/images/products-organized/7-anti-sweat-finger-sleeve/2-angle.jpg",
+        "assets/images/products-organized/7-anti-sweat-finger-sleeve/3-detail.jpg",
+        "assets/images/products-organized/7-anti-sweat-finger-sleeve/4-context.jpg",
+        "assets/images/products-organized/7-anti-sweat-finger-sleeve/5-package.jpg"
+      ],
+      "link": "product-template.html?id=7",
+      "category": "Mobile Accessories",
+      "description": "Premium anti-sweat finger sleeves designed for mobile gaming\n          enthusiasts. Made from breathable, moisture-wicking fabric that\n          prevents sweat buildup and provides excellent grip control. Perfect\n          for extended gaming sessions, these sleeves enhance touch sensitivity\n          while keeping your fingers dry and comfortable.",
+      "stock": 156,
+      "rating": 4.8,
+      "reviews": 0,
+      "features": [
+        "Anti-Sweat Material",
+        "Breathable Fabric",
+        "Moisture-Wicking",
+        "Enhanced Touch Sensitivity",
+        "Excellent Grip Control",
+        "Comfortable Fit"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "K21 Gaming Handle and Trigger",
+      "price": 4,
+      "originalPrice": 6,
+      "discount": 33,
+      "image": "assets/images/products-organized/8-k21-gaming-handle-and-trigger/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/8-k21-gaming-handle-and-trigger/1-main.jpg",
+        "assets/images/products-organized/8-k21-gaming-handle-and-trigger/2-angle.jpg",
+        "assets/images/products-organized/8-k21-gaming-handle-and-trigger/3-detail.jpg",
+        "assets/images/products-organized/8-k21-gaming-handle-and-trigger/4-context.jpg",
+        "assets/images/products-organized/8-k21-gaming-handle-and-trigger/5-package.jpg"
+      ],
+      "link": "product-template.html?id=8",
+      "category": "Mobile Accessories",
+      "description": "Premium K21 gaming handle and trigger system designed for enhanced\n          mobile gaming control. Features ergonomic design with responsive\n          triggers, comfortable grip handles, and universal compatibility with\n          all mobile devices. Perfect for FPS games, racing games, and action\n          titles requiring precise control and quick response times.",
+      "stock": 203,
+      "rating": 4.7,
+      "reviews": 0,
+      "features": [
+        "Responsive Triggers",
+        "Comfortable Grip Handles",
+        "Ergonomic Design",
+        "Universal Compatibility",
+        "Precise Control",
+        "Quick Response Times"
+      ]
+    },
+    {
+      "id": 53,
+      "name": "Mouse Gamepad 31.5 x 11.8 Large Mouse Pad",
+      "price": 24,
+      "originalPrice": 24,
+      "discount": 0,
+      "image": "assets/images/products-organized/53-mouse-gamepad-315-x-118-large-mouse-pad/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/53-mouse-gamepad-315-x-118-large-mouse-pad/1-main.jpg",
+        "assets/images/products-organized/53-mouse-gamepad-315-x-118-large-mouse-pad/2-angle.jpg",
+        "assets/images/products-organized/53-mouse-gamepad-315-x-118-large-mouse-pad/3-detail.jpg",
+        "assets/images/products-organized/53-mouse-gamepad-315-x-118-large-mouse-pad/4-context.jpg",
+        "assets/images/products-organized/53-mouse-gamepad-315-x-118-large-mouse-pad/5-package.jpg"
+      ],
+      "link": "product-template.html?id=53",
+      "category": "Accessories",
+      "description": "Elevate your gaming and work setup with this extra-large mouse pad (31.5 x 11.8 inches). Provides smooth, precise mouse control and a comfortable surface for your keyboard and mouse. Perfect for gamers and professionals alike.",
+      "stock": 100,
+      "rating": 5,
+      "reviews": 0,
+      "features": [
+        "Large Surface",
+        "Non-Slip Base",
+        "Smooth Texture",
+        "Durable Stitching",
+        "Water Resistant"
+      ],
+      "related": [
+        7,
+        5,
+        6
+      ]
+    },
+    {
+      "id": 54,
+      "name": "Premium Gaming Controller Pro",
+      "price": 89.99,
+      "originalPrice": 119.99,
+      "discount": 25,
+      "image": "assets/images/products-organized/54-premium-gaming-controller-pro/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/54-premium-gaming-controller-pro/1-main.jpg",
+        "assets/images/products-organized/54-premium-gaming-controller-pro/2-angle.jpg",
+        "assets/images/products-organized/54-premium-gaming-controller-pro/3-detail.jpg",
+        "assets/images/products-organized/54-premium-gaming-controller-pro/4-context.jpg",
+        "assets/images/products-organized/54-premium-gaming-controller-pro/5-package.jpg"
+      ],
+      "link": "product-template.html?id=54",
+      "category": "Gaming Controller",
+      "description": "Professional gaming controller with advanced features including customizable buttons, ergonomic design, and wireless connectivity. Perfect for competitive gaming with superior precision and comfort during extended gaming sessions.",
+      "stock": 15,
+      "rating": 4.9,
+      "reviews": 127,
+      "features": [
+        "Wireless Connectivity",
+        "Customizable Buttons",
+        "Ergonomic Design",
+        "Long Battery Life",
+        "Universal Compatibility"
+      ]
+    },
+    {
+      "id": 55,
+      "name": "RGB Gaming Keyboard Mechanical",
+      "price": 129.99,
+      "originalPrice": 159.99,
+      "discount": 19,
+      "image": "assets/images/products-organized/55-rgb-gaming-keyboard-mechanical/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/55-rgb-gaming-keyboard-mechanical/1-main.jpg",
+        "assets/images/products-organized/55-rgb-gaming-keyboard-mechanical/2-angle.jpg",
+        "assets/images/products-organized/55-rgb-gaming-keyboard-mechanical/3-detail.jpg",
+        "assets/images/products-organized/55-rgb-gaming-keyboard-mechanical/4-context.jpg",
+        "assets/images/products-organized/55-rgb-gaming-keyboard-mechanical/5-package.jpg"
+      ],
+      "link": "product-template.html?id=55",
+      "category": "Gaming Keyboard",
+      "description": "Premium mechanical gaming keyboard with RGB backlighting, customizable macro keys, and anti-ghosting technology. Features Cherry MX switches for superior tactile feedback and durability. Perfect for competitive gaming and professional use.",
+      "stock": 25,
+      "rating": 4.8,
+      "reviews": 89,
+      "features": [
+        "Mechanical Switches",
+        "RGB Backlighting",
+        "Macro Keys",
+        "Anti-Ghosting",
+        "Wrist Rest Included"
+      ]
+    },
+    {
+      "id": 56,
+      "name": "Wireless Gaming Mouse Pro",
+      "price": 79.99,
+      "originalPrice": 99.99,
+      "discount": 20,
+      "image": "assets/images/products-organized/56-wireless-gaming-mouse-pro/1-main.jpg",
+      "images": [
+        "assets/images/products-organized/56-wireless-gaming-mouse-pro/1-main.jpg",
+        "assets/images/products-organized/56-wireless-gaming-mouse-pro/2-angle.jpg",
+        "assets/images/products-organized/56-wireless-gaming-mouse-pro/3-detail.jpg",
+        "assets/images/products-organized/56-wireless-gaming-mouse-pro/4-context.jpg",
+        "assets/images/products-organized/56-wireless-gaming-mouse-pro/5-package.jpg"
+      ],
+      "link": "product-template.html?id=56",
+      "category": "Gaming Mouse",
+      "description": "High-precision wireless gaming mouse with 25K DPI sensor, programmable buttons, and RGB lighting. Features ultra-lightweight design and long battery life. Perfect for FPS and MOBA games requiring precise control.",
+      "stock": 42,
+      "rating": 4.7,
+      "reviews": 156,
+      "features": [
+        "25K DPI Sensor",
+        "Wireless Technology",
+        "Programmable Buttons",
+        "RGB Lighting",
+        "Ultra-Lightweight"
+      ],
+      "createdAt": "2024-12-15T09:30:00.000Z",
+      "isNew": true
+    }
+  ],
+  "count": 42,
+  "note": "Auto-backup before deployment"
+}
